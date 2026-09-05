@@ -19,6 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Enables GitHub Pages (build type "workflow") on first run, so no
+      # manual switch in the repo settings is needed.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: 1.6.42

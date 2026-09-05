@@ -1,0 +1,389 @@
+# Services and their open ports {#sec-07-services-and-their-open-ports}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 2: Networking Essentials\
+**Accompanies.** Lecture L07. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025). Core: Sect. 6.1.2 (ports, TCP and UDP, application protocols), pp. 121--126; Sect. 6.2--6.2.1 (communication security, TLS), pp. 126--128. Supporting: Sect. 3.2, 3.3, 6.4, 6.7. RFC 9110 (HTTP semantics).
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+In L06 you got a packet to the right machine. This chapter is about the second number that says which program on that machine receives it, and about what follows from it: which services a machine offers, which of them carry your password readably, and the difference between a service that is listening, one that is reachable, one that is exposed, and one that is vulnerable.
+
+The five parts move from one number to one command. Part 1 is the port. Part 2 shows three services you used today, each one a program on a port. Part 3 pairs old protocols with their protected replacements. Part 4 keeps four words apart. Part 5 lists what one machine is running and names every line.
+
+::: {.callout-tip}
+## Nordvik's server, and what answers
+
+Nordvik's one server runs several jobs on a single address: mail, files, a login for the two suppliers, and more. Each service waits on its own port. The whole reader lands on one question: which ports on that server answer, and to whom?
+
+:::
+
+[→ The address got the packet to the machine. One more number decides which program receives it.]{.bridge}
+
+## Services and ports
+
+### One machine, several jobs
+
+One machine can do many jobs at once. The machine the address brought you to may be running eight or ten separate things: web pages, mail, logins, file sharing. A **service** is a program waiting for a question, and a **server** is the machine it runs on. Both words are used loosely, and the difference matters when you start counting.
+
+### The port: the number that says which program
+
+::: {.callout-note}
+## Port
+
+For each IP address there is a range of port numbers which represent specific network applications or processes in a specific host node. The port number is required for a packet to reach the correct application on a host node. A port number is a 16-bit integer, which means that it is possible to define 65,535 different ports in each host node. [Jøsang, Sect. 6.1.2, p. 126]{.src}
+
+:::
+
+The word misleads every beginner. A port is not a hole in anything; nothing is cut into a machine. A program asks the operating system for a number, and that number exists only while the program runs. One machine, one address, many programs, and the port is how the packet finds the right one. The book puts the number in the transport header: "The port number is transmitted in the TCP header (or UDP header)" [Jøsang, Sect. 6.1.2, p. 126]{.src}.
+
+The book also states what "open" means, and it is narrower than people think: "The fact that a specific port is 'open' means that packets with that port number in the TCP header is allowed to pass through the firewall or that the host node accepts those packets" [Jøsang, Sect. 6.1.2, p. 126]{.src}.
+
+### The numbers everyone agreed on
+
+Some port numbers are agreed by convention, so a client knows where to knock. The book's examples are "port 80 is reserved for HTTP and port 443 is reserved for HTTPS" [Jøsang, Sect. 6.1.2, p. 126]{.src}. IANA, the Internet Assigned Numbers Authority, keeps the list. Nothing enforces it, so a few services sit elsewhere.
+
+  **Service**                   **Port**   **Transport**
+  ----------------------------- ---------- ---------------
+  Web pages (HTTP)              80         TCP
+  Protected web pages (HTTPS)   443        TCP
+  Remote login (SSH)            22         TCP
+  Name lookups (DNS)            53         UDP (and TCP)
+  Mail between servers (SMTP)   25         TCP
+
+A browser knocks on 443 because everybody agreed on it, not because anything enforces it.
+
+### Two ways to send data: TCP and UDP
+
+The book names both transport protocols in one sentence: TCP "is the most common transport protocol", and UDP "is used for faster transmission at the cost of reduced reliability" [Jøsang, Sect. 6.1.2, p. 121]{.src}.
+
+  **Sets up a conversation (TCP)**                                    **Sends it and does not look back (UDP)**
+  ------------------------------------------------------------------- -----------------------------------------------------------------
+  Like a telephone call somebody has to answer                        Like shouting something across a room
+  Anything lost is sent again, and the pieces are put back in order   A lost lookup is simply asked again
+  Web pages on 80 and 443; mail on 25; remote login on 22             Name lookups on 53; voice and video calls
+  File transfer, because half a page would be useless                 Things that update constantly, where the old value is worthless
+
+Neither is better than the other. TCP pays time to be certain, and UDP pays nothing and accepts loss. The choice is about what a lost piece costs.
+
+::: {.callout-important}
+## Key idea
+
+One machine runs many services behind one address, and a port is just the number that says which program gets a packet. A port is open only while a program is listening on it: open means something is there, not that it is unprotected.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik's one server runs several services on one address. Each open port is one more program that has to be patched and watched, and nobody at Nordvik has counted them.
+
+:::
+
+[→ You have the number. Part 2 shows three services you used today, each one a program on a port.]{.bridge}
+
+## DNS, HTTP and HTTPS
+
+### Name lookups, as a service
+
+DNS was close to a magic box in L06. Here it becomes one program on one machine, waiting on port 53. It travels over UDP, because a lookup is one small question and one small answer; asking again costs almost nothing, so losing one costs almost nothing. Nothing about it is special.
+
+### Fetching a page
+
+HTTP is the HyperText Transfer Protocol, the book's first example of an application-layer protocol, "for web traffic" [Jøsang, Sect. 6.1.2, p. 121]{.src}. Two messages travel, not one. The browser asks with a method, usually `GET`, and a path on the server; the headers under that line say who is asking and what answers they accept. The server replies with a separate message that opens with a status.
+
+```
+GET /nyheter/ HTTP/1.1
+Host: www.nrk.no
+User-Agent: Mozilla/5.0
+Accept: text/html
+```
+
+### What the answer says first
+
+Every reply opens with a three-digit status, and the first digit names its family. The codes are defined in RFC 9110, which anybody can read.
+
+  **Status**   **It means**                     **Whose problem**            **So you**
+  ------------ -------------------------------- ---------------------------- --------------------------
+  200          It worked, and here it is        Nobody's                     Read the answer
+  403          It exists, you may not have it   Yours, or your permissions   Ask who may see it
+  404          Nothing sits at that path        The address you asked for    Check the path you typed
+  500          The server broke while trying    Theirs, not yours            Tell whoever runs it
+
+The leading digit is the useful part. Two hundred means it worked, four hundred is about the request, and five hundred is about the server. You met these in L02's developer tools.
+
+### HTTPS: the same conversation, protected
+
+HTTPS is HTTP with Secure on the end, and it listens on 443. The conversation inside it is exactly the same one. The same request and the same answer travel, wrapped so the path sees only that a connection happened, and the same status codes come back out of it. The book names the wrapper: TLS, Transport Layer Security, "used in conjunction with TCP to support end-to-end encryption of application data through the Internet" [Jøsang, Sect. 6.2, p. 127]{.src}, and "supports encrypted web communication with HTTPS" [Jøsang, Sect. 6.2.1, p. 127]{.src}.
+
+### What the padlock proves, and what it does not
+
+The padlock proves two things and no more. Nobody between you and the far end can read what you send or what comes back. And the far end holds a certificate issued for the exact name you typed. The book's TLS handshake shows where the second comes from: the server "sends certificate" and then "sends digital signature", and the client verifies both before the session key is used [Jøsang, Sect. 6.2.1, Fig. 6.7, p. 128]{.src}.
+
+That matters in ID-porten, where the name in the address bar is the whole point. It proves nothing about the owner. Criminals hold valid certificates too, for names that look like a bank's. The padlock is a claim about the path and the name, not about honesty.
+
+### Heartbleed: a leak with nobody logged in
+
+Encryption on the port does not make the service safe. Heartbleed was a flaw in the OpenSSL heartbeat extension, the code that keeps a connection alive, disclosed in April 2014. Anybody who could reach the service could read up to 64 kilobytes of the server's memory per request, without logging in, and that memory held session cookies, passwords and private keys. The service was doing the encryption correctly. The flaw was in the program behind the port. The book's general form: endpoints "due to their complexity always have vulnerabilities", and the armoured car does not help if the endpoints are weak [Jøsang, Sect. 3.2, p. 45]{.src}.
+
+[→ Same job, two protocols. Part 3 asks which of each pair carries your password readably.]{.bridge}
+
+## Protocol pairs and credentials
+
+### SSH, and the question it asks first
+
+SSH, or Secure Shell, gives you a command line on another machine. It listens on port 22, and the session is encrypted the whole way. It replaced telnet, which did the same job and sent every keystroke as readable text. The book lists SSH among the application protocols in its stack figure [Jøsang, Fig. 6.3, p. 122]{.src}. From Module 3 onward you live inside it, because nearly every server in the world is administered that way.
+
+The first time you connect to a new machine, SSH asks you whether you trust its key. That question is the same one the padlock answers for a website, and there is no certificate authority to answer it for you. L14 returns to it.
+
+### FTP, FTPS and SFTP
+
+Three names that look like variations of one protocol, and are not.
+
+                          **FTP**                                      **FTPS**                     **SFTP**
+  ----------------------- -------------------------------------------- ---------------------------- -----------------------------------------------------
+  Listens on              Port 21                                      Port 21, with a wrapper      Port 22
+  What it really is       The File Transfer Protocol, from the 1970s   FTP itself, with TLS added   The SSH File Transfer Protocol, inside Secure Shell
+  Your password travels   As ordinary readable text                    Protected by the wrapper     Protected by Secure Shell
+
+FTP sends the username and the password as ordinary readable text, because nobody worried about that in the 1970s. SFTP shares nothing with it except the job.
+
+### SMTP: sending mail
+
+SMTP, the Simple Mail Transfer Protocol, carries mail between servers and listens on port 25. Its dialogue is readable English: `HELO`, then `MAIL FROM`, then `RCPT TO`, then `DATA`, one line at a time. You could hold that conversation yourself, by hand, from a terminal. Nothing in it checks that the sender is who the `MAIL FROM` line says, which is why the book calls spoofing the sender's address "technically easy to perform" [Jøsang, Sect. 2.1.1, p. 27]{.src}, and why phishing works.
+
+### A password, in a capture
+
+You can read a username and a password straight off a Wireshark screen when the protocol is FTP or telnet. Both crossed the network exactly as they appear there. Nothing was broken to get at them. The capture in the lecture was prepared in advance, on a machine we own, with invented credentials; the rules from L04 apply to every capture you ever open, because reading somebody else's password off a network you were not authorised to record is § 204.
+
+The book's summary of the threat: "Data sent between nodes is exposed to threats against confidentiality (interception of data), against integrity (falsification of data) and against availability" [Jøsang, Sect. 6.2, p. 126]{.src}.
+
+### The pairs, side by side
+
+Each row does one job in two ways. The older protocols were written before anybody expected an audience on the path.
+
+  **What it does**                 **The old way**                          **The protected way**
+  -------------------------------- ---------------------------------------- ------------------------------------
+  Moves files between machines     FTP on 21, everything readable           SFTP on 22, inside Secure Shell
+  Gives a command line elsewhere   Telnet on 23, every keystroke readable   SSH on 22
+  Fetches a web page               HTTP on 80, readable                     HTTPS on 443
+  Carries mail between servers     SMTP on 25, readable                     Mail submission, encrypted, on 587
+
+The book's history of the problem: "In the early days of the Internet, almost all data communication was unencrypted, and even passwords were sent unencrypted. This changed when HTTPS was introduced around the year 2000" [Jøsang, Sect. 3.2, p. 45]{.src}. The old protocols are still there, and still answering, on machines nobody has looked at.
+
+[→ Listening, reachable, exposed, vulnerable. Part 4 keeps four words apart.]{.bridge}
+
+## Exposed services
+
+### Listening is not reachable
+
+A service can be listening and still be impossible to reach. Something in between may refuse to carry the traffic, such as a firewall that allows nothing in. **Listening** is a fact about the machine. **Reachable** is a fact about the network. Both answers are worth having, and they come from different places: the first from the machine itself, the second from somewhere else on the network. The book's firewall sentence is the mechanism: firewalls "are typically configured to block most ports by default, and only open ports that are explicitly needed" [Jøsang, Sect. 6.1.2, p. 126]{.src}.
+
+### Three questions about a service
+
+Ask three questions about every service you find, in this order.
+
+1.  **Is it running?** Something is listening on a port.
+
+2.  **Who can reach it?** This machine, the building, or the world.
+
+3.  **Does it need to be there, and who says so?**
+
+Only the third question ever removes work. The first two describe; the third decides.
+
+### The services nobody meant to run
+
+::: {.callout-note}
+## Services nobody chose
+
+Running because a package pulled them in, or because someone switched one on years ago. A test left on, or a database a feature needed and nobody removed.
+
+:::
+
+These are exactly the ones nobody patches, because nobody knows they are there. The book's vulnerability-management section says why this matters: "every system always has security vulnerabilities that will be exploited as soon as attackers can find them", and the race is between attackers finding them and organisations "removing and mitigating the same vulnerabilities" [Jøsang, Chap. 3 intro, p. 43]{.src}. A service nobody knows about is not in that race.
+
+### Exposed is not vulnerable
+
+  **Exposed**                                                 **Vulnerable**
+  ----------------------------------------------------------- -----------------------------------------------------------
+  Something is listening, and somebody outside can reach it   It has a specific weakness, and that weakness can be used
+  It answers when asked                                       Being reachable makes it worse
+  It may be patched and configured well                       It needs fixing, not just watching
+  This can be entirely fine                                   This is never fine
+
+A patched, well-configured, deliberately public web server is exposed and healthy. Exposure is not a fault. It is a cost, and counting the costs is how you choose which to pay. The book's term for the sum of those costs is the **vulnerability surface**, "all the attack vectors a threat actor can leverage", and it notes that reducing it "will usually have a cost and can affect usability, so that there is a trade-off" [Jøsang, Sect. 1.4, p. 6]{.src}.
+
+### WannaCry, and the patch nobody applied
+
+WannaCry spread on 12 May 2017 and stopped hospitals in England, a car plant in France and Telefónica in Spain within a day. It used the EternalBlue exploit against Windows file sharing over SMB, port 445. Microsoft had published the patch two months earlier, on 14 March 2017. The exploit leaked publicly on 14 April 2017. Every machine WannaCry reached had a service reachable on a port plus a patch nobody had applied.
+
+The book's vulnerability lifecycle runs from discovery and CVE registration, through NVD guidance, to "prioritization and removal of vulnerabilities" inside organisations [Jøsang, Sect. 3.3, Fig. 3.3, p. 46]{.src}. WannaCry hit the organisations that had not reached the last step, two months after the patch existed.
+
+### Mapping, as NSM means it
+
+Mapping means finding out what you actually have. In L03 you met NSM's *Grunnprinsipper for IKT-sikkerhet*, and the first of its four categories is *identifisere og kartlegge*: identify and map. In front of one machine it means one task. List what is listening, name each line, and find out who owns it. The book's version is asset identification as the first step of risk identification [Jøsang, Sect. 19.4.1, p. 418]{.src}. Part 5 turns the category into a command.
+
+::: {.callout-important}
+## Key idea
+
+Keep four words apart: listening is about the machine, reachable is about the network, exposed is both, and vulnerable is a specific weakness. Ask of every service whether it runs, who can reach it, and whether it needs to be there, because only the last question removes work.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+The services nobody at Nordvik chose, a test switched on years ago, a database a package pulled in, are the ones nobody patches. They are exposed to the two suppliers at least, and to the world if the firewall rule from L05 was written loosely.
+
+:::
+
+[→ Ports, services, pairs, exposure. Part 5 is one command, and you name every line of it.]{.bridge}
+
+## Listing one machine's services
+
+### Asking the machine
+
+The command `ss` lists the sockets a Linux machine holds. The letters in `ss -tlnp` ask for TCP, listening only, numbers left as numbers, and the name of the program. You get one line for each listening service, with its port and the program that holds it.
+
+```{.bash}
+$ sudo ss -tlnp
+State   Local Address:Port   Process
+LISTEN  0.0.0.0:22           users:(("sshd",pid=612,fd=3))
+LISTEN  127.0.0.1:3306       users:(("mariadbd",pid=845,fd=21))
+LISTEN  0.0.0.0:80           users:(("nginx",pid=903,fd=6))
+LISTEN  0.0.0.0:8080         users:(("python3",pid=1420,fd=4))
+```
+
+The local address column already answers part of the second question. `0.0.0.0` means the service accepts connections on every address the machine has. `127.0.0.1` means it accepts connections only from the machine itself: listening, but reachable from nowhere else.
+
+### The three questions, applied
+
+Take the output one line at a time. Say out loud what the program on that port is actually for. Then say who can reach it, from the machine, the building or the world. Then ask whether it needs to be there, and whom you would ask. On the four lines above: SSH for administration, needed, reachable from wherever the firewall allows; a database on the local address only, reachable from nowhere else, needed by whatever uses it; a web server, deliberately public; and a Python program on 8080 that nobody can name. The fourth line is the one to ask about.
+
+### Worked example: seven services on one server
+
+::: {.callout-tip}
+## The case
+
+Nordvik keeps one server in a cupboard. They have agreed a written scope for that server, this fortnight, working hours, and one named person to telephone. You run `ss -tlnp`. Seven things are listening, and nobody there can say what three of them are.
+
+:::
+
+::: {.callout-warning}
+## One minute
+
+What do you do with the three services nobody recognises?
+
+:::
+
+**Reasoning.** Almost everybody wants to switch off whatever nobody recognises, and that would have broken the accounting updates. Switching off is the third question's answer, and it belongs to the owner. So you identify first: which program holds each port, which package installed it, when it was last started. Then you ask who needs it. The owner decides last.
+
+**Result.** Two of the seven were public and needed: the mail service and the suppliers' login. Three belonged inside the building only, and one of those was reachable from outside because the firewall rule allowed the whole address rather than two ports. One was an abandoned test, switched on two years ago. One fed the accounting software, and would have taken the month's invoicing down with it. The report lists all seven, names each, says who can reach it, and recommends: close the test, tighten the firewall rule to two ports, leave the rest. The owner signs.
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                      **Correction**
+  ----------------------------------------------- -------------------------------------------------------------------------------------------------------------------
+  An open port means the machine is vulnerable.   It means a program is listening. A patched, well-configured, deliberately public service is exposed and healthy.
+  SFTP is FTP with encryption added.              It is file transfer carried inside Secure Shell, on port 22. It shares nothing with FTP except the job.
+  The padlock means the website is trustworthy.   It means the path is encrypted and the certificate matches the name typed. Criminals hold valid certificates too.
+  A service on 443 must be web traffic.           The numbers are a convention kept by IANA and enforced by nothing. Any program may listen on any free port.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  One machine runs many services. The address gets you there, and the port says which one you want.
+
+2.  TCP sets up a conversation and checks that everything arrived. UDP sends it and does not look back.
+
+3.  Protocols come in pairs, and the old member of each pair carries your password readably: FTP, telnet, HTTP, SMTP.
+
+4.  Listening is about the machine, reachable about the network, exposed is both, vulnerable is a specific weakness.
+
+5.  `ss -tlnp` lists what one machine is running; name every line, ask who can reach it, and let the owner decide what stays.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Your bank's website and a criminal's website both show a padlock. State what each padlock proves and what it does not. (Part 2)
+
+2.  A colleague wants an open port closed at once. Which three questions do you ask first, and who answers the third? (Part 4)
+
+3.  Why does a name lookup travel over UDP while a web page travels over TCP? (Part 1)
+
+4.  Name the protected replacement for FTP, telnet, HTTP and SMTP, and the port each one uses. (Part 3)
+
+5.  A service shows `127.0.0.1:3306` in `ss -tlnp`. Is it listening? Is it reachable from the building? (Part 5)
+
+6.  What did every machine WannaCry reached have in common, and which two dates make the point? (Part 4)
+
+## Before L08 {#before-l08 .unnumbered}
+
+Run `sudo ss -tlnp` on your exercise machine, and for every line write one sentence: what the program is for, and who can reach it. Bring the list. In L08 the question turns from one machine to the network around it: putting the server, the laptops and the guests on different wires, so that a rule can sit between them.
+
+## Glossary {#glossary .unnumbered}
+
+Service
+
+:   A program waiting for a question on a port.
+
+Port
+
+:   A 16-bit number in the TCP or UDP header that selects the program on a host. [Jøsang, Sect. 6.1.2]{.src}
+
+Well-known port
+
+:   A number agreed by convention, kept by IANA: 22, 25, 53, 80, 443.
+
+TCP / UDP
+
+:   Reliable, ordered conversation; fast, unacknowledged sending. [Jøsang, Sect. 6.1.2]{.src}
+
+HTTP / HTTPS
+
+:   The web protocol; the same protocol inside TLS on 443. [Jøsang, Sect. 6.1.2, 6.2.1]{.src}
+
+Status code
+
+:   The three-digit opening of every HTTP reply; 2xx worked, 4xx your request, 5xx their server.
+
+TLS
+
+:   Transport Layer Security; the wrapper that encrypts and authenticates a TCP connection. [Jøsang, Sect. 6.2.1]{.src}
+
+Certificate
+
+:   The server's signed claim to a name, checked by the client during the handshake. [Jøsang, Sect. 6.2.1]{.src}
+
+SSH / SFTP
+
+:   Secure Shell on 22; file transfer inside it.
+
+Listening / reachable / exposed / vulnerable
+
+:   Machine fact; network fact; both; a specific usable weakness.
+
+Vulnerability surface
+
+:   All the attack vectors a threat actor can use; reducing it has a cost. [Jøsang, Sect. 1.4]{.src}
+
+`ss -tlnp`
+
+:   Lists listening TCP sockets with port and program on Linux.
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. <https://doi.org/10.1007/978-3-031-68483-8>. Sect. 1.4, 2.1.1, 3.2--3.3, 6.1.2, 6.2--6.2.1, 6.4, 19.4.1.
+
+-   Cisco Networking Academy. (n.d.). *Networking basics*.
+
+-   Cloudflare. (n.d.). *What was the WannaCry ransomware attack?*
+
+-   Cybersecurity and Infrastructure Security Agency. (2014, April 8). *OpenSSL "Heartbleed" vulnerability (CVE-2014-0160)*.
+
+-   Fielding, R., Nottingham, M., & Reschke, J. (Eds.). (2022). *HTTP semantics* (RFC 9110). Internet Engineering Task Force.
+
+-   Internet Assigned Numbers Authority. (n.d.). *Service name and transport protocol port number registry*.
+
+-   Lovdata. (n.d.). *Lov om straff (straffeloven)*, § 204.
+
+-   Nasjonal sikkerhetsmyndighet. (n.d.). *Grunnprinsipper for IKT-sikkerhet 2.1*.

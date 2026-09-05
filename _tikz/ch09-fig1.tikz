@@ -1,0 +1,7 @@
+\begin{tikzpicture}[node distance=6mm]
+  \node[box,text width=26mm] (a) {\textbf{Look}\\ read the destination address};
+  \node[boxfill,text width=26mm,right=of a] (b) {\textbf{Decide}\\ find the matching line};
+  \node[box,text width=26mm,right=of b] (c) {\textbf{Forward}\\ send it out of that port};
+  \node[boxwarm,text width=26mm,right=of c] (d) {\textbf{Forget}\\ keep no record of it};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+\end{tikzpicture}

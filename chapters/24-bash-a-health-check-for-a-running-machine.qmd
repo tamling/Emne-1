@@ -1,0 +1,357 @@
+# Bash: a health check for a running machine {#sec-24-bash-a-health-check-for-a-running-machine}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L24. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025): Sect. 1.9.3--1.9.4 (system integrity and availability; monitoring as a control), Sect. 1.5 (detective controls), Sect. 14.5.2 (detection and precursors). The command facts follow Ward (2021) and the `systemctl(1)` manual page. This reader closes Tema 10's Bash half.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+L23's script read a file. This chapter's script asks the machine about itself, and the question underneath it is what a check is: a question with a repeatable answer, short enough for an `if` to test. Part 1 is the four questions every morning round reduces to. Part 2 asks systemd two narrow questions instead of one wide one. Part 3 is disk and ports, and the two numbers that mislead. Part 4 is the journal, and then all four questions in one script with one exit status. Part 5 is a firm that left one server of eight on old code and lost 460 million dollars in forty-five minutes.
+
+The book's reason for a morning check is its availability goal: "the property of being accessible and usable on demand", with monitoring among its controls [Jøsang, Sect. 1.9.4, p. 17]{.src}, and its system-integrity goal, "correct configuration, correct software and updated patch status" [Jøsang, Sect. 1.9.3, p. 16]{.src}. A check is how you know either is still true today.
+
+::: {.callout-tip}
+## A health check for Nordvik's server
+
+Instead of reading a file, today's script asks Nordvik's server about itself. Four questions cover its services, disk space, listening ports and logs, asked the same way every morning. One script asks all four and exits non-zero if any answer is wrong, so that the thing that scheduled it knows before anybody phones.
+
+:::
+
+[→ A glance is not an answer. Part 1 is what a check is, and the four questions.]{.bridge}
+
+## What a check is
+
+### A check is a question with a repeatable answer
+
+::: {.callout-note}
+## Check
+
+A check asks one question that has a clear answer. The same command on the same machine returns the same kind of value. A person glancing at a screen is not a check, because glancing is not repeatable. A check has to say what it found, in a form something else can test.
+
+:::
+
+This is the book's **detective control**, "to detect and register attempted or actual security incidents" [Jøsang, Sect. 1.5, p. 8]{.src}, at its smallest: one question, one answer, every morning.
+
+### Four questions to ask a machine
+
+      **The question**          **The command**              **Why this order**
+  --- ------------------------- ---------------------------- --------------------------------------------------------
+  1   Is the service running?   `systemctl is-active`        A stopped service explains most complaints
+  2   How full is the disk?     `df -h /`                    A full disk stops writing without stopping the machine
+  3   What is listening?        `ss -ltn`                    A missing door, or an extra one
+  4   What do the logs say?     `journalctl -p err -S -1h`   The record of what the first three did overnight
+
+Almost every morning routine reduces to these four. Each has a command that answers it in a line or two, and the questions are the same on a laptop and on a large server. The order matters, because each answer narrows the next.
+
+### What makes an answer repeatable
+
+A repeatable answer comes out of a command, not out of a screenshot. It must be short enough for an `if` statement to test. The same question asked tomorrow must return the same kind of value. An answer whose shape changes from day to day cannot be compared, and comparing is what a check is for.
+
+### The trap: a check only a person can read
+
+A paragraph of status text tells a person a lot and a script nothing. A check that needs a human eye runs only as often as a human runs it. Seven machines checked and one forgotten is the ordinary way this fails, and Part 5 is exactly that. A script does not forget the eighth.
+
+::: {.callout-warning}
+## Checkpoint
+
+Name the four questions. Why does reading a status screen not count as a check? What has to be true before a script can test an answer with an `if`? Which question comes first, and why?
+
+:::
+
+[→ A service is a program the system starts for you. Part 2 asks systemd two narrow questions.]{.bridge}
+
+## Services
+
+### A service is a program the system starts for you
+
+A service runs without anyone logged in and starts again after a reboot. On Kali and on most Linux servers, systemd starts and supervises services, as L14 said. The SSH server is a service, and so are cron, a web server and a database.
+
+### Asking systemd for the whole story
+
+`systemctl status ssh` prints a paragraph meant for a person to read: the unit, its state, since when, the PID, recent log lines. It is the right command when you want to understand, not when you want to decide. A script cannot test a paragraph.
+
+### Two narrow questions
+
+```{.bash}
+student@kali:~$ systemctl is-active ssh
+active
+student@kali:~$ systemctl is-enabled ssh
+enabled
+```
+
+`is-active` asks whether the service is running right now. `is-enabled` asks whether it will start after the next reboot. Each prints a single word, short enough to compare between machines.
+
+  **Running now: `is-active`**                            **Starting at boot: `is-enabled`**
+  ------------------------------------------------------- -----------------------------------------------------------------------
+  Describes this moment and says nothing about tomorrow   Describes what systemd will do at the next boot and nothing about now
+  A service started by hand is running now                A service enabled but stopped is not running now
+  A reboot ends that state without warning anyone         A reboot is exactly what this answers for
+
+The two words answer two different questions, and a server can be `active` and `disabled`, working today and gone after the next patch reboot.
+
+### The exit status is the scriptable answer
+
+```
+if ! systemctl is-active --quiet ssh; then
+    echo "FEIL: ssh kjoerer ikke" >&2
+    FEIL=1
+fi
+```
+
+Every command leaves an exit status behind, and `$?` holds it, as L23 said. `is-active` sets that status from its answer, so an `if` can test it directly. `–quiet` prints nothing and leaves only the status behind. Testing the status instead of the word means the check does not break when somebody changes the wording.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which command answers the question about the next reboot? What does `–quiet` change? Where does a script find the answer when nothing was printed? Why test the status rather than compare the word `active`?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+A glance is not an answer; a check is a question with a repeatable one, and its exit status is the part a script can test. Ask `is-active` about now and `is-enabled` about the next boot, because they are different, and remember that a disk percentage hides the actual size.
+
+:::
+
+[→ A full disk stops a service without stopping the machine. Part 3 is disk and ports.]{.bridge}
+
+## Disk and ports
+
+### How full is the disk
+
+```{.bash}
+student@kali:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        40G   35G  3.1G  92% /
+```
+
+A full disk stops a service without stopping the machine; L11's worked example was one. `df` reports how much of each filesystem has been used. The `-h` flag prints sizes in units a person reads at a glance. A path after the command limits the report to the filesystem that holds it.
+
+### Reading what df prints
+
+The columns give the size, the space used, the space left and a percentage. The percentage is the column people read, and it hides the size. Ninety-two percent of forty gigabytes leaves three; ninety-two percent of four terabytes leaves three hundred and twenty. A machine writing a gigabyte of log a day has three days on the first and a year on the second. Quote the `Avail` column to a colleague who asks how long you have.
+
+```
+BRUKT=$(df --output=pcent / | tr -dc "0-9")
+if [[ "$BRUKT" -ge "$GRENSE" ]]; then
+    echo "FEIL: rotdisken er $BRUKT prosent full" >&2
+    FEIL=1
+fi
+```
+
+`–output=pcent` asks for one column, `tr -dc "0-9"` keeps only the digits, and the result is a number an `if` can compare with `-ge`. That is L12's pipe, captured with L23's `$(…)`.
+
+### What is listening
+
+A listening socket is a door the machine has opened towards the network. `ss -ltn` lists listening TCP sockets without looking names up: `-l` selects listening, `-t` selects TCP, `-n` keeps ports numeric. Adding `-p` names the process, as in L14, and needs root.
+
+```
+if ! ss -ltn | grep -q ":22 "; then
+    echo "FEIL: ingenting lytter paa port 22" >&2
+    FEIL=1
+fi
+```
+
+`grep -q` answers with a code only, and the space after `22` stops `:2222` from matching.
+
+### A socket count is not a service count
+
+Counting the lines that `ss` prints is tempting and gives the wrong number. One service often holds an IPv4 socket and an IPv6 socket at the same time, so two lines describe one program listening on one port. Count sockets when you mean sockets, and ask `ss -ltnp` for the program when you mean services. Both numbers are useful; they are not the same number.
+
+::: {.callout-warning}
+## Checkpoint
+
+What do the three letters in `ss -ltn` select? Which `df` column would you quote to a colleague who asks how long we have? Why can a count of listening sockets exceed the number of services? What does `-h` change?
+
+:::
+
+[→ The logs are the record of what the first three questions did overnight. Part 4 narrows the journal, then puts all four in one script.]{.bridge}
+
+## Logs, and one script
+
+### What do the logs say
+
+systemd keeps its own record of what services printed, the journal from L14. `journalctl -u` limits the output to one unit, such as `ssh`. `-p` limits it to messages at or above a priority, such as `err`. `-S` limits it to a start time, such as `-1h`. The journal on a running machine is far too long to read from the top; each flag narrows a different dimension, and the flags combine. Unit, priority and time together usually leave a screen you can explain. Start wide and narrow, as L12 built patterns one idea at a time.
+
+### grep still reads a plain file
+
+Not every program uses the journal, and many write plain files under `/var/log`. The `auth.log` from the earlier lessons is one of those. `grep -c` counts matching lines and `grep -n` shows where each match sits. The file may rotate overnight, so a check that reads yesterday's file by name needs to know what rotation renamed it to.
+
+### One script, several questions, one exit status
+
+```{.bash}
+#!/bin/bash
+# Sjekk maskinen, og avslutt med feil hvis noe er galt.
+GRENSE=90
+FEIL=0
+
+if ! systemctl is-active --quiet ssh; then
+    echo "FEIL: ssh kjoerer ikke" >&2
+    FEIL=1
+fi
+
+BRUKT=$(df --output=pcent / | tr -dc "0-9")
+if [[ "$BRUKT" -ge "$GRENSE" ]]; then
+    echo "FEIL: rotdisken er $BRUKT prosent full" >&2
+    FEIL=1
+fi
+
+if ! ss -ltn | grep -q ":22 "; then
+    echo "FEIL: ingenting lytter paa port 22" >&2
+    FEIL=1
+fi
+
+ANTALL=$(journalctl -p err -S -1h --no-pager | wc -l)
+if [[ "$ANTALL" -gt 0 ]]; then
+    echo "FEIL: $ANTALL feilmeldinger i journalen siste time" >&2
+    FEIL=1
+fi
+
+echo "Sjekk ferdig paa $(hostname) $(date +%F' '%T), feil=$FEIL"
+exit "$FEIL"
+```
+
+The script asks each question in turn and remembers whether anything failed. Every failing check writes one line to standard error and sets the flag. The script exits non-zero when any check failed, so a caller can react; a scheduler such as cron can mail the stderr and a colleague's script can read `$?`. The last line names the machine and the time, which is L19's "a file a colleague can read alone" for a check.
+
+```{.code-out}
+student@kali:~$ ./sjekk.sh
+FEIL: rotdisken er 92 prosent full
+Sjekk ferdig paa kali 2026-09-05 07:00:03, feil=1
+student@kali:~$ echo $?
+1
+```
+
+The book's incident-handling section calls these outputs **precursors**, "a sign that an incident may occur soon" [Jøsang, Sect. 14.5.2, p. 311]{.src}; a disk at 92 percent is one.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which `journalctl` flag limits the output to a single unit? Why does the health check send its failures to standard error? What does the exit status tell the program that called this script? What single change would make this script pass on a machine that is down?
+
+:::
+
+[→ A check that runs the same way on every machine names the one that answers differently. Part 5 is the firm that did not run one.]{.bridge}
+
+## Knight Capital, 1 August 2012
+
+### The case
+
+Knight Capital, a market maker, copied new trading code to seven of its eight servers over several days from 27 July 2012. The eighth server kept old code called Power Peg, discontinued years earlier but never removed. The new code reused a flag that the old code still read, which is L16's case. On 1 August 2012, 212 incoming parent orders reached those servers. The eighth server, running the old code, produced about four million executions in 154 stocks in approximately forty-five minutes, covering more than 397 million shares. Knight lost over 460 million dollars and was sold within the year.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that one technician forgot one server. The deployment reached seven servers and nothing compared the eighth with them. Ninety-seven automated messages naming the error reached a group of staff before the market opened; they went to email, nobody was reading, and no exit code was tested. A check of the kind in Part 4, run on all eight servers, asking one question, which version of the code is installed, would have printed eight lines and one of them would have been different. The SEC's order records that Knight had no such check and no written procedure for one.
+
+The book's control for this is configuration management under system integrity [Jøsang, Sect. 1.9.3, p. 16]{.src}, and its lesson about detection is the one L18 and L19 already gave: silence from a check that was never run is indistinguishable from success.
+
+::: {.callout-important}
+## Key idea
+
+A check that runs the same way on every machine names the one that answers differently; that is the work a script does and a person skips. Knight Capital left one server of eight on old code and lost over 460 million dollars; a check that always exits zero would have passed that server too.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik has one server, and the health check still earns its place: the morning the disk passes ninety percent, or SSH stops after a patch reboot because it was active but not enabled, the script says so at seven o'clock, with a code the scheduler can act on, before the first person arrives to glance at a screen.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                       **Correction**
+  ---------------------------------------------------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------
+  A service that is enabled is a service that is running.          Enabled describes the next boot and active describes this moment. Enabling usually starts it in the same breath, which is why the two are confused.
+  Every line from `ss -ltn` is a separate service.                 One process often holds an IPv4 and an IPv6 socket on one port. The list looks like a list of programs and is a list of sockets.
+  A check that ran without an error message found nothing wrong.   A script that always exits zero passes on a machine that is down. Silence and success look identical from outside.
+  Ninety percent full means the same thing on every disk.          A percentage hides the size; quote the space left, in bytes, and the rate at which it is being used.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  A glance is not an answer; a check is a question with a repeatable one, and there are four: service, disk, ports, logs.
+
+2.  `is-active` asks about now and `is-enabled` about the next boot; test the exit status with `–quiet`, not the printed word.
+
+3.  A percentage hides the size: read `Avail` from `df`; and a socket count is not a service count, because one service listens twice.
+
+4.  Narrow the journal by unit, priority and time; `grep` still reads the plain files under `/var/log`.
+
+5.  One script, four questions, one exit status, failures on stderr, and the machine's name and the time on the last line; a scheduler reads the code.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Which of today's four questions would have exposed the eighth Knight server, and what would the check have compared? (Part 5)
+
+2.  How would you make the health check report the name of the machine it ran on, and why does that matter with seven machines? (Part 4)
+
+3.  If your morning check stops running entirely, what tells you that it stopped? (Parts 1, 4)
+
+4.  A service shows `active` and `disabled`. What happens at the next reboot, and which line of the script catches it? (Part 2)
+
+5.  Two machines both report 90% on `df`. Why might one be urgent and the other not? (Part 3)
+
+6.  Why does `ss -ltn wc -l` overcount services? (Part 3)
+
+## Before L25 {#before-l25 .unnumbered}
+
+Run the duty script on your exercise machine twice: once healthy, once with a service stopped (`sudo systemctl stop ssh`, then start it again). Note both exit codes. L25 leaves the terminal and opens the web page: the counts from the log reach a page anyone can open, and the page is made of exactly the text you have been reading all semester.
+
+## Glossary {#glossary .unnumbered}
+
+Check
+
+:   A question with a repeatable, testable answer.
+
+Detective control
+
+:   A control that detects and registers incidents; a check is one. [Jøsang, Sect. 1.5]{.src}
+
+`systemctl status` / `is-active` / `is-enabled`
+
+:   A paragraph for a person; running now; starts at boot.
+
+`–quiet`
+
+:   Print nothing; answer with the exit status.
+
+`df -h` / `Avail` / `Use%`
+
+:   Disk use in readable units; space left; the percentage that hides the size.
+
+`ss -ltn`
+
+:   Listening TCP sockets, numeric; one service may show twice.
+
+`journalctl -u / -p / -S`
+
+:   Narrow by unit, priority, start time.
+
+Flag variable
+
+:   `FEIL=0`, set to 1 by any failing check, used as the exit code.
+
+stderr for failures
+
+:   So the scheduler can capture them separately from the summary line.
+
+Precursor
+
+:   A sign an incident may occur soon; what a health check reports. [Jøsang, Sect. 14.5.2]{.src}
+
+Configuration management
+
+:   Knowing what is installed where, and comparing; what Knight lacked. [Jøsang, Sect. 1.9.3]{.src}
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 1.5, 1.9.3--1.9.4, 6.4, 14.5.2.
+
+-   Ward, B. (2021). *How Linux works: What every superuser should know* (3rd ed.). No Starch Press.
+
+-   The systemd Project. (n.d.). *systemctl* \[Manual page\]. freedesktop.org.
+
+-   U.S. Securities and Exchange Commission. (2013). *In the matter of Knight Capital Americas LLC* (Release No. 34-70694).

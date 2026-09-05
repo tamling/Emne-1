@@ -1,0 +1,10 @@
+\begin{tikzpicture}[node distance=2.5mm]
+  \node[boxfill,text width=92mm,align=left] (a) {\textbf{Applications}\ \ the browser, the mail client, the payroll system};
+  \node[boxfill,text width=92mm,align=left,below=of a] (o) {\textbf{Operating system}\ \ decides which program gets the processor, the disk, the network};
+  \node[boxdark,text width=92mm,align=left,below=of o] (h) {\textbf{Hardware}\ \ processor, memory, disk, network card};
+  \node[lbl,right=3mm of a] {Level 3, user mode};
+  \node[lbl,right=3mm of o] {Level 0, kernel mode};
+  \node[lbl,right=3mm of h] {trust anchor};
+  \draw[arr] ([xshift=-4mm]a.west) -- ([xshift=-4mm]h.west);
+  \node[lbl,text width=20mm,align=right,left=1mm of {$([xshift=-4mm]a.west)!0.5!([xshift=-4mm]h.west)$}] {each layer trusts the one below};
+\end{tikzpicture}

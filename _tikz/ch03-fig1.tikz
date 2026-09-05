@@ -1,0 +1,8 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=30mm] (t) {\textbf{A threat}\\ somebody picks up the lost phone};
+  \node[box,text width=30mm,right=of t] (v) {\textbf{Meets a vulnerability}\\ there is no lock code on it};
+  \node[boxred,text width=30mm,right=of v] (i) {\textbf{An incident}\\ they open everything};
+  \node[boxred,text width=30mm,right=of i] (h) {\textbf{The harm}\\ photos, messages, bank};
+  \draw[arr] (t)--(v); \draw[arr] (v)--(i); \draw[arr] (i)--(h);
+  \node[lbl,below=2mm of v,text width=34mm] {remove this, and the chain stops here with the same threat still in the world};
+\end{tikzpicture}

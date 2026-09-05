@@ -1,0 +1,383 @@
+# Functions and file reading {#sec-18-functions-and-file-reading}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L18. **Reading time.** About 45 minutes.\
+**Primary reading.** Horstmann & Necaise, *Python for Everyone* (3rd ed.): Chapter 5 (functions: definition, parameters and arguments, return values, docstrings, variable scope), Sect. 7.1 (opening, reading and closing files), Sect. 7.2 (iterating over lines, reading records). Jøsang (2025) Sect. 1.10.2, 14.5.2.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+In L17 every value had to be typed into the script by hand, and the script forgot everything the moment it ended. This chapter gives a block of code a name so it can be run again on any file, and it opens a real file the safe way. Part 1 is the function. Part 2 is what happens when a program opens a text file. Part 3 splits a line into fields and meets the trap that catches most first parsers. Part 4 counts per user and reads the numbers, not just produces them. Part 5 is the case where equipment produced nothing readable for ten months.
+
+The book's opening line on functions is the whole idea: "A function is a sequence of instructions with a name" [Python for Everyone, Sect. 5.1]{.src}.
+
+::: {.callout-tip}
+## Nordvik's log, turned into numbers
+
+Nordvik's server writes an authentication log, and by hand it is 69 lines nobody reads twice. Today you write functions that read that log line by line and turn it into three numbers a colleague can act on. A function you write once runs unchanged on tomorrow's log, and on the log of the next machine.
+
+:::
+
+[→ A function is a named tool. Part 1 writes one.]{.bridge}
+
+## Functions
+
+### A function is a named tool
+
+::: {.callout-note}
+## Function
+
+A function is a sequence of instructions with a name. You call a function in order to execute its instructions. [Python for Everyone, Sect. 5.1]{.src}
+
+:::
+
+The name lets you run that block again without writing it again. Python has built-in functions already, such as `print()` and `len()`; you have been calling functions since L15. Today you write your own, and they work exactly the same way from the outside.
+
+### Writing your first function
+
+```{.python}
+def les_linjer(sti):
+    """Read a text file and return its lines as a list."""
+    with open(sti, encoding="utf-8") as f:
+        return f.readlines()
+```
+
+`def` starts the definition, and the name follows the same rules as a variable. The parentheses hold the parameters, which are the values the function needs. Everything indented under `def` belongs to the function. Nothing runs until the function is called by its name. The book's syntax box: "def name(parameters): statements" [Python for Everyone, Sect. 5.2]{.src}. The string in triple quotes is a **docstring**: "a comment that describes the purpose of the function", which the book asks for on every function [Python for Everyone, Sect. 5.2, PT]{.src}.
+
+### Parameters and arguments
+
+A **parameter** is the name written in the definition, such as `sti`. An **argument** is the actual value handed over when the function is called, such as `"auth.log"`. The book: "When a function is called, the parameter variables are set to the argument values" [Python for Everyone, Sect. 5.2]{.src}. The same function works on any file, because the path arrives as an argument. Calling it twice with two paths reads two files with no new code.
+
+### Return sends an answer back
+
+`return` hands a value back to the line that called the function, and the function stops the moment it reaches it. A function without `return` hands back `None`, which is Python for nothing. The book: "The return statement gives the function's result to the caller" [Python for Everyone, Sect. 5.3]{.src}. Printing inside a function shows a value but does not hand it back.
+
+Variables created inside a function exist only while it runs; the book calls them local variables, and "a variable that is defined within a function is not visible outside the function" [Python for Everyone, Sect. 5.8]{.src}. That is a feature: two functions can both use the name `treff` without treading on each other.
+
+### Two functions working together
+
+```{.python}
+def les_linjer(sti):
+    """Read a text file and return its lines as a list."""
+    with open(sti, encoding="utf-8") as f:
+        return f.readlines()
+
+def tell_treff(linjer, ord):
+    """Count how many lines contain the given text."""
+    treff = 0
+    for linje in linjer:
+        if ord in linje:
+            treff += 1
+    return treff
+
+linjer = les_linjer("auth.log")
+print("Linjer i filen:", len(linjer))
+print("Failed password:", tell_treff(linjer, "Failed password"))
+print("Accepted password:", tell_treff(linjer, "Accepted password"))
+```
+
+The first function reads the file and hands back a list of lines. The second counts how many of those lines contain a word. Neither function knows anything about the other's inner workings. The result is printed at the bottom, by the caller, which is the book's advice on splitting a task: "a function should not do too much; it should do one thing" [Python for Everyone, Sect. 5.6]{.src}.
+
+### The trap: printing is not returning
+
+  **Not this**                                                   **But this**
+  -------------------------------------------------------------- ---------------------------------------------------------------
+  The function prints the number and hands back nothing          The function returns the number and prints nothing
+  The caller has no value to store, compare or write to a file   The caller decides whether to print it, store it or add it up
+  The number exists on screen and nowhere else                   The same function now works in a report as well as on screen
+
+The book has a common-error box for exactly this, "Trying to Modify Arguments" and "Missing Return Value" [Python for Everyone, Sect. 5.3--5.4, CE]{.src}. In L19 the number goes into a file; a function that only prints cannot be used there.
+
+::: {.callout-warning}
+## Checkpoint
+
+Write the first line of a function called `tell_linjer` that takes a path. What keyword hands the answer back? What happens to a variable created inside a function when it ends? Why is a docstring worth one extra line?
+
+:::
+
+[→ A file is a name, a path and bytes. Part 2 opens one the safe way.]{.bridge}
+
+## Reading a file
+
+### A file is a name, a path and bytes
+
+A text file is a sequence of characters stored under a name on disk. The path tells the program where to look, starting from the current folder, which is L11's `pwd`. A program must open the file before it can read a single character, and the operating system decides whether it may, which is L13's permission check happening inside `open()`. The book: "To access a file, you must first open it" [Python for Everyone, Sect. 7.1]{.src}.
+
+### Opening a file the safe way
+
+```{.python}
+with open("auth.log", encoding="utf-8") as f:
+    linjer = f.readlines()
+```
+
+`open()` gives the program a handle to the file. `with` closes the file automatically when the block ends, even if the code inside it fails; the book's special topic on it says it "ensures that the file is closed" [Python for Everyone, Sect. 7.5, ST 4]{.src}. `encoding="utf-8"` tells Python how to turn bytes into characters, and the book's note on character encodings is why that matters for Norwegian letters [Python for Everyone, Sect. 7.2, ST 3]{.src}. `readlines()` gives a list where each item is one line [Python for Everyone, Sect. 7.1]{.src}.
+
+### Reading line by line
+
+```{.python}
+with open("auth.log", encoding="utf-8") as f:
+    for linje in f:
+        ...
+```
+
+Looping over the file object reads one line at a time. `readlines()` loads everything into memory at once. A 69-line log fits either way, and a 4 GB log does not. The book: "you can iterate over the lines of a file" with `for line in infile`, and "each line ends with a newline character" [Python for Everyone, Sect. 7.2]{.src}. Every line read from a text file still carries that newline, which is why `.strip()` from L15 appears in every parser.
+
+### The file on the exercise machine
+
+One day of SSH activity on one machine produced 69 lines. The file is 7,014 bytes, smaller than one photograph. The first lines are routine and say nothing about an attack. Interesting lines have to be found, because the file will not point at them.
+
+### The script reads the real file
+
+```{.code-out}
+student@kali:~/logganalyse$ python3 lesfil.py
+Linjer i filen: 69
+Failed password: 10
+Accepted password: 9
+student@kali:~/logganalyse$ wc -l auth.log
+69 auth.log
+student@kali:~/logganalyse$ grep -c "Failed password" auth.log
+10
+```
+
+The two functions now run against the real log. The line count matches what `wc -l` reported, and the word count matches what `grep -c` reported. Agreement between two tools is the first check worth doing, and the disagreement in Part 3 is the point of doing it.
+
+::: {.callout-important}
+## Key idea
+
+A function names a block of work so you can reuse it, and `return` hands the answer back; printing is not returning. Reading a file line by line handles a log larger than the machine's memory, and a line stays text until you split it into fields.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+The same two functions, called with the path of Nordvik's log, produce Nordvik's three numbers. Nothing in them mentions Nordvik. That is what a parameter is for.
+
+:::
+
+[→ One line, several fields. Part 3 takes the line apart, and meets the line that breaks it.]{.bridge}
+
+## Parsing a line
+
+### One line, several fields
+
+A log line is one long string until the program splits it. `split()` cuts the line wherever there is whitespace. The result is a list, and each field can be reached by position, counting from zero. The book's "Reading Records" does this to fields separated by a known character [Python for Everyone, Sect. 7.2]{.src}.
+
+### Finding a field by its label
+
+```{.python}
+def finn_bruker(linje):
+    """Return the username from a 'Failed password' line."""
+    deler = linje.split()
+    return deler[deler.index("for") + 1]
+```
+
+Counting positions breaks the moment a line has an extra word, as L17 showed. `index()` finds where a known word sits, and the field follows it. The username always comes straight after the word `for`, or after `user` when the line says `invalid user`. Reading by label survives changes that reading by position does not.
+
+### The trap: the filter caught the wrong line
+
+```{.code-out}
+student@kali:~/logganalyse$ grep -n "Failed password" auth.log | tail -2
+23:Jan 14 09:21:05 kali sshd[1330]: Failed password for invalid user backup from 127.0.0.1 port 41330 ssh2
+61:Jan 14 14:10:44 kali sudo:  student : TTY=pts/1 ; PWD=/home/student ; USER=root ; COMMAND=/usr/bin/grep -c 'Failed password' /var/log/auth.log
+```
+
+The obvious filter is any line containing the words `Failed password`. That filter matches ten lines in this log, and nine of them are logins. The tenth is a `sudo` line, from L13, where a student ran `grep` with those words as an argument. The log recorded the command, exactly as L13 promised it would.
+
+### What the wrong line does to the parser
+
+```{.code-out}
+student@kali:~/logganalyse$ python3 brukere_naiv.py
+Traceback (most recent call last):
+  File "/home/student/logganalyse/brukere_naiv.py", line 23, in <module>
+    for bruker, antall in tell_per_bruker(linjer).items():
+  File "/home/student/logganalyse/brukere_naiv.py", line 12, in tell_per_bruker
+    bruker = finn_bruker(linje)
+  File "/home/student/logganalyse/brukere_naiv.py", line 7, in finn_bruker
+    return deler[deler.index("for") + 1]
+ValueError: 'for' is not in list
+```
+
+The parser looks for the word `for`, does not find it, and stops. Three levels of file and line, and the last line still says what happened. This traceback is the book's "function call stack" made visible: each "File" line is one function that had called the next [Python for Everyone, Sect. 5.9]{.src}.
+
+### A filter that says what it means
+
+```{.python}
+def er_feilet_innlogging(linje):
+    """True only for sshd lines that record a refused password."""
+    return "sshd" in linje and "Failed password for" in linje
+```
+
+A better filter names the program as well as the message. Only `sshd` writes authentication results, so require `sshd` in the line. Require the full phrase `Failed password for`, not two words that could appear anywhere. The check now says what it means, and the `sudo` line no longer passes. This is L16's allow-list idea applied to a filter: say what you accept.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does `split()` do to a line of text? Why is reading a field by label safer than by position? Name one line in this log that contains the words `Failed password` but is not a login. What kind of bug was that: a crash, or a wrong answer?
+
+:::
+
+[→ The filter is right. Part 4 counts per user, and reads the numbers.]{.bridge}
+
+## Counting per user
+
+### The function
+
+```{.python}
+def tell_per_bruker(linjer):
+    """Return a dictionary of username -> number of refused logins."""
+    antall = {}
+    for linje in linjer:
+        if er_feilet_innlogging(linje):
+            bruker = finn_bruker(linje)
+            antall[bruker] = antall.get(bruker, 0) + 1
+    return antall
+
+for bruker, n in sorted(tell_per_bruker(linjer).items()):
+    print(bruker, n)
+```
+
+```{.code-out}
+admin 3
+backup 1
+student 5
+```
+
+The dictionary from L17 holds a username with its count. `get(bruker, 0)` returns the current count, or zero for a new name, which is the book's own idiom for counting with a dictionary [Python for Everyone, Sect. 8.2]{.src}. The loop adds one for each line that survived the filter. The function returns the finished dictionary rather than printing it, so that L19 can write it to a file.
+
+### The answer, in three numbers
+
+Three accounts were involved in failed logins on this machine. The account called `backup` does not exist, and it was tried once. Five failures for `student` look like a person mistyping a password. Three for `admin`, on an account this machine does not have, look like somebody guessing.
+
+### Reading the numbers, not just producing them
+
+A count answers a narrower question than the one that was asked. This count says how many lines matched, not how many people tried. One person retrying a password three times produces three lines. The number is a starting point for a question, not the end of one. Jøsang's word for the sentence you write beside it is analysis, "to understand what has happened and what should be done next" [Jøsang, Sect. 14.5.2, p. 311]{.src}, and the analysis is the part that gets read.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which Python type pairs a username with a count? What does the counting function hand back? Why return the dictionary instead of printing it? State in one sentence what the number 5 for `student` does and does not tell you.
+
+:::
+
+[→ A script that runs is not a script that is right. Part 5 is the case that shows the difference at scale.]{.bridge}
+
+## Equifax, 2017
+
+### The case
+
+Attackers used a vulnerability in the Apache Struts web framework in March 2017 to reach Equifax's systems, and stayed for more than two months. A device that inspected encrypted traffic on the way out held a certificate that had expired about ten months earlier. While the certificate was expired, the device could not decrypt the traffic, so it produced nothing readable. The day the certificate was renewed, the device saw the outbound data and the intrusion was noticed.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that Equifax lacked monitoring equipment. The report says the equipment existed and produced nothing readable. Renewing one certificate turned silence back into evidence. The same day, an administrator saw the traffic and the response began. The point for this chapter is small: a tool that runs without error has not proved its output is right, and silence is not the same as "nothing happened". L14 said that about logs; Part 3 said it about the naive filter, which would have run cleanly and reported ten. Jøsang's account of detection lists exactly this failure mode among "the most challenging" parts of incident handling: determining whether an incident has occurred at all from signs that may be absent [Jøsang, Sect. 14.5.2, p. 311]{.src}.
+
+::: {.callout-important}
+## Key idea
+
+A script that runs without an error has not proved its answer is right; the naive filter ran cleanly and reported the wrong number. Say what a number counted, and check it against a tool like `wc -l` or `grep -c`, so it is a number you can defend.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+A script that reports zero refusals for Nordvik tomorrow morning is either good news or a broken filter. The line that says `69 lines read` beside the zero is what tells you which.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                  **Correction**
+  ----------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  A function has to be long to be worth writing.              A three-line function with a good name earns its place; writing `def` for three lines only feels like extra work.
+  Reading a file means reading all of it into memory.         A loop over the file handles a log larger than the machine's memory; `readlines()` is just the first method most people meet [Python for Everyone, Sect. 7.2]{.src}.
+  If the script runs without an error, the answer is right.   The naive filter would have run cleanly and reported ten. A crash is visible and a wrong number is not.
+  `grep` and Python should always agree.                      They agree only when both use the same pattern. Both were pointed at the same file, not the same question.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  A function names a block of work, takes parameters, and `return` hands the answer back; printing is not returning.
+
+2.  `with open(...)` closes the file even when the code inside it fails; looping over the file reads one line at a time and scales.
+
+3.  A line is text until you `split` it; then it is fields, and you find a field by its label, not its position.
+
+4.  Name the program in the filter, `sshd`, or you catch a `sudo` line that mentions the same words.
+
+5.  Check the number against `wc -l` and `grep -c`, say what it counted, and treat a clean run as the beginning of the check, not the end.
+
+## Self-check {#self-check .unnumbered}
+
+1.  What other line in this log would break a parser that reads fields by position? (Part 3)
+
+2.  Which of today's functions could run unchanged against a web server log, and which could not? (Parts 1--3)
+
+3.  If tomorrow's run reports zero failures, how would you tell success from silence? (Part 5)
+
+4.  Why does `with` matter when opening a file, and what happens to the file if the code inside the block crashes? (Part 2)
+
+5.  What is the difference between a parameter and an argument? Point at one of each in the finished code. (Part 1)
+
+6.  Why does `tell_per_bruker` return its dictionary rather than print it? (Part 4)
+
+## Before L19 {#before-l19 .unnumbered}
+
+Read Chapter 5 and Sect. 7.1--7.2 of *Python for Everyone*. Run today's two functions against the `auth.log` on your own exercise machine and write down the three numbers they produce. Bring the numbers. In L19 they go into a file a colleague can read.
+
+## Glossary {#glossary .unnumbered}
+
+Function / `def`
+
+:   A named sequence of instructions; the keyword that defines one. [Python for Everyone, Sect. 5.1--5.2]{.src}
+
+Parameter / argument
+
+:   The name in the definition; the value passed when calling. [Python for Everyone, Sect. 5.2]{.src}
+
+`return`
+
+:   Hands a value back to the caller and ends the function. [Python for Everyone, Sect. 5.3]{.src}
+
+Docstring
+
+:   A triple-quoted description at the top of a function. [Python for Everyone, Sect. 5.2]{.src}
+
+Local variable
+
+:   Exists only inside the function that created it. [Python for Everyone, Sect. 5.8]{.src}
+
+Call stack
+
+:   The chain of functions that called each other; what a traceback shows. [Python for Everyone, Sect. 5.9]{.src}
+
+`open` / `with` / `encoding`
+
+:   Get a file handle; close it automatically; how bytes become characters. [Python for Everyone, Sect. 7.1; 7.5 ST 4]{.src}
+
+`readlines` / `for line in f`
+
+:   All lines as a list; one line at a time. [Python for Everyone, Sect. 7.1--7.2]{.src}
+
+Path
+
+:   Where the file is, from the current folder or from the root.
+
+Field / `split` / `index`
+
+:   One piece of a line; cut into pieces; find a piece by label.
+
+Filter
+
+:   A function that says which lines count; name the program and the full phrase.
+
+## Sources {#sources .unnumbered}
+
+-   Horstmann, C., & Necaise, R. (2019). *Python for everyone* (3rd ed.). Wiley. Chapter 5; Sect. 7.1--7.2; Sect. 8.2.
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 1.10.2, 14.5.2.
+
+-   U.S. Government Accountability Office. (2018). *Data protection: Actions taken by Equifax and federal agencies in response to the 2017 breach* (GAO-18-559).
+
+-   Python Software Foundation. (2026). *Reading and writing files*. The Python tutorial.

@@ -1,0 +1,13 @@
+\begin{tikzpicture}[node distance=1.6mm]
+  \node[boxfill,minimum width=28mm,minimum height=7mm] (p) {Payload};
+  \node[box,minimum width=16mm,minimum height=7mm,right=0mm of p] (h) {HTTP};
+  \node[box,minimum width=16mm,minimum height=7mm,right=0mm of h] (t) {TCP};
+  \node[box,minimum width=16mm,minimum height=7mm,right=0mm of t] (i) {IP};
+  \node[boxdark,minimum width=16mm,minimum height=7mm,right=0mm of i] (l) {Link};
+  \node[lbl,above=1mm of p] {the message};
+  \node[lbl,above=1mm of h] {application};
+  \node[lbl,above=1mm of t] {transport: port};
+  \node[lbl,above=1mm of i] {internet: IP};
+  \node[lbl,above=1mm of l] {link: MAC};
+  \node[lbl,below=1.5mm of {$(p.south)!0.5!(l.south)$}] {one packet on the wire: each layer's header wraps what the layer above handed down \src{Fig.\,6.5, p.\,125}};
+\end{tikzpicture}

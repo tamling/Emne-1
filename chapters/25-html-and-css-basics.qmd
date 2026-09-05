@@ -1,0 +1,312 @@
+# HTML and CSS basics {#sec-25-html-and-css-basics}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L25. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025): Sect. 6.1.2 (HTTP as an application protocol), 6.2.1 (HTTPS and what TLS protects), 11.6.3 (OWASP Top 10, especially software and data integrity failures), 2.1.6 (supply chain), 1.9.1 (confidentiality). The HTML and CSS facts follow the W3C HTML 5.2 recommendation and MDN.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+The Bash checks of L24 stayed inside a terminal window. This chapter puts Nordvik's counts on a page a colleague can open in a browser, and it asks what that page actually is. Part 1 is how a page loads: text over HTTP that names the other files it needs. Part 2 is the element, the tag pair that labels content. Part 3 is CSS, which decides how it looks, kept apart from what it says. Part 4 is what happens when the browser fetches a file, from anyone, and runs it with the page's own privileges. Part 5 is the airline that lost card data to one edited script.
+
+The page travels over the HTTP you met in Module 2: the book's application-layer protocol "for web traffic" [Jøsang, Sect. 6.1.2, p. 121]{.src}. HTML only labels content; it is not a programming language, and after eleven readers of Python and Bash that distinction is worth stating first.
+
+::: {.callout-tip}
+## Nordvik's report as a web page
+
+The Bash checks stayed inside a terminal; today Nordvik's counts become a page a colleague can open in a browser. A browser asks the server for a file over the HTTP you met in Module 2, and HTML marks up the content. CSS decides how it looks. The same three numbers from L18, L21 and L24 are on the page, now readable by anybody with a link.
+
+:::
+
+[→ A page starts as one text file. Part 1 is how the browser turns it into a page.]{.bridge}
+
+## How a page loads
+
+### A page starts as one text file
+
+A web page begins as one text file sitting on a server. The browser asks for that file over HTTP, on port 80 or 443, the ports from L07. The server answers with headers first and then the text itself, exactly the request-and-answer of L07's HTTP section. Nothing in that reply is a picture, a colour or a layout; it is text.
+
+### The browser asks and the server answers
+
+```{.code-out}
+student@kali:~/nettside$ ls -1
+index.html
+stil.css
+student@kali:~/nettside$ curl -s -I http://localhost:8080/index.html
+HTTP/1.0 200 OK
+Server: SimpleHTTP/0.6 Python/3.11.15
+Content-type: text/html
+Content-Length: 498
+```
+
+The folder holds two files and nothing else. `curl -s -I` asks for the headers only and prints the server's reply. The status line says 200, the code from L07, so the file was found and sent. `Content-Length` says the file is 498 bytes. This is the same conversation you watched in L02's developer tools, now on the command line.
+
+### The text names the other files it needs
+
+The first reply is only the HTML, and the HTML is not the whole page. Inside the head sits a line that names a second file, `stil.css`. The browser reads that line and makes a separate request for it. One visit to one address becomes several requests, which is the count you met in L02: one page, dozens of fetches.
+
+### Several files, often several servers
+
+A page can name files that live on a completely different server. The browser fetches each of them without asking the visitor first. A font, a script or an image can arrive from another company. The visitor sees one page and one address bar, and behind it are files from several places. This is the fact Part 4 turns into a security problem.
+
+### The trap: the page is assembled, not delivered
+
+The server never sends the page the visitor finally sees. It sends one text file, and the browser collects everything else. A change to any one of those files changes the page for every visitor, and nobody looking at the address bar can tell how many files there were or whose servers they came from. The page is assembled in the browser, from parts, and any part can change under it.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does a server send back first when a browser asks for a page? Which part of the HTML tells the browser to fetch another file? How many requests does a page with one stylesheet need? Where does the page the visitor sees actually get put together?
+
+:::
+
+[→ An element is a tag pair around content. Part 2 is how HTML labels what the page says.]{.bridge}
+
+## Elements
+
+### An element is a tag pair around content
+
+HTML marks up text by wrapping it in tags. An opening tag names the element, such as `<p>` for a paragraph. A closing tag repeats that name after a slash, `</p>`. Whatever sits between the two tags is the content of the element. That is the whole idea; the book's word for HTML is markup, and markup labels, it does not compute.
+
+### Attributes, and elements inside elements
+
+An attribute is a name and a value written inside the opening tag. The `href` attribute holds the address a link points to; the `class` attribute names a group CSS can style. An element can contain other elements, which is called nesting, and tags have to close in the reverse of the order they opened, the way brackets do in Python. An `alt` attribute on an image gives text for a reader who cannot see it, which is accessibility, not decoration.
+
+### The skeleton every page has
+
+```{.html}
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <title>Innloggingsrapport</title>
+  <link rel="stylesheet" href="stil.css">
+</head>
+<body>
+  <h1>Innloggingsforsoek 14. januar</h1>
+  <p class="ingress">Tallene kommer fra auth.log paa oevingsmaskinen.</p>
+  <table>
+    <tr><th>Bruker</th><th>Mislykkede forsoek</th></tr>
+    <tr><td>student</td><td>5</td></tr>
+    <tr><td>admin</td><td>3</td></tr>
+    <tr><td class="varsel">backup</td><td>1</td></tr>
+  </table>
+</body>
+</html>
+```
+
+Three elements hold every page, and their order never changes. The `head` carries facts about the page rather than its content: the title, the character set, the link to the stylesheet. The `body` carries everything the visitor reads. The `<!DOCTYPE html>` line at the top tells the browser to read the file as modern HTML. A table holds rows of cells, with `<th>` for headers and `<td>` for data. These counts were a Python dictionary in L17, a CSV file in L19, table rows in L21; here they are table cells.
+
+### lang and charset decide the letters
+
+`charset="utf-8"` tells the browser how bytes become characters, which is L19's file-encoding question at the web layer. Without it a browser may guess wrong and mangle æ, ø and å, so *Innloggingsforsøk* reaches the screen as nonsense. `lang="no"` tells a screen reader which language to pronounce. Both belong in the head, and both are one line.
+
+::: {.callout-warning}
+## Checkpoint
+
+Why does an image element carry an `alt` attribute? Where in the document does the character-set attribute belong? Which element marks a header cell inside a table row? Which two parts wrap a piece of text into an element?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+A web page is text fetched over HTTP that names the other files it needs, and HTML only labels content; it has no conditions, loops or variables. Declare `charset="utf-8"` so æ, ø and å stay readable, and put styling in one external stylesheet that changes every page at once.
+
+:::
+
+[→ HTML says what a piece of text is. Part 3 is CSS, which says how it looks.]{.bridge}
+
+## CSS
+
+### What the page says, and how it looks
+
+HTML says what a piece of text is, and CSS says how it looks. A table stays a table whether it is printed blue or grey. Keeping the two apart lets one person write the text and another design it, and lets the same HTML be shown on a phone, on paper or by a screen reader. This is the L08 separation-of-concerns idea in a different domain: one job, one place.
+
+### Selectors pick the elements to change
+
+```{.css}
+p { color: #44546a; }
+.varsel { font-weight: bold; }
+#hovedtabell { margin-top: 1rem; }
+```
+
+A selector says which elements a rule applies to. An element selector such as `h1` matches every heading of that kind. A class selector starts with a dot and matches a `class` attribute. An id selector starts with a hash and matches one element with that `id`. Each rule holds properties and their values inside braces.
+
+### The stylesheet for the report page
+
+```{.css}
+body {
+  font-family: system-ui, sans-serif;
+  margin: 2rem;
+  color: #1b1b1b;
+}
+h1 { color: #0d1f4f; }
+.ingress { color: #44546a; }
+table { border-collapse: collapse; }
+th, td { border: 1px solid #ced1dc; padding: 0.4rem 0.8rem; }
+th { background: #0d1f4f; color: #ffffff; }
+.varsel { color: #4e0c0c; font-weight: bold; }
+```
+
+The whole look of this page fits in one small file. `body`, `h1`, `table`, `th` and `td` are element selectors that need no attribute. `.ingress` and `.varsel` match the two class names in the HTML, and `.varsel` is the one that turns the `backup` row red, because that account should not exist. The navy `#0d1f4f` is the same colour as this chapter's title band, which is not a coincidence.
+
+### One file, linked from the head
+
+The stylesheet is a separate file, fetched with a request of its own, which is why the page needed two requests in Part 1. One line in the head connects the page to it, and every page that names the file changes when the file changes. The server sends the stylesheet as plain text with a `Content-Type` header, and Part 4 is about what that header decides.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does a selector do inside a CSS rule? Which character starts a class selector, and which starts an id selector? Why is a stylesheet usually kept in a file of its own? If the red row should become orange, which one line changes?
+
+:::
+
+[→ The browser follows the server's word on how to treat each file. Part 4 is what that means for security.]{.bridge}
+
+## Files, types and trust
+
+### Content-Type decides how the bytes are treated
+
+A header called `Content-Type` arrives ahead of the file itself. `text/html` tells the browser to read the arriving text as markup. `text/css` means style rules, and a script type means code to run. The browser follows that header, not the file's name. So what the server labels a file as decides whether the browser draws it or runs it.
+
+### Every file the page loads runs with the page's privileges
+
+A script named by the page runs as part of that page. It can read the fields a visitor is typing into a form. It can read the cookies the browser holds for that site, which is L26's subject. The browser cannot tell whose script it was, only which page loaded it. This is Jøsang's privilege logic from L02 and L13 at the web layer: a program runs with the reach of the context that started it [Jøsang, Sect. 3.4, p. 49]{.src}, and here the context is the page.
+
+### A third-party script is code you did not write
+
+One line in the HTML is enough to load code from another company. That company can change the contents of its file whenever it chooses, and your customer's browser runs the new version without asking anyone. Nobody at your own company approved that version. This is exactly the book's supply-chain attack from L11, "a two-stage attack" where compromising a supplier reaches its customers [Jøsang, Sect. 2.1.6, p. 30]{.src}, and the book's OWASP Top 10 names it as "Software and Data Integrity Failures", which occurs when "an application fetches plugins, libraries, or modules from unreliable sources and content delivery networks" [Jøsang, Sect. 11.6.3, p. 260]{.src}. The book's fix is the same as for the XZ backdoor: "digital signature of data and software".
+
+### The trap: a changed file leaves the page looking the same
+
+Editing one script changes no visible word on the page. The page still loads, the form still works and the payment still goes through. A copy of the data can leave at the same moment, unseen. A visitor cannot notice, because the padlock is identical on a clean page and an edited one: HTTPS protects the data in transit, as L07 said, not from code running inside the page. The book's confidentiality goal, that information is not disclosed to the unauthorised [Jøsang, Sect. 1.9.1, p. 14]{.src}, is broken here without any of the transport security failing.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which header tells the browser how to treat an arriving file? What privileges does a script fetched from another server run with? Why is a change to a third-party script hard to notice? Name one thing such a script can read.
+
+:::
+
+[→ One edited script, and the page still worked. Part 5 is the airline that learned that at scale.]{.bridge}
+
+## British Airways, 2018
+
+### The case
+
+The attacker used login credentials issued to an employee of Swissport, a third-party provider of cargo services to the airline; that account had no multi-factor authentication. The attacker was inside the airline's network from 22 June 2018. About two months later, one JavaScript file loaded by the payment page on the website was edited. The page kept working and the payments kept going through. Card details for around 400,000 customers were copied, as they were typed, to a server the attacker controlled at a domain resembling the airline's own. The Information Commissioner's Office fined the airline 20 million pounds.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that the whole payment page was replaced. One JavaScript file was edited, and the page looked and behaved exactly as before. Card data still reached British Airways, and a copy went to the attacker's domain at the same instant. The changed file passed every check a visitor could make: the page loaded, the padlock showed, the purchase completed. What was missing was a check the airline could make: whether the scripts its payment page loaded were the ones it had approved, unchanged, which is Part 4's "prove a script is unchanged", and the book's digital signature of software [Jøsang, Sect. 11.6.3, p. 260]{.src}. The first access, a supplier account without MFA, is the book's broken authentication [Jøsang, Sect. 11.6.3, p. 260]{.src} and its supply-chain warning [Jøsang, Sect. 2.1.6, p. 30]{.src}, both from earlier readers.
+
+::: {.callout-important}
+## Key idea
+
+A page is not one file but a list of files the browser assembles, and every one of them runs with the page's own privileges; a third-party script is a supplier with access to your customers. British Airways lost card data when one edited JavaScript file, loaded by the payment page, copied every card number as it was typed, while the page and its padlock looked unchanged.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik's report page loads one stylesheet from its own server and nothing else. The day somebody adds a chart library from another company's server "to make it look nicer", that company gains the ability to change what runs on the page, and nobody at Nordvik will see the change. The question to ask first is the one from L04 and L11: whose code is this, and how would we know if it changed?
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                       **Correction**
+  ------------------------------------------------ ----------------------------------------------------------------------------------------------------------------------------------------------
+  HTML is a programming language.                  HTML labels content and has no conditions, loops or variables. It is typed as text and stored in files, like code, but it does not compute.
+  A page is one file that the server hands over.   The browser assembles it from many files, sometimes from many servers. One address is typed and one page appears, which hides the rest.
+  A script from a known company is safe.           It runs with the page's privileges whoever wrote it, and the company can change it after you approved it [Jøsang, Sect. 11.6.3]{.src}.
+  HTTPS protects the data the page collects.       It protects data in transit, not from code inside the page. The padlock looks identical on a clean and an edited page.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  A page is text fetched over HTTP that names the other files it needs; the browser assembles it, sometimes from several servers.
+
+2.  An element is a tag pair, opening tag, content, closing tag; attributes go in the opening tag; `charset="utf-8"` keeps Norwegian letters readable.
+
+3.  HTML says what text is and CSS says how it looks; one external stylesheet, selected by element, class or id, changes every page at once.
+
+4.  `Content-Type` decides whether the browser draws a file or runs it, and every file the page loads runs with the page's privileges.
+
+5.  A third-party script is a supplier inside your page; a change to it is invisible, and the defence is knowing, and signing, what your page loads.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Which files does your bank's login page load, and from whose servers? (Parts 1, 4)
+
+2.  How would you prove tomorrow that a script on your site is unchanged? (Parts 4--5)
+
+3.  What would you need before you could allow a supplier's script on a payment page? (Part 4)
+
+4.  Write the element that shows the number 5 as a data cell in a table row. (Part 2)
+
+5.  Why does the padlock stay valid on a page whose script has been edited to steal data? (Parts 4--5)
+
+6.  Which OWASP Top 10 risk names the British Airways script, and what fix does the book give for it? (Part 4)
+
+## Before L26 {#before-l26 .unnumbered}
+
+Open any login page, view its source, and find the `<form>` tag and where it sends its data (the `action` attribute). Count how many separate files the page loads and how many different domains they come from. In L26 that request is followed to the server, where the fields you typed become the query from L22, and where an unchecked one is the injection you have already seen.
+
+## Glossary {#glossary .unnumbered}
+
+HTML
+
+:   Markup: text wrapped in tags that label content; not a programming language.
+
+Element / tag / content
+
+:   An opening tag, its content, and a closing tag.
+
+Attribute
+
+:   A name and value in the opening tag: `href`, `class`, `id`, `alt`, `charset`, `lang`.
+
+`head` / `body` / `<!DOCTYPE html>`
+
+:   Facts about the page; what the visitor reads; the declaration at the top.
+
+Nesting
+
+:   Elements inside elements; close in reverse order.
+
+CSS
+
+:   Rules that say how elements look, kept apart from what they say.
+
+Selector
+
+:   Element (`h1`), class (`.varsel`), or id (`#main`); picks what a rule applies to.
+
+External stylesheet
+
+:   One file, linked from the head, that styles every page that names it.
+
+`Content-Type`
+
+:   The header that decides whether the browser draws a file or runs it.
+
+Third-party script
+
+:   Code the page loads from another server; runs with the page's privileges. [Jøsang, Sect. 11.6.3, 2.1.6]{.src}
+
+Same look, changed file
+
+:   An edited script leaves the page and its padlock unchanged. [Jøsang, Sect. 1.9.1]{.src}
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. <https://doi.org/10.1007/978-3-031-68483-8>. Sect. 1.9.1, 2.1.6, 6.1.2, 6.2.1, 11.6.3.
+
+-   World Wide Web Consortium. (2017). *HTML 5.2* (W3C Recommendation).
+
+-   Mozilla. (n.d.). *HTML basics*; *CSS basics*. MDN Web Docs.
+
+-   Information Commissioner's Office. (2020). *Penalty notice: British Airways plc*.

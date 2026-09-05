@@ -1,0 +1,357 @@
+# Writing results to files and building a report {#sec-19-writing-results-to-files-and-building-a-report}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L19. **Reading time.** About 40 minutes.\
+**Primary reading.** Horstmann & Necaise, *Python for Everyone* (3rd ed.): Sect. 7.1 (writing to a file, file modes, closing), Sect. 7.2 ST 3 (character encodings), Toolbox 7.1 (working with CSV files). Jøsang (2025) Sect. 14.5.2 (documentation and evidence), 1.10.2. RFC 4180 for the CSV format.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+In L18 the counts lived in a dictionary inside a running program, and the program ended and took the dictionary with it. This chapter writes the same dictionary to disk, as rows in a file that a colleague can open in a spreadsheet, and asks the question that goes with every file: how do you know it is complete? Part 1 is why a file outlives the run. Part 2 is the CSV format and what the `csv` module handles for you. Part 3 is the report script. Part 4 writes one row per event rather than per user, and counts the finished file. Part 5 is the case where a file that existed was not complete.
+
+The book covers writing in the same section as reading, and the sentence to remember is the one about modes: "When you open a file for writing, you provide the file name and the string \"w\" as the second argument" [Python for Everyone, Sect. 7.1]{.src}.
+
+::: {.callout-tip}
+## A report Nordvik can hand over
+
+In L18 the counts from Nordvik's log lived in a dictionary that vanished when the script ended. Today they become rows in a CSV file that stays on disk, that a colleague at Nordvik can open in a spreadsheet, and that tomorrow's file can be compared against. The `csv` module writes the commas and quotes; your job is the columns, the names and the check.
+
+:::
+
+[→ Screen output does not survive the run. Part 1 is why a file does.]{.bridge}
+
+## Why a file
+
+### Screen output does not survive the run
+
+Monday's screen and Tuesday's screen cannot be compared by any tool. A printed number lives in the terminal until something scrolls past it. Nobody can attach that number to a ticket, an email or a report. A file has a name, a date, a size and a place, and all four can be checked by somebody who was not there.
+
+### What a file lets other people do
+
+Another program can read the file without knowing your script exists. A file can be sent, attached to a case or handed to an auditor. Two files from two days can be compared automatically, line against line. The file survives the machine being rebooted and the person who wrote it going home. Jøsang's incident-handling rule applies to every one of these: the record "can be used as evidence in a court of law" only if it exists as a document with a timestamp [Jøsang, Sect. 14.5.2, p. 311]{.src}, and a terminal scrollback is not a document.
+
+### Opening a file for writing
+
+```{.python}
+with open("rapport.csv", "w", encoding="utf-8") as f:
+    f.write("bruker,mislykkede_forsok\n")
+```
+
+`open()` takes a second argument when the program intends to write. The letter `w` means write, and `a` means append. `with` closes the file at the end of the block and flushes the last characters; the book: "you must close the file" when done, and "Closing the file ensures that all data is written" [Python for Everyone, Sect. 7.1]{.src}. Nothing is reliably on disk until the file is closed.
+
+### Write mode empties, append mode adds
+
+  **Write mode, `"w"`**                                                 **Append mode, `"a"`**
+  --------------------------------------------------------------------- ---------------------------------------------------------------------------
+  The file is emptied the moment it opens, before any byte is written   Nothing is removed; new content goes on the end
+  A run that crashes halfway leaves a file shorter than yesterday's     A run that crashes halfway leaves yesterday's content and part of today's
+  The old content is gone and no copy of it was kept                    The file grows every run and never loses a line
+  Right for a report that is rebuilt from scratch each time             Right for a log the script adds to
+
+The book is blunt: "If the file already exists, it is emptied before the new data is written" [Python for Everyone, Sect. 7.1]{.src}. This is L12's one arrow and two arrows again, `>` and `>>`, inside Python.
+
+### Encoding decides which characters survive
+
+`encoding="utf-8"` tells Python which bytes stand for each character. The program that reads the file later must assume the same encoding. Norwegian letters break when the writing side and the reading side disagree. Leaving the argument out lets the machine choose, and two machines may choose differently. The book's special topic on character encodings explains the mechanism and recommends UTF-8 [Python for Everyone, Sect. 7.2, ST 3]{.src}.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does `"w"` do to a file that already exists? Which mode suits a script that runs every morning and rebuilds the report? Which suits one that adds today's events to a running record? What does `encoding="utf-8"` decide about the finished file?
+
+:::
+
+[→ Every spreadsheet reads CSV. Part 2 is the format, and the module that writes it correctly.]{.bridge}
+
+## CSV, and the module that writes it
+
+### Why a CSV file and not hand-built text
+
+Every spreadsheet, database and scripting language reads the CSV format. A CSV file is plain text where a comma separates one field from the next, and each line is one row. Building the lines yourself means writing the separators and the line ends, and getting the exceptions wrong. The book's toolbox introduces the `csv` module for exactly this reason: "the csv module provides functions for reading and writing CSV files" and handles the details [Python for Everyone, Toolbox 7.1]{.src}.
+
+### writer, writerow and writerows
+
+```{.python}
+import csv
+with open("rapport.csv", "w", newline="", encoding="utf-8") as f:
+    skriver = csv.writer(f)
+    skriver.writerow(["bruker", "mislykkede_forsok"])
+    skriver.writerows([["admin", 3], ["backup", 1], ["student", 5]])
+```
+
+`csv.writer(f)` wraps an open file and turns lists into rows. `writerow()` takes one list and writes one line. `writerows()` takes a list of lists and writes all of them. The order of values in the list becomes the order of columns in the file.
+
+### The header row names the columns
+
+The first row holds names, not data, and readers expect that. A column called `mislykkede_forsok` explains itself without a message from you. Spreadsheets and database imports both look for names in the first row. Write the header once, before the loop, exactly as the counter was created before the loop in L16.
+
+### A comma inside a value
+
+A comma inside a value looks like a new column boundary. The `csv` module wraps such a value in quotes so the comma stays inside. A value containing a quote mark is handled by doubling that quote. Building rows by hand means remembering both rules, and RFC 4180 has more. Let the module write the punctuation.
+
+### The trap: blank lines between the rows
+
+`newline=""` belongs in every `open()` call that feeds a `csv` writer. The module already writes the line ending that the format requires. Without that argument, Windows adds a second one and the rows separate with blank lines. On Linux the file looks fine, and the same script breaks the day somebody runs it on a laptop.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which method writes one row, and which writes many? What belongs in the first row, and why? What does the module do with a value that contains a comma? Why does `newline=""` belong in the `open` call?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+Opening a file in write mode empties it before the first byte, while append adds to it; the mode decides what survives. Let the `csv` module write the commas, quotes and line endings rather than building them by hand, and name the columns in the first row so the next reader needs no message from you.
+
+:::
+
+[→ From a dictionary to rows. Part 3 is the report script.]{.bridge}
+
+## The report script
+
+### From a dictionary to rows
+
+The counting function from L18 returns `admin 3`, `backup 1` and `student 5`. Each key and value pair becomes one row holding two fields. `items()` gives those pairs, and `sorted()` puts them in a fixed order. Insertion order is not alphabetical, and a report that comes out in a different order each day is one that cannot be compared with yesterday's.
+
+### The script
+
+```{.python}
+import csv
+from brukere import les_linjer, tell_per_bruker
+
+def skriv_csv(sti, tellinger):
+    """Write one row per user, with a header row first."""
+    with open(sti, "w", newline="", encoding="utf-8") as f:
+        skriver = csv.writer(f)
+        skriver.writerow(["bruker", "mislykkede_forsok"])
+        for bruker, antall in sorted(tellinger.items()):
+            skriver.writerow([bruker, antall])
+    return len(tellinger)
+
+linjer = les_linjer("auth.log")
+tellinger = tell_per_bruker(linjer)
+rader = skriv_csv("rapport.csv", tellinger)
+print(f"Skrev rapport.csv med {rader} rader")
+```
+
+The script imports two functions that L18 already produced, which is what returning rather than printing bought you. One new function does the writing, and the counts arrive as an argument. It returns the number of rows, so the caller can say what happened.
+
+### What the script produced
+
+```{.code-out}
+student@kali:~/logganalyse$ python3 rapport.py
+Skrev rapport.csv med 3 rader
+student@kali:~/logganalyse$ cat rapport.csv
+bruker,mislykkede_forsok
+admin,3
+backup,1
+student,5
+```
+
+Last lesson's three numbers are now three rows in a file. The printed line names the file and states how many rows were written. `cat` shows the header row sitting above the three data rows. A spreadsheet opens this file with no help from you.
+
+### A file a colleague can read alone
+
+Column names answer the first question a reader has. A filename carrying a date says which day the numbers describe, and a name shaped `rapport-YYYY-MM-DD.csv` sorts itself by date in a folder. A short summary line states the total so nobody has to add the column. Four small habits, and the file needs no phone call.
+
+### Who reads this report
+
+A duty officer reads it to decide whether tonight needs a response. A manager reads the total and sets it against last week's total. The next shift reads it instead of reading 69 log lines again. The next program reads it, and L21 is that program. Four readers, one file, and none of them was in the room when it was written.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does `items()` give back? Why sort the rows before writing? What does the printed line at the end tell you? Name two things a filename can carry.
+
+:::
+
+[→ A count says how many, not when or from where. Part 4 writes one row per event.]{.bridge}
+
+## One row per event
+
+### The second file
+
+```{.python}
+import csv
+from brukere import les_linjer, hent_bruker
+
+def klassifiser(linje):
+    """Return (resultat, bruker) for an sshd authentication line, or None."""
+    if "sshd" not in linje:
+        return None
+    if "Failed password for" in linje:
+        return ("mislykket", hent_bruker(linje))
+    if "Accepted password for" in linje:
+        return ("vellykket", hent_bruker(linje))
+    return None
+
+hendelser = []
+for linje in les_linjer("auth.log"):
+    resultat = klassifiser(linje)
+    if resultat is None:
+        continue
+    deler = linje.split()
+    tid = " ".join(deler[0:3])
+    kilde = deler[deler.index("from") + 1]
+    hendelser.append([tid, resultat[1], resultat[0], kilde])
+
+with open("hendelser.csv", "w", newline="", encoding="utf-8") as f:
+    skriver = csv.writer(f)
+    skriver.writerow(["tid", "bruker", "resultat", "kilde"])
+    skriver.writerows(hendelser)
+print(f"Skrev {len(hendelser)} hendelser til hendelser.csv")
+```
+
+A count says how many, not when or from where. This file writes one row for every authentication event found. Four columns carry the time, the account, the result and the source address. `writerows()` writes all the collected rows at once, after the loop. The function returns a tuple, two values in round brackets, which the book introduces as "Returning Multiple Values with Tuples" [Python for Everyone, Sect. 6.4, ST 8]{.src}.
+
+### Counting the rows after writing
+
+```{.code-out}
+student@kali:~/logganalyse$ python3 hendelser.py
+Skrev 21 hendelser til hendelser.csv
+student@kali:~/logganalyse$ head -5 hendelser.csv
+tid,bruker,resultat,kilde
+Jan 14 09:05:12,student,mislykket,127.0.0.1
+Jan 14 09:05:19,student,mislykket,127.0.0.1
+Jan 14 09:05:27,student,mislykket,127.0.0.1
+Jan 14 09:11:44,admin,mislykket,127.0.0.1
+student@kali:~/logganalyse$ wc -l hendelser.csv
+22 hendelser.csv
+```
+
+The script reports how many events it collected before writing. `wc -l` counts the lines that actually reached the disk. The file holds 22 lines because the header row is a line as well. Two numbers differing by exactly one is the check passing; any other difference is the check failing. Two tools, two numbers, and they agree only if the write finished.
+
+### The trap: a limit that says nothing
+
+Every storage format has a limit on how many rows it holds. A good format refuses a row it cannot store and reports the refusal. A weaker one keeps the rows that fit and drops the rest in silence. Plain CSV has no row limit of its own; the limit arrives with whatever opens it next, and Part 5 is what that looks like.
+
+::: {.callout-warning}
+## Checkpoint
+
+Why does the script print the number of rows it wrote? Why is `wc -l` a better check than reading the number again in Python? Why does the file hold one more line than the number of events? What would a silent limit look like in a folder listing?
+
+:::
+
+[→ A file that exists is not a file that is complete. Part 5 is the case.]{.bridge}
+
+## Public Health England, October 2020
+
+### The case
+
+Testing firms submitted their COVID-19 results as CSV files. An automatic process gathered those results into Excel templates for the national count. The templates used the older XLS format, which holds about 65,000 rows. In practice each template held about 1,400 cases before it was full, because each case took many rows. The rows beyond the limit were dropped, without an error. Nearly 16,000 positive cases went unreported for about a week, and their contacts were not traced.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that a spreadsheet was simply the wrong tool. The results arrived in a format that had room for every single row; CSV has no such limit. The loss happened at the step that converted them into an older format, and the newer XLSX format would have held them all. The fault was a silent limit at one step of a chain, and the check that would have caught it is the one from Part 4: count the rows going in, count the rows coming out, and compare. Every file existed. Every file looked complete.
+
+Jøsang's list of what an incident-handling record must do includes "verification", and it names the failure this case shows: the "challenge of reliably identifying ... genuine incidents" when the signs are missing rather than wrong [Jøsang, Sect. 14.5.2, p. 311]{.src}. A dropped row leaves no sign at all.
+
+::: {.callout-important}
+## Key idea
+
+A file that exists is not a file that is complete; an empty or half-written file exists just as convincingly in a folder listing. Count the finished file, not only the running script, and compare it against a tool like `wc -l`: two numbers from two tools is the check.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik's morning report is one file with a date in its name and a summary line that states the total. The check that it is complete is the row count in the summary against `wc -l` of the file, and the day those two disagree is the day something in the chain went quiet.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                      **Correction**
+  --------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------
+  A CSV file is only text, so you can build the lines yourself.   Quoting and line endings are rules, and the module already knows them. The first thirty rows written by hand work, and the thirty-first has a comma in it.
+  If the file exists, the write must have worked.                 An empty or half-written file exists just as convincingly. The folder listing shows a name and a size, not completeness.
+  A program will complain when it runs out of room.               Some formats keep what fits and drop the rest without a word.
+  Append mode is safer because it never deletes.                  It never deletes, and it also never removes yesterday's mistake; the file grows until somebody reads it.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  `"w"` empties, `"a"` adds; the mode decides what survives a run, and a crash halfway leaves a file that looks finished.
+
+2.  `newline=""` and `encoding="utf-8"` belong in every `open` call that feeds a `csv` writer.
+
+3.  The module writes the punctuation, commas, quotes and line endings; you write the columns.
+
+4.  The first row names the columns, the filename carries the date, the summary line states the total, and the rows are sorted, so the next reader needs no message from you.
+
+5.  Count the finished file with `wc -l` and compare it with what the script said it wrote; a file that exists is not a file that is complete.
+
+## Self-check {#self-check .unnumbered}
+
+1.  What would you add to today's report so a colleague never has to call you? (Part 3)
+
+2.  If a file is written every morning, how would you notice one that never arrived? (Part 5)
+
+3.  Which of today's two files would you rather hand to an auditor, and why? (Part 4)
+
+4.  Why does `hendelser.csv` hold 22 lines when the script wrote 21 events? (Part 4)
+
+5.  What went wrong in the Public Health England chain, and where would a row count have caught it? (Part 5)
+
+6.  Why did `tell_per_bruker` returning a dictionary in L18 matter today? (Part 3)
+
+## Before L20 {#before-l20 .unnumbered}
+
+Read Sect. 7.1 and Toolbox 7.1 of *Python for Everyone*. Open the CSV your script wrote in a spreadsheet and check that the number of rows matches the count your script printed. If the two disagree, find out which one is telling the truth. In L20 the script learns what to do when the file is missing, the path is wrong, or a line is not what it should be.
+
+## Glossary {#glossary .unnumbered}
+
+File mode
+
+:   `"r"` read, `"w"` write (empties first), `"a"` append. [Python for Everyone, Sect. 7.1]{.src}
+
+Flush / close
+
+:   Data is reliably on disk only when the file is closed; `with` does it. [Python for Everyone, Sect. 7.1]{.src}
+
+Encoding
+
+:   How characters become bytes; UTF-8 on both sides. [Python for Everyone, Sect. 7.2, ST 3]{.src}
+
+CSV
+
+:   Comma-separated values; one row per line, a header row first. [Python for Everyone, Toolbox 7.1; RFC 4180]{.src}
+
+`csv.writer` / `writerow` / `writerows`
+
+:   Wraps a file; one row; many rows.
+
+`newline=""`
+
+:   Lets the module write the line endings itself.
+
+Header row
+
+:   Column names in the first line.
+
+Tuple
+
+:   Several values returned together in round brackets. [Python for Everyone, Sect. 6.4, ST 8]{.src}
+
+Row count check
+
+:   Script's count versus `wc -l`; differ by exactly one (the header).
+
+Silent limit
+
+:   A format that drops what does not fit without an error.
+
+## Sources {#sources .unnumbered}
+
+-   Horstmann, C., & Necaise, R. (2019). *Python for everyone* (3rd ed.). Wiley. Sect. 6.4 ST 8; Sect. 7.1--7.2; Toolbox 7.1.
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 1.10.2, 14.5.2.
+
+-   Python Software Foundation. (2026). *CSV file reading and writing*. The Python standard library.
+
+-   Shafranovich, Y. (2005). *Common format and MIME type for comma-separated values (CSV) files* (RFC 4180). Internet Engineering Task Force.
+
+-   Kelion, L. (2020, October 5). *Excel: Why using Microsoft's tool caused Covid-19 results to be lost*. BBC News.

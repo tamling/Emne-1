@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=25mm] (a) {\textbf{A frame in VLAN 10}\\ leaving one switch};
+  \node[boxfill,text width=25mm,right=of a] (b) {\textbf{A label is added}\\ ``this frame belongs to 10''};
+  \node[boxdark,text width=25mm,right=of b] (c) {\textbf{One shared cable}\\ carrying 10 and 20 together};
+  \node[boxfill,text width=25mm,right=of c] (d) {\textbf{The label is read}\\ and removed on arrival};
+  \node[box,text width=20mm,right=of d] (e) {\textbf{Delivered}\\ inside 10 only};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d); \draw[arr] (d)--(e);
+  \node[lbl,below=1.5mm of c] {trunk port, 802.1Q};
+\end{tikzpicture}

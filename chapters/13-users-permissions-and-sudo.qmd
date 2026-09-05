@@ -1,0 +1,399 @@
+# Users, permissions and sudo {#sec-13-users-permissions-and-sudo}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 3: Linux for Security Operations\
+**Accompanies.** Lecture L13. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025). Core: Sect. 9.3--9.3.1 (access control: subject, object, DAC with owner, group and others), pp. 206--207; Sect. 3.4 (root at privilege level 0), pp. 48--50; Sect. 1.11 (authorization versus access control). Supporting: Sect. 1.10.2, 3.5. The command facts follow Shotts (2026) and Ward (2021).
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+L12 was about finding text. This chapter is about being allowed to reach it at all, which is a different question. Every refusal you met last week was the kernel checking an identity. Part 1 is that identity. Part 2 is ten characters that answer nine questions. Part 3 is the tool that borrows root, and the record it leaves. Part 4 says why three directories from L11 are set exactly the way they are. Part 5 breaks a file on purpose and reads the refusal.
+
+The book's frame for all of it is one sentence: "Access control is the security function that ensures that users can only access resources to which they have been authorized beforehand" [Jøsang, Sect. 9.3, p. 206]{.src}. Authorised beforehand, in L04's sense, by somebody with the authority to authorise. On Linux, "beforehand" means the accounts in `/etc/passwd`, the groups in `/etc/group`, the mode on every file, and the rules in `/etc/sudoers`. This chapter is those four files.
+
+::: {.callout-tip}
+## Who may touch Nordvik's data
+
+Every program on Nordvik's server runs as some account, and the kernel checks what that account may touch each time a file is opened. Who can read the customer and drawing data comes down to users, groups and the permissions on a directory. Nobody at Nordvik has ever looked at any of the three.
+
+:::
+
+[→ Every refusal last week was the kernel checking an identity. Part 1 is that identity.]{.bridge}
+
+## Users, groups and root
+
+### What Permission denied was saying
+
+Everybody has seen this message and typed `sudo` in front of the command. Every running program carries a user identity, and the kernel decides what it may touch. Nothing is decided once at login. The kernel asks again every time a file is opened. The book's terms: the **subject** is "the entity who requests access", the **object** is "the resource to which the subject wants access", and an access request "means, for example, that the subject attempts to open a file to read/edit, open a directory to see what it contains, or to launch/execute an application" [Jøsang, Sect. 9.3, p. 206]{.src}. A program is not trusted or untrusted. It runs as somebody, and that somebody has a number the kernel checks.
+
+### Your account on this machine
+
+```{.bash}
+student@kali:~$ id
+uid=1000(student) gid=1000(student) groups=1000(student),27(sudo),4(adm)
+student@kali:~$ groups
+student sudo adm
+```
+
+The command `id` prints the numbers the kernel actually uses when it decides anything. The name in brackets is there for you; the kernel compares the number beside it. The uid is the account number, the gid is the main group, and `groups` lists every membership. Whatever is listed there is what you can reach that is not your own.
+
+### Seven fields on one line
+
+Accounts are written down in a plain text file called `/etc/passwd`. One line for each account, and seven fields split by colons.
+
+  **Name**   **Pass**   **UID**   **GID**   **Real name**   **Home**    **Shell**
+  ---------- ---------- --------- --------- --------------- ----------- -------------------
+  root       x          0         0         root            /root       /bin/bash
+  daemon     x          1         1         daemon          /usr/sbin   /usr/sbin/nologin
+  bin        x          2         2         bin             /bin        /usr/sbin/nologin
+
+The last field is worth a look: `nologin` means the account exists so that a program can run as it, and nobody can log in as it. Most of the lines in `/etc/passwd` are accounts nobody sits at.
+
+### Only root may read the passwords
+
+Every line in `/etc/passwd` carries an `x` where the password itself used to sit. The passwords moved into `/etc/shadow`, and only root may read that file. `/etc/passwd` has to stay readable by everybody, because every program that shows a file's owner needs to turn a number into a name. Splitting one file into two was the whole fix, and it is still how every Linux machine does it. The book's reason: stolen credential databases are a prime target, and "passwords are typically not stored in cleartext, but in hashed form" [Jøsang, Sect. 2.1.2, p. 28]{.src}; `/etc/shadow` holds those hashes, and its mode keeps them from everybody but root.
+
+### Groups, and the accounts nobody sits at
+
+Every account belongs to at least one group. A group in `/etc/group` is four fields: the name, an unused password field, the number, and the extra members. Access is granted to groups far more often than to people, because a group can be changed without touching any file's permissions. The book's model for this is DAC: "it is not possible to specify individual subjects, only three categories: owner, group and others" [Jøsang, Sect. 9.3.1, p. 207]{.src}, and "Individual subjects can be added to each group".
+
+### root, the account the kernel does not check
+
+::: {.callout-note}
+## root
+
+The account numbered zero, the one the kernel does not check at all. Every other account is checked against the permissions; root skips the test.
+
+:::
+
+Root is not a special kind of thing. It is the number zero, and the kernel is written to skip its checks. The book places it at privilege level 0, "Kernel Mode (Unix root, Win. Adm.)" [Jøsang, Sect. 3.4, Fig. 3.4, p. 49]{.src}. So anything running as root is unchecked, which is why so much of Part 3 is about not being root for longer than one command.
+
+::: {.callout-important}
+## Key idea
+
+Every process runs as an account, and the kernel checks what that account may touch every single time a file is opened, nothing decided once at login. Access is given to groups far more than to people, and root is simply the account numbered zero, the one the kernel does not check at all.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+On Nordvik's server the file service, the mail service and the suppliers' login each run as some account. If any of them runs as root, a flaw in that service is a flaw the kernel will not check, on the machine that holds everything.
+
+:::
+
+[→ You know who you are. Part 2 is ten characters, and they answer nine questions.]{.bridge}
+
+## Read, write and execute
+
+### The anatomy of a mode
+
+Only three things can be allowed on a file: reading it, changing it, or running it as a program. The letters are `r`, `w` and `x`, and a dash means no. The ten characters of `-rw-r–r–` split into four pieces. The book describes exactly this: "For each object, access rights can be specified for each category with one or more of the access modes read, write and execute" [Jøsang, Sect. 9.3.1, p. 207]{.src}.
+
+          **Which of the ten**   **Who it answers for**           **What it says here**
+  ------- ---------------------- -------------------------------- ---------------------------
+  `-`     character 1            a file, or `d` for a directory   an ordinary file
+  `rw-`   characters 2 to 4      the person who owns it           may read it and change it
+  `r–`    characters 5 to 7      members of the file's group      may only read it
+  `r–`    characters 8 to 10     anybody else with an account     may only read it
+
+Three questions, asked of three audiences. Owner first, then the file's group, then every other account on the machine.
+
+### What x does on a directory
+
+On a file, `x` means you may run it as a program. On a directory, `x` means you may pass through it and reach what is inside. Reading a directory gives you the names. Passing through gives you the files themselves. A directory is a list of names; the execute bit lets you go through to what they point at. A folder you can list but not enter is the worked example in Part 5.
+
+### Changing what a file allows
+
+The symbolic form reads like a sentence: who, then plus or minus, then which letters. Read a numeric mode by adding 4 for read, 2 for write and 1 for run, once for each audience. Learn the six patterns rather than computing them each time; almost every file on a machine has one of these modes.
+
+  **Command**                **What it does**
+  -------------------------- ---------------------------------------------------
+  `chmod u+x oppsett.sh`     `u` is the owner. Give them run
+  `chmod go-r notat.txt`     `g` and `o`. Take read away from group and others
+  `chmod 644 notat.txt`      An ordinary file. The owner writes, the rest read
+  `chmod 600 hemmelig.txt`   A private file. Nobody else at all
+  `chmod 755 oppsett.sh`     A program or a directory. Everyone enters
+  `chmod 700 privat`         A private directory. Only the owner
+
+### Changing who owns a file
+
+Ownership is a separate question from permission, and it has its own two commands. The book's word for the model is *discretionary*: the owner "can specify at 'their discretion' who should have access to the file" [Jøsang, Sect. 9.3.1, p. 207]{.src}. Giving a file away usually needs root, or you could leave a file in somebody else's name.
+
+  **Type this**                       **Short for**       **What happens**
+  ----------------------------------- ------------------- --------------------------------------------------------------------------
+  `sudo chown anneli notat.txt`       change file owner   The file now belongs to anneli, and the old owner loses the owner rights
+  `sudo chgrp adm notat.txt`          change group        The file's group becomes adm, so members of adm get the group rights
+  `sudo chown anneli:adm notat.txt`   change file owner   Both at once, with the owner before the colon and the group after it
+
+[→ The bits refuse you. Part 3 is the tool that borrows root, and the record it leaves.]{.bridge}
+
+## Running commands as root
+
+### One command as root
+
+The first two letters of `sudo` are `su`, the older command Shotts writes out as substitute user. It runs one command as somebody else, and that somebody is root unless you say otherwise. It asks for your own password rather than root's, checks a written rule, and writes the use down with your name. Ward puts the costs of a bare root shell in this order on purpose: accountability is lost before convenience is, and the record is the point.
+
+### sudo refuses, and says why
+
+```{.bash}
+$ ssh server 'sudo systemctl restart nginx'
+sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper
+sudo: a password is required
+```
+
+`sudo` needs a password and needs somewhere to ask for it. This command arrived over a connection with no terminal attached, so it stopped rather than guessing. A refusal that says what was missing is worth far more than one that only fails.
+
+### Where the rules are written
+
+The rules live in `/etc/sudoers`, and that file is itself an example of this chapter's subject. It is mode 440: root may read it, and not even root may write it without asking. The command `visudo` opens it in an editor and refuses to save a file whose syntax is broken, because a broken sudoers file locks everybody out.
+
+  **Command**                        **What it shows**
+  ---------------------------------- -------------------------------------------------
+  `sudo cat /etc/sudoers`            The rules, in a file only root may read
+  `ls -l /etc/sudoers`               Mode 440, not even writable by root
+  `sudo visudo`                      The only correct way to edit it
+  `ls /etc/sudoers.d`                Extra rules, often added by packages
+  `sudo grep -v ’^#’ /etc/sudoers`   The same file without comments, with L12's flag
+
+### Reading one rule
+
+```
+anneli   ALL=(root)   /usr/bin/systemctl restart nginx
+```
+
+A rule in `/etc/sudoers` is four parts, read from left to right like a sentence. Which people, on which machines, who they may become, and which commands they may run. **Least privilege** means making each of those four parts as small as the job allows. The rule above lets one person restart one service, and nothing else. `ALL=(ALL) ALL` lets a person do anything, which is the rule most machines ship with. The book's word for what the rule is doing is authorisation, "the act of specifying access rights for users, roles, and processes" [Jøsang, Sect. 1.11, p. 21]{.src}; `sudo` checking it at run time is access control. Keeping the two apart is the book's insistence, and the sudoers file shows why: the rule was written by somebody with authority, before the request.
+
+### Baron Samedit, a flaw in sudo itself
+
+`sudo` is a boundary, and a boundary is only as good as the code that enforces it. On 26 January 2021 the sudo project published CVE-2021-3156, found by the Qualys Research Team: a heap buffer overflow in the way `sudo` unescaped command-line arguments, present since 2011. Any local account could become root without a rule and without a password. The book describes the class of bug: "Vulnerabilities in operating systems and software can be exploited by attackers to take control of a system", and a buffer overflow is the classic case [Jøsang, Sect. 3.5, p. 50]{.src}. The fix was a version number, 1.9.5p2, and the way to apply it was L11's `apt upgrade`.
+
+### The record it leaves
+
+::: {.callout-note}
+## sudo
+
+Runs one command as root and writes every use down with your name. A whole root shell leaves no record of who did what. The log is most of the reason `sudo` exists: every use and every refusal, named.
+
+:::
+
+```{.bash}
+$ sudo journalctl _COMM=sudo | tail -n 2
+Aug 08 15:02:11 kali sudo[9812]:  student : TTY=pts/0 ; PWD=/home/student ; USER=root ; COMMAND=/usr/bin/apt update
+Aug 08 15:03:40 kali sudo[9830]:  student : command not allowed ; TTY=pts/0 ; ... ; COMMAND=/usr/bin/cat /etc/shadow
+```
+
+Two lines: one use, one refusal, both with a name, a time, a directory and the exact command. That is the book's accountability, "activities in a system or computer network can be traced to someone who can be held accountable" [Jøsang, Sect. 1.10.2, p. 20]{.src}, delivered by one program.
+
+::: {.callout-important}
+## Key idea
+
+`sudo` runs one command as root, asking your own password and checking a written rule, and if no rule covers you it refuses and writes that down. Most of the reason it exists is the record: every use and every refusal is logged with your name. Least privilege means each part of a rule is as small as the job allows.
+
+:::
+
+[→ Three directories from L11 return. Part 4 says why each is set exactly the way it is.]{.bridge}
+
+## Three system directories
+
+### Three directories, three answers
+
+```{.bash}
+student@kali:~$ ls -ld /etc /var/log /tmp
+drwxr-xr-x  1 root root    4096 Aug  8 09:14 /etc
+drwxrwxr-x  1 root syslog  4096 Aug  8 14:47 /var/log
+drwxrwxrwt  1 root root    4096 Aug  8 15:03 /tmp
+```
+
+The flag `-d` describes the directory itself instead of listing what is inside it. All three belong to root, and all three carry a different mode. `/var/log` has the group `syslog`, so the logging service writes there without being root.
+
+### Why each one is set that way
+
+                           **`/etc`**   **`/var/log`**                         **`/tmp`**
+  ------------------------ ------------ -------------------------------------- ----------------
+  Owner                    root         root                                   root
+  Mode                     755          775 on this machine, files often 640   1777
+  Who may read the files   everybody    root and the log groups                everybody
+  Who may write            root only    the services, through root             anybody at all
+
+Each answer is a decision somebody made. `/etc` is readable by everybody because every program reads its own settings out of a file, and writable only by root; that shape covers most of the system. Log files are readable by root and by members of the groups `adm` and `syslog`, which is why L12 worked on your account and why the same commands fail for a user who was not added to `adm`. `/tmp` is writable by anybody, and the leading 1 in 1777 is the **sticky bit**, the `t` at the end of the mode: anybody may create a file there, and only the file's owner may delete it. Readable by all and writable by one is the shape of most of the system. A settings file owned by an ordinary user is a file that user can rewrite.
+
+### The letter s where the x should be
+
+```{.bash}
+student@kali:~$ ls -l /usr/bin/passwd /usr/bin/sudo
+-rwsr-xr-x 1 root root  68248 ... /usr/bin/passwd
+-rwsr-xr-x 1 root root 281744 ... /usr/bin/sudo
+```
+
+The letter `s` sits where the owner's `x` would normally be. A program marked that way runs as its owner, not as whoever started it. This is the **SUID bit**. Both of these belong to root, which is how you change your own password without being root: `passwd` runs as root long enough to write one line of `/etc/shadow`. It is also why Baron Samedit mattered: `sudo` is SUID root, so a flaw in it is a flaw that already runs as root. `find / -perm -4000 -type f 2>/dev/null` lists every such program on a machine, and that list is the first thing an attacker with an ordinary account looks at.
+
+[→ Identity, mode, sudo, reasons. Part 5 breaks a file on purpose and reads the refusal.]{.bridge}
+
+## Permissions on a real machine
+
+### Setting a mode and reading it back
+
+```{.bash}
+student@kali:~$ mkdir prosjekt
+student@kali:~$ echo "hemmelig" > prosjekt/notat.txt
+student@kali:~$ chmod 640 prosjekt/notat.txt
+student@kali:~$ ls -l prosjekt/notat.txt
+-rw-r----- 1 student student 9 Aug  8 15:10 prosjekt/notat.txt
+```
+
+Four commands make a directory, write a file, set a mode, and read that mode back. A numeric mode is three digits, one for each of the three audiences. Six is read and write, four is read, and zero is nothing at all.
+
+### Taking write away, and watching it bite
+
+```{.bash}
+student@kali:~$ chmod 400 prosjekt/notat.txt
+student@kali:~$ echo "mer" >> prosjekt/notat.txt
+bash: prosjekt/notat.txt: Permission denied
+```
+
+The mode 400 leaves the owner read, and takes everything else away from everybody. The refusal that follows is aimed at the owner of the file. Owning a file does not put you outside its mode; it only means you may change the mode.
+
+### Putting the write back
+
+```{.bash}
+student@kali:~$ chmod u+w prosjekt/notat.txt
+student@kali:~$ ls -l prosjekt/notat.txt
+-rw------- 1 student student 9 Aug  8 15:10 prosjekt/notat.txt
+```
+
+The symbolic form names one audience and one letter at a time. `u+w` adds write for the owner and says nothing about the group or the others. A numeric mode would have rewritten all three audiences at once.
+
+### What can this account do
+
+Run all four of these on a machine you are given on your first day. Together they describe an account better than any document does.
+
+```{.bash}
+$ id                                          # who the kernel thinks you are
+$ groups                                      # what you inherit
+$ sudo -l                                     # what you were explicitly granted
+$ ls -l /etc/shadow                           # a file you should not be able to read
+$ find / -writable -type d 2>/dev/null | head # where you may write
+```
+
+### Worked example: three people, one folder
+
+::: {.callout-tip}
+## The case
+
+Three people share a project folder, and none of them can open the others' files. They can all see that the files are there, because listing the folder works. Nothing was misconfigured. Each file came out with the ordinary default mode.
+
+:::
+
+::: {.callout-warning}
+## One minute
+
+What is wrong, and what do you change? Most people propose `chmod 777`, because it does close the ticket.
+
+:::
+
+**Reasoning.** Each file is 644: owner writes, everybody reads. So the others can read but not edit, and if the folder is 755, they can list it but only the owner can create files in it. `chmod 777` works and also opens the folder to every account on the machine, including the web server's and the suppliers'. It removes the problem by removing all restriction.
+
+**Result.** The real answer is a group. Create one, put the three of them in it, make it the folder's group with `chgrp`, and give the group write with `chmod 2775` on the directory. The 2 is the setgid bit: new files inside inherit the folder's group, so the next file is shared without anybody remembering. Give that group execute on the directory too, or they list the folder and open nothing. Three people, one group, one directory mode, and nobody else on the machine gained anything. That is the book's DAC done the way it was designed: "the owner can specify access rights for themselves, for a group of subjects, and for all subjects" [Jøsang, Sect. 9.3.1, p. 207]{.src}, and the middle one is the one to use.
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                        **Correction**
+  ------------------------------------------------- ----------------------------------------------------------------------------------------------------------
+  `sudo` makes a command work.                      It runs the command as root, if a rule says you may. If no rule does, it refuses and writes that down.
+  `chmod 777` fixes permission problems.            It removes the problem by removing all restriction, and grants every account on the machine full access.
+  `x` means the same on files and directories.      On a file it means run it. On a directory it means you may pass through and reach what is inside.
+  Logging in as root is the same as using `sudo`.   A root shell leaves no record of which person ran what, and that record is why `sudo` exists.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  Every process runs as somebody, and the kernel asks who on every access; accounts are in `/etc/passwd`, hashes in `/etc/shadow`, groups in `/etc/group`.
+
+2.  A mode is three questions asked of three audiences, owner, group, others, and a directory answers them differently: `x` means enter.
+
+3.  Access is granted to groups far more often than to people, because a group can change without touching a file.
+
+4.  root is the account numbered zero that the kernel does not check; `sudo` borrows it for one command, against a written rule, and logs every use and refusal by name.
+
+5.  `/etc`, `/var/log` and `/tmp` are set the way they are for reasons; SUID programs run as their owner, and the list of them is what an attacker reads first.
+
+## Self-check {#self-check .unnumbered}
+
+1.  A file shows `-rw-r—–` with owner root and group adm. Who may read it, and who may change it? (Part 2)
+
+2.  Why does `chmod 777` close a ticket while making the machine worse? Name what it removes. (Part 5)
+
+3.  What does `sudo` write down that a root shell does not, and why does the book care? (Part 3)
+
+4.  Read the sudoers rule `anneli ALL=(root) /usr/bin/systemctl restart nginx` as a sentence, and say which of its four parts least privilege is about. (Part 3)
+
+5.  Why is `/etc/passwd` readable by everybody while `/etc/shadow` is not? (Part 1)
+
+6.  What does the `s` in `-rwsr-xr-x` mean, and why did it make Baron Samedit worse? (Parts 3--4)
+
+7.  Using the book's terms subject, object and access mode, describe what happens when `cat /etc/shadow` is refused. (Part 1)
+
+## Before L14 {#before-l14 .unnumbered}
+
+On your exercise machine, run `sudo -l` and write down every rule that names you. Then run `find / -perm -4000 -type f 2>/dev/null` and count the SUID programs. Bring both. In L14 the accounts meet the network: which services are listening, how they are started and stopped, and how to harden the one service every server exposes, SSH.
+
+## Glossary {#glossary .unnumbered}
+
+Subject / object / access mode
+
+:   Who asks; what is asked for; read, write or execute. [Jøsang, Sect. 9.3]{.src}
+
+DAC
+
+:   Discretionary access control: the owner decides, for owner, group and others. [Jøsang, Sect. 9.3.1]{.src}
+
+UID / GID
+
+:   The numbers the kernel compares; names are for people.
+
+`/etc/passwd`, `/etc/shadow`, `/etc/group`
+
+:   Accounts; password hashes, root-only; groups and members.
+
+root
+
+:   Account zero; the kernel skips its checks; privilege level 0. [Jøsang, Sect. 3.4]{.src}
+
+Mode
+
+:   Ten characters: type, then rwx for owner, group, others; or three digits.
+
+`chmod` / `chown` / `chgrp`
+
+:   Change mode; change owner; change group.
+
+`sudo` / `/etc/sudoers` / `visudo`
+
+:   One command as root; the rules; the safe editor.
+
+Least privilege
+
+:   Each part of a rule as small as the job allows.
+
+SUID / setgid / sticky
+
+:   Run as owner; inherit group; only the owner deletes.
+
+Accountability
+
+:   Activities traced to a named person; what the sudo log provides. [Jøsang, Sect. 1.10.2]{.src}
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. <https://doi.org/10.1007/978-3-031-68483-8>. Sect. 1.10.2, 1.11, 2.1.2, 3.4, 3.5, 9.3--9.3.1.
+
+-   Shotts, W. (2026). *The Linux command line: A complete introduction* (3rd ed.). No Starch Press.
+
+-   Ward, B. (2021). *How Linux works: What every superuser should know* (3rd ed.). No Starch Press.
+
+-   Qualys. (2021, January 26). *CVE-2021-3156: Heap-based buffer overflow in sudo (Baron Samedit)*.
+
+-   Sudo Project. (2021, January 26). *Buffer overflow in command line unescaping*.
+
+-   Nasjonal sikkerhetsmyndighet. (n.d.). *Fem effektive tiltak mot dataangrep*.

@@ -1,0 +1,14 @@
+\begin{tikzpicture}[x=19mm,y=8mm]
+  \foreach \r/\lab in {1/Rare,2/Unlikely,3/Possible,4/Likely,5/Certain}{
+    \node[lbl,anchor=east] at (0.45,\r-0.5) {(\r) \lab};}
+  \foreach \c/\lab in {1/Insignificant,2/Minor,3/Significant,4/Major,5/Disastrous}{
+    \node[lbl,anchor=north,text width=18mm] at (\c,-0.05) {(\c) \lab};}
+  \foreach \r in {1,...,5}{ \foreach \c in {1,...,5}{
+    \pgfmathtruncatemacro{\s}{\r+\c}
+    \ifnum\s<4 \colorlet{cc}{boxbg}\else\ifnum\s<6 \colorlet{cc}{gagreen!45}\else\ifnum\s<8 \colorlet{cc}{ahabg}\else\ifnum\s<10 \colorlet{cc}{gaapricot!55}\else\colorlet{cc}{gared!55}\fi\fi\fi\fi
+    \fill[cc,draw=white,line width=0.6pt] (\c-0.5,\r-1) rectangle (\c+0.5,\r);}}
+  \node[font=\scriptsize\bfseries\color{navy}] at (4,2.5) {Server encrypted};
+  \node[font=\scriptsize\bfseries\color{navy}] at (2,3.5) {Laptop stolen};
+  \node[lbl,anchor=south] at (3,5.2) {Increasing impact $\rightarrow$};
+  \node[lbl,anchor=south,rotate=90] at (-1.05,2.5) {Increasing likelihood $\rightarrow$};
+\end{tikzpicture}

@@ -1,0 +1,8 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[boxred,text width=26mm] (a) {\textbf{WEP}\\ 1999; trivially broken};
+  \node[boxwarm,text width=26mm,right=of a] (b) {\textbf{WPA}\\ 2003; stopgap};
+  \node[boxfill,text width=26mm,right=of b] (c) {\textbf{WPA2}\\ 2004; the ordinary case};
+  \node[boxdark,text width=26mm,right=of c] (d) {\textbf{WPA3}\\ 2018; current; mandatory on new devices since 2020};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+  \node[lbl,below=1.5mm of {$(a.south)!0.5!(d.south)$}] {after J\o sang, Fig.\,7.4, p.\,147};
+\end{tikzpicture}

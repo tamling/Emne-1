@@ -1,0 +1,8 @@
+\begin{tikzpicture}[node distance=2.5mm]
+  \node[boxwarm,text width=100mm,align=left] (r) {\textbf{What is right}\ \ nobody wrote this down, and it cannot be looked up};
+  \node[boxfill,text width=100mm,align=left,below=of r] (e) {\textbf{What your employer requires}\ \ policies; can be looked up};
+  \node[boxdark,text width=100mm,align=left,below=of e] (l) {\textbf{What the law requires}\ \ the floor; § 204, GDPR, digitalsikkerhetsloven};
+  \node[lbl,right=3mm of r] {your judgement};
+  \node[lbl,right=3mm of e] {L03's policies};
+  \node[lbl,right=3mm of l] {Parts 1 and 3};
+\end{tikzpicture}

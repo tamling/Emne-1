@@ -1,0 +1,420 @@
+# Services, logs and hardening SSH {#sec-14-services-logs-and-hardening-ssh}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 3: Linux for Security Operations\
+**Accompanies.** Lecture L14. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025). Core: Sect. 3.1 (processes), 3.4 (privilege), 6.4 (listening versus reachable), 1.9.3 (system integrity), 1.10.2 (logging), 2.1.6 (supply chain). Supporting: Sect. 8.4 (key-based authentication), 14.5.2. The command facts follow Ward (2021), Shotts (2026) and the `sshd_config(5)` manual.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+L13 was about what is allowed. This chapter is about what is happening. The same accounts turn up, now attached to programs that are running. Part 1 asks what is actually running, and as whom. Part 2 asks which of it answers the network, and on which address. Part 3 reads what the machine wrote down about before. Part 4 locks down the one service that has to stay reachable, without locking you out. Part 5 asks all four questions on a machine nobody explained.
+
+The book's phrase for the state this chapter checks is **system integrity**: that "systems, applications and network components have the correct configuration, correct software and updated patch status" [Jøsang, Sect. 1.9.3, p. 16]{.src}. On a Linux server, the correct configuration is which services run, what they listen on, and what `sshd_config` says.
+
+::: {.callout-tip}
+## What Nordvik's server is doing
+
+Nobody at Nordvik documented the server in the cupboard, so the questions are simple: what is running, and what is listening? Every process runs as some account, and every listening port belongs to one program you can name from inside the machine. Four commands answer both, and Part 5 runs them in order.
+
+:::
+
+[→ Yesterday said what is allowed. Part 1 asks what is actually running, and as whom.]{.bridge}
+
+## Running processes and services
+
+### A program that is currently running
+
+::: {.callout-note}
+## Process
+
+A file loaded and running, each with a number and running as some account. A program on disk is just a file; a service is one the system starts and keeps running.
+
+:::
+
+Start with the file on disk. The book: "A software module resides on a storage disk when not in use and is copied into system memory when activated, turning it into an active running process" [Jøsang, Sect. 3.1, p. 44]{.src}. Loading it into memory and running it makes a process, and the PID, the process number, is how everything else refers to it. Nothing runs without being a process, and no process is anonymous.
+
+### Every process, one line each
+
+```{.bash}
+student@kali:~$ ps -eo user,pid,pcpu,pmem,stat,comm | head -n 6
+USER       PID %CPU %MEM STAT COMMAND
+root         1  0.0  0.3 Ss   systemd
+syslog     412  0.0  0.1 S    rsyslogd
+root       612  0.0  0.2 Ss   sshd
+student  11538  0.0  0.2 S    python3
+student  11540  0.0  0.1 R    ps
+```
+
+Every process on the machine gets one line, and the account it runs as comes first. The flag `-eo` asks for every process and names the columns you want. Read the account column first: `rsyslogd` runs as `syslog`, the SSH server runs as root, and the small web server runs as `student`. Each of them may do exactly what its own account may do, which is L13's whole point. One program can appear more than once; the SSH server and your own session are both called `sshd`.
+
+  **Column**   **The line**   **What it tells you**
+  ------------ -------------- ------------------------------
+  USER         student        the account it runs as
+  PID          11538          its number on this machine
+  %CPU         0.0            share of the processor
+  %MEM         0.2            share of the memory
+  STAT         S              sleeping, running or stopped
+  COMMAND      python3        the program that is running
+
+`ps` reports the processes running at the moment you ask, and nothing after that. Left alone, `ps aux` prints eleven columns, and the last one, how the program was started, is often the useful part.
+
+### The ones that start by themselves
+
+A **service** is a program the system starts at boot and keeps running, with nobody logged in. Linux also calls a service a **daemon**. The program `systemd` starts them and knows which ones exist. `systemctl list-units –type=service` lists them, and `systemctl status ssh` describes one: whether it is running, since when, its PID, and its last few log lines.
+
+### Not everything is a service
+
+Both columns are processes, and both can listen on a port. Only one of the two is written down anywhere you can look it up.
+
+  **A service**                         **Just a running program**
+  ------------------------------------- -------------------------------------
+  Started by the system at boot         Started by a person, in a session
+  Restarted if it stops                 Gone when it stops
+  Keeps running with nobody logged in   It dies when that person logs out
+  systemd knows it, from a unit file    systemd has never heard of it
+  Named in `list-units`                 It appears in `ps` and nowhere else
+
+The left column is managed and written down. The right column exists only for as long as somebody keeps it alive, and it is where the "test somebody switched on" from L07 usually lives.
+
+::: {.callout-important}
+## Key idea
+
+Nothing runs on a Linux machine without being a process, and no process is anonymous: each has a number and runs as some account. A service is one the system starts at boot and systemd knows about; anything else appears in `ps` and nowhere else.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Taken to Nordvik's undocumented server, the first command is `ps -eo user,pid,comm`, and the first thing to read is which account each program runs as. Anything unfamiliar running as root is the first question for the owner.
+
+:::
+
+[→ You know what runs. Part 2 asks which of it answers the network, and on which address.]{.bridge}
+
+## Listening ports
+
+### From a port to a person
+
+::: {.callout-note}
+## From inside
+
+One line of `ss` turns a port into a program, a process and an account. From outside, in L07, this was guesswork. Read the bind address: `0.0.0.0` faces the network, `127.0.0.1` faces only itself.
+
+:::
+
+```{.bash}
+student@kali:~$ sudo ss -tlnp
+State  Local Address:Port  Process
+LISTEN 0.0.0.0:22          users:(("sshd",pid=612,fd=3))
+LISTEN 0.0.0.0:8080        users:(("python3",pid=11538,fd=4))
+```
+
+Two ports answer on this machine, one for the shell and one for a web server. Run as root, `ss` names the program and the process number behind each port. Run as an ordinary user, the ports are still visible and who answers them is not. Four flags, and every open door on this machine has a name beside it. The PID column ties this table to the `ps` output in Part 1: port 8080 is process 11538, which runs as `student`.
+
+### Speaking to a port by hand
+
+The name `telnet` is older than the web, and the command opens a plain connection to a port. Type `telnet example.org 80` and you are the client, typing what a browser would send. Send `GET / HTTP/1.1`, then `Host: example.org`, then an empty line, and a web page comes back as text. A program was waiting, you spoke to it, and it answered. That makes the word listening concrete.
+
+### Bound to everything, or only to here
+
+The address in front of the port number changes the answer completely. `0.0.0.0` means every address this machine has, including the one facing the network. `127.0.0.1` is the machine talking to itself, and nothing outside can reach it. Beginners read the port and skip the address in front of it. That address decides whether anybody outside the machine can reach the service at all, and it is set in the service's own configuration, not in any firewall.
+
+### Not the same as open in a firewall
+
+  **Listening on the machine**         **Reachable from elsewhere**
+  ------------------------------------ -----------------------------------------------
+  A process is waiting on a port       Traffic actually arrives on that port
+  A decision the machine made          A decision the network made
+  `ss` and `lsof` can see it           The firewall decides it, often on another box
+  Changed by configuring the service   Changed by a rule
+
+A firewall filters packets on the way in, so a service can be listening and unreachable. Both must be true before a service is exposed. The book's firewall is the second column: "The task of the firewall is to control traffic between computer networks", with default-deny as the standard rule [Jøsang, Sect. 6.4, p. 135]{.src}. L08 built that side. In Part 5 you read the two answers together.
+
+::: {.callout-important}
+## Key idea
+
+From inside the machine, one line of `ss` turns a port into a program, a process and an account, the guesswork L07 stopped at. Read the bind address before the port: `0.0.0.0` faces the network, `127.0.0.1` faces only itself, and listening still is not the same as reachable through a firewall.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+On Nordvik's server, a database bound to `0.0.0.0` with the suppliers' remote access forwarded to the whole machine is reachable by both suppliers whether or not anybody meant it. Bound to `127.0.0.1`, it is reachable by nobody outside, whatever the firewall says.
+
+:::
+
+[→ Running and listening are now. Part 3 reads what the machine wrote down about before.]{.bridge}
+
+## Reading the logs
+
+### The machine wrote it down
+
+In L11 you found `/var/log`, and in L12 you searched it without asking who wrote the lines. Services write a line whenever something worth recording happens. Most of that goes to the systemd **journal**, and to text files under `/var/log`; which one a service uses depends on the service, not on you. Both hold the same kind of evidence, the book's basis for accountability: "logging activities in systems and networks" that "maps which user or other entity is behind each logged activity" [Jøsang, Sect. 1.10.2, p. 20]{.src}.
+
+### What two services wrote down
+
+The web server recorded one request. The SSH server recorded every attempt to log in, and only one line proves that somebody got in; it names the account and the address. Take the `Failed password` line apart again, and every word of it is now something you have been taught: the timestamp (L12), the host, the service name (Part 1), the process number (ties back to `ps`), and the message with the account (L13) and the address and port (L07).
+
+### One command for all of it
+
+The name `journalctl` is the journal plus `ctl` for control, and its own help says "query the journal". The flag `-S` is since, `-U` is until, and `-u` picks out one unit. Narrow before you read.
+
+  **Command**                         **What it prints**
+  ----------------------------------- ------------------------------------------
+  `journalctl`                        the whole journal, oldest first
+  `journalctl -n 50`                  the last fifty lines and nothing else
+  `journalctl -b`                     only what has happened since this boot
+  `journalctl -f`                     keep printing as new lines arrive
+  `journalctl -p err -b`              errors and worse, since this boot
+  `journalctl -g "Failed password"`   search the message text, as `grep` would
+  `journalctl -S 12:00 -U 13:00`      one named hour, from noon to one
+  `journalctl -u ssh -S -1h`          one service, inside the last hour
+
+### Not a complete record
+
+A log records only what somebody configured it to record, and nothing else.
+
+  **What beginners assume**           **What is actually true**
+  ----------------------------------- ------------------------------------------------------------
+  Everything that happens is logged   Only what somebody configured is logged
+  A log line is a fact                It is a claim about who wrote it
+  It is still there next year         It rotates away, or the disk fills and the recording stops
+  Nobody can change it                Anyone with enough access can edit it
+  Silence means nothing happened      Silence may mean nothing was recorded
+
+Rotation is Ward's section 7.1.3: today's file is open, yesterday's is renamed and compressed, and the oldest goes by age or by disk space. The second row is the deepest. The book allows for exactly this when it says logging "can be combined with data authentication to ensure the integrity of data logs" [Jøsang, Sect. 1.10.2, p. 21]{.src}; without that, a log line is what the process that wrote it claimed. One question sits under all of these: how would you know that the thing calling itself your web server is your web server? Part 5 has a case where nobody could.
+
+[→ One service has to stay reachable. Part 4 locks it down without locking you out.]{.bridge}
+
+## Hardening a service
+
+### Why Secure Shell comes first
+
+Secure Shell, written SSH, is how you reach every server you administer. A server has no screen and no keyboard, so this one service has to be reachable, and that makes it the service everybody outside tries first, all day. L12's `auth.log` was mostly that. Put the effort where the traffic is.
+
+### The settings file itself
+
+```{.bash}
+student@kali:~$ ls -l /etc/ssh/sshd_config
+-rw-r--r-- 1 root root 3253 ... /etc/ssh/sshd_config
+student@kali:~$ grep -v '^#' /etc/ssh/sshd_config | grep -v '^$'
+Include /etc/ssh/sshd_config.d/*.conf
+KbdInteractiveAuthentication no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server
+```
+
+The file runs to over three thousand bytes, and seven lines of it are switched on. Everything else is a comment, so the machine is running on defaults this list does not show. The `grep` here is L12's own tool, pointed at a settings file.
+
+### Three settings that decide it
+
+  **Setting**                   **What it decides**
+  ----------------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------
+  `PermitRootLogin no`          Whether root may log in over the network at all. L13 said why not: root is unchecked, and a guessed root password is the whole machine.
+  `PasswordAuthentication no`   Whether a password is accepted at all. Off means logging in with a key pair: the public half goes on the server, the private half stays on your laptop.
+  `AllowUsers anneli timo`      The only accounts allowed in. Everybody else, including accounts that exist, is refused before a password is asked.
+
+Each line is one key and one value, which is all this file ever is. A commented-out line is not dead text: it shows the default the server uses when you say nothing. The book's authentication chapter is the reason for the second row. A password is a knowledge-based authenticator, and the book's threats to it are guessing, cracking and phishing [Jøsang, Sect. 8.3]{.src}; a key pair is an ownership-based authenticator, "something you have" in the book's three categories [Jøsang, Sect. 8.2, p. 166; Sect. 8.4]{.src}, that cannot be guessed against the server from the internet.
+
+Every setting takes effect when the service reloads. Test from a second connection, and put the file back if that one is refused. The service that applies these settings is also the service carrying your own session, which is why the second connection matters.
+
+### The log becomes the defence
+
+The program `fail2ban` joins three things you already know into one defence. It counts refusals in the log, per address, inside a time window you choose. When the count is passed it asks the firewall to drop that address for a while. Counting lines came from L12, the lines themselves came from Part 3, and the block itself is L08's firewall. The book's category for this is a detective control that triggers a corrective one [Jøsang, Sect. 1.5, p. 8]{.src}, and it is the smallest working example of the loop from L01.
+
+### Why hardening is never finished
+
+Run as few services as possible, because intruders cannot break into what does not exist. NSM writes this as grunnprinsipp 2.3.3, *deaktiver unødvendig funksjonalitet*. Write each change into a list of measures, with what you changed, when, and who changed it.
+
+  **What hardening feels like**          **What actually happens**
+  -------------------------------------- ---------------------------------------------
+  A job with an end                      A package update replaces the settings file
+  Done once, when the machine is built   A new service arrives as a dependency
+  A checklist you sign off               Somebody needs an exception, urgently
+  Stable until somebody meddles          The exception is never taken back
+  Provable by the settings file          So you look again, on a schedule
+
+The book's controls for system integrity are "configuration management" and "change management" [Jøsang, Sect. 1.9.3, p. 16]{.src}. The list of measures is the first; looking again on a schedule is the second.
+
+[→ Running, listening, the log, the door. Part 5 asks all four on a machine nobody explained.]{.bridge}
+
+## Surveying an unknown machine
+
+### The four commands you take to a strange machine
+
+Four commands answer four questions, and you run them in this order every time. Write the four answers down as four short lists before you change anything at all.
+
+  **Type this**            **In plain words**           **What it answers**
+  ------------------------ ---------------------------- ----------------------------------------------------------------
+  `ps -eo user,pid,comm`   a process report             What is running right now, and as which account
+  `ss -tlnp`               a socket investigator        What is listening, on which address, and which program answers
+  `systemctl list-units`   control the system manager   Which services this machine knows about and starts by itself
+  `journalctl -S -1h`      query the journal            What the machine wrote down about the last hour
+
+### Running, and listening
+
+  **Command**                            **What it answers**
+  -------------------------------------- ------------------------------------------
+  `systemctl list-units –type=service`   every service this machine knows of
+  `systemctl –failed`                    and the ones that tried and gave up
+  `ss -tlnp`                             what is listening, and which program
+  `ss -tlnp wc -l`                       how many, before you read any of them
+  `sudo lsof -i -P -n`                   the same, with the owning user beside it
+
+Read the two lists against each other. Running, and listening on `0.0.0.0`, is the row to ask about before any other.
+
+### The last hour, and who may log in
+
+  **Command**                                  **What it answers**
+  -------------------------------------------- ------------------------------------------
+  `journalctl -S -1h`                          everything, since one hour ago
+  `journalctl -S -1h -u ssh`                   only Secure Shell, in that hour
+  `journalctl -S -1h -p err`                   only the ones marked error or worse
+  `journalctl _UID=1001`                       everything one account did
+  `sudo grep -n PermitRootLogin sshd_config`   may root log in over the network
+  `sudo grep -n AllowUsers sshd_config`        and is anybody named explicitly
+  `sudo sshd -T grep -i permitroot`            what the running server actually decided
+  `sudo systemctl reload ssh`                  apply it, from a second open session
+
+Narrow by time, then by service, then by severity, and a week of log becomes readable. The seventh row matters: `sshd -T` prints the effective configuration, defaults included, which is the only way to know what a commented-out line actually means on this version. Ask permission before scanning a network you do not control; that is L04, and a scoped lab with written authorisation.
+
+### SUNBURST: a process that belonged
+
+SolarWinds Orion is a network-monitoring platform that customers installed on their own machines. In December 2020 Mandiant found a backdoor riding inside one of its own files, `SolarWinds.Orion.Core.BusinessLayer.dll`, signed with SolarWinds' own certificate and delivered through the normal update channel, and named it SUNBURST. SolarWinds told the SEC on 14 December 2020 that around 18,000 customers had installed the affected versions. The process was a product the customer had bought. It was running because somebody chose it, it belonged on the machine, and it was in every inventory. Every one of the four commands in this chapter would have shown a service that was supposed to be there.
+
+The book's name for this is again the supply chain attack, and its warning is the point: "A company which has implemented reasonable security controls in its own infrastructure may nevertheless be vulnerable if ... an attacker manages to install a hidden backdoor in software that the company buys from a supplier" [Jøsang, Sect. 2.1.6, p. 30]{.src}. The survey finds what you did not know about. It cannot find what you trusted.
+
+### Worked example: a server nobody documented
+
+::: {.callout-tip}
+## The case
+
+A municipality hands you a server, and the person who built it left eighteen months ago. It is called `srv-web01` and it has run for four hundred days. Nothing about it was written down.
+
+:::
+
+::: {.callout-warning}
+## Two minutes
+
+Which four commands, in which order, and what do you write down before touching anything?
+
+:::
+
+**Reasoning.** Twenty services are running, four of them surprise everybody, and one of those answers on `0.0.0.0`. The log says that service last restarted in 2023 and has written nothing since. Nobody is hiding anything and nothing is broken here. This is what a server looks like after years of ordinary use by people who meant well. A service nobody can name is itself the finding. Identify, then ask who depends on it, then decide, as in L07.
+
+**Result.** Four short lists, dated, with your name on them: what runs and as whom; what listens and where; what systemd knows; what the last hour and the last week wrote. Then three questions for the owner about the unnamed service, and a recommendation: bind it to `127.0.0.1` until somebody claims it. And `sshd_config`: `PermitRootLogin yes` was in force by default, and the fix is one line, reloaded from a second session. That is the book's incident documentation habit applied before there is an incident, "every step ... documented with a timestamp and signature" [Jøsang, Sect. 14.5.2, p. 311]{.src}, and it is what the next person will read.
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                          **Correction**
+  ------------------------------------------------------------------- --------------------------------------------------------------------------------------------------------------------------
+  If a service is running it must be needed.                          Most machines run things nobody chose, installed as dependencies or switched on for a test years ago.
+  Everything that happens on a machine is in the logs.                Logging is a configuration decision, the files rotate away, and a full disk stops the recording.
+  A service listening on the machine is reachable from the network.   It must also be bound to a reachable address and allowed through the firewall [Jøsang, Sect. 6.4]{.src}.
+  Turning off password login makes Secure Shell inconvenient.         A key pair logs you in without typing anything, so it is faster and far harder to guess [Jøsang, Sect. 8.4]{.src}.
+
+## Summary: five points, closing Module 3 {#summary-five-points-closing-module-3 .unnumbered}
+
+1.  Every process runs as somebody, and a service is one the system starts, watches and restarts with nobody logged in.
+
+2.  Listening is not the same as reachable. Read the address in front of the port; the firewall is a separate decision by a separate person.
+
+3.  The journal and `/var/log` hold what services chose to write; narrow by time, service and severity, and remember what a log cannot tell you.
+
+4.  SSH is the service that must stay reachable, so harden it first: no root login, keys instead of passwords, named users, tested from a second session.
+
+5.  Four commands survey a strange machine, and their four answers, written down and dated, are the document the next person reads. Next week those commands become scripts.
+
+## Self-check {#self-check .unnumbered}
+
+1.  A machine shows twelve `nginx` processes. Explain why that is normal, and how you would find the account they run as. (Part 1)
+
+2.  `ss -tlnp` shows one database on `127.0.0.1` and another on `0.0.0.0`. What is the difference, and which one worries you? (Part 2)
+
+3.  Name three things a log cannot tell you, and say what the book suggests for one of them. (Part 3)
+
+4.  Give the three `sshd_config` settings that decide who may log in, and the safe way to change them. (Part 4)
+
+5.  Why would the four survey commands not have caught SUNBURST? (Part 5)
+
+6.  What is the difference between a service and a running program, and where does each appear? (Part 1)
+
+7.  Write the `journalctl` command for SSH errors in the last hour. (Part 3)
+
+## Before L15 {#before-l15 .unnumbered}
+
+Run the four survey commands on your exercise machine and save each answer to a file with `>`: `running.txt`, `listening.txt`, `services.txt`, `lasthour.txt`. Check each with `wc -l`. Module 3 is finished. L15 opens Module 4, and the first thing you do is make a computer do those four commands for you, in Python.
+
+## Glossary {#glossary .unnumbered}
+
+Process / PID
+
+:   A program loaded and running; its number. [Jøsang, Sect. 3.1]{.src}
+
+Service / daemon
+
+:   A process systemd starts at boot, restarts, and knows by name.
+
+systemd / systemctl / journalctl
+
+:   The system manager; its control command; its log query.
+
+`ps -eo`
+
+:   Every process, chosen columns; read the USER column first.
+
+`ss -tlnp`
+
+:   Listening TCP sockets with program and PID; read the address before the port.
+
+Bind address
+
+:   `0.0.0.0` faces every interface; `127.0.0.1` faces only the machine itself.
+
+Listening / reachable / exposed
+
+:   Machine's decision; network's decision; both. [Jøsang, Sect. 6.4]{.src}
+
+Journal / rotation
+
+:   systemd's log store; old files renamed, compressed, and eventually dropped.
+
+`sshd_config`
+
+:   Key and value per line; commented lines show defaults; `sshd -T` shows the result.
+
+Key pair
+
+:   Ownership-based authentication for SSH; public half on the server, private half with you. [Jøsang, Sect. 8.4]{.src}
+
+fail2ban
+
+:   Counts log refusals per address and asks the firewall to drop the address.
+
+Hardening
+
+:   Fewest services, correct settings, written measures, looked at again on a schedule. [Jøsang, Sect. 1.9.3]{.src}
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. <https://doi.org/10.1007/978-3-031-68483-8>. Sect. 1.5, 1.9.3, 1.10.2, 2.1.6, 3.1, 3.4, 6.4, 8.3--8.4, 14.5.2.
+
+-   Ward, B. (2021). *How Linux works: What every superuser should know* (3rd ed.). No Starch Press.
+
+-   Shotts, W. (2026). *The Linux command line: A complete introduction* (3rd ed.). No Starch Press.
+
+-   Kerrisk, M. (n.d.). *ss(8)*. Linux manual pages, man7.org.
+
+-   OpenBSD. (n.d.). *sshd_config(5)*. Manual page.
+
+-   Mandiant. (2020, December 13). *Highly evasive attacker leverages SolarWinds supply chain to compromise multiple global victims with SUNBURST backdoor*.
+
+-   SolarWinds Corporation. (2020, December 14). *Form 8-K*. U.S. Securities and Exchange Commission.
+
+-   Nasjonal sikkerhetsmyndighet. (n.d.). *Grunnprinsipper for IKT-sikkerhet 2.1*, principle 2.3.3.

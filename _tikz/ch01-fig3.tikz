@@ -1,0 +1,11 @@
+\begin{tikzpicture}[node distance=6mm]
+  \node[box,minimum width=30mm] (a) {\textbf{1\ \ A scan runs}\\ looking for anything\\ that answers};
+  \node[box,minimum width=30mm,right=of a] (b) {\textbf{2\ \ Something is found}\\ an old version,\\ an open service};
+  \node[box,minimum width=30mm,right=of b] (c) {\textbf{3\ \ It is used}\\ with a technique that\\ already existed};
+  \node[boxred,minimum width=30mm,right=of c] (d) {\textbf{4\ \ Nobody chose you}\\ you matched\\ a pattern};
+  \draw[arr] (a) -- (b); \draw[arr] (b) -- (c); \draw[arr] (c) -- (d);
+  \node[lbl,below=2mm of a] {threat actor};
+  \node[lbl,below=2mm of b] {vulnerability};
+  \node[lbl,below=2mm of c] {threat scenario};
+  \node[lbl,below=2mm of d] {incident};
+\end{tikzpicture}

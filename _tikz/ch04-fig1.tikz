@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=30mm] (a) {\textbf{The EU adopts it}\\ the text is written once};
+  \node[box,text width=32mm,right=of a] (b) {\textbf{It enters the EEA agreement}\\ or it does not, and nothing follows};
+  \node[boxfill,text width=30mm,right=of b] (c) {\textbf{Regulation}\\ applies as written; the Norwegian law only refers to it};
+  \node[boxfill,text width=30mm,right=of c] (d) {\textbf{Directive}\\ must be rewritten as a Norwegian law first};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (b.east) -- ++(2mm,0) |- (d.west);
+  \node[lbl,below=2mm of c] {GDPR $\rightarrow$ personopplysningsloven};
+  \node[lbl,below=2mm of d] {NIS2 $\rightarrow$ digitalsikkerhetsloven};
+\end{tikzpicture}

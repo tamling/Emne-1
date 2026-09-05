@@ -1,0 +1,41 @@
+% Shared preamble for the chapter figures. The colours and node styles
+% mirror e1reader.sty (the LaTeX course-reader style) so the SVGs look
+% the same as the figures in the PDF reader.
+\documentclass[tikz,border=4pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usetikzlibrary{arrows.meta,positioning,calc,shapes.geometric}
+
+\definecolor{ganavy}{HTML}{0D1F4F}
+\definecolor{gared}{HTML}{BF3D37}
+\definecolor{gaapricot}{HTML}{D8973C}
+\definecolor{gateal}{HTML}{224A4E}
+\definecolor{gagreen}{HTML}{9CE37D}
+\colorlet{navy}{ganavy}
+\colorlet{slate}{gateal}
+\definecolor{rulegrey}{HTML}{BFC6D4}
+\definecolor{boxbg}{HTML}{EDF3F3}
+\definecolor{ahabg}{HTML}{FBF1E1}
+\definecolor{redbg}{HTML}{F8ECEB}
+\definecolor{navybg}{HTML}{E9ECF4}
+
+\tikzset{
+  box/.style={draw=navy,thick,rounded corners=2pt,fill=white,align=center,font=\footnotesize,minimum height=9mm,inner sep=4pt},
+  boxfill/.style={box,fill=navybg},
+  boxdark/.style={box,fill=navy,text=white,draw=navy},
+  boxwarm/.style={box,fill=ahabg,draw=gaapricot},
+  boxred/.style={box,fill=redbg,draw=gared},
+  boxgrey/.style={box,fill=boxbg,draw=rulegrey},
+  arr/.style={-{Stealth[length=2.4mm]},thick,navy},
+  arrwarm/.style={-{Stealth[length=2.4mm]},thick,gaapricot},
+  arrred/.style={-{Stealth[length=2.4mm]},thick,gared},
+  darr/.style={{Stealth[length=2.4mm]}-{Stealth[length=2.4mm]},thick,navy},
+  lbl/.style={font=\scriptsize\color{slate},align=center}
+}
+
+% inline source tags used in a few figure labels
+\newcommand{\src}[1]{{\scriptsize\color{slate}[J\o sang, #1]}}
+\newcommand{\srcp}[1]{{\scriptsize\color{slate}[Python for Everyone, #1]}}
+\newcommand{\term}[1]{\textbf{\color{navy}#1}}
+
+\begin{document}

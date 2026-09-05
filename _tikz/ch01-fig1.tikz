@@ -1,0 +1,14 @@
+\begin{tikzpicture}[node distance=6mm]
+  \node[boxfill,minimum width=32mm] (p) {\textbf{1\ \ Prevent}\\ patch, access, backup};
+  \node[boxfill,minimum width=32mm,right=of p] (w) {\textbf{2\ \ Watch}\\ logs and alerts};
+  \node[boxfill,minimum width=32mm,right=of w] (r) {\textbf{3\ \ Respond}\\ when it happens};
+  \node[boxwarm,minimum width=32mm,right=of r] (d) {\textbf{4\ \ Write it down}\\ so the next one is smaller};
+  \draw[arr] (p) -- (w);
+  \draw[arr] (w) -- (r);
+  \draw[arr] (r) -- (d);
+  \draw[arrwarm] (d.south) -- ++(0,-6mm) -| node[pos=0.25,below,lbl]{what you write down feeds the next round of prevention} (p.south);
+  \node[lbl,above=2mm of p] {preventive};
+  \node[lbl,above=2mm of w] {detective};
+  \node[lbl,above=2mm of r] {corrective};
+  \node[lbl,above=2mm of d] {governance};
+\end{tikzpicture}

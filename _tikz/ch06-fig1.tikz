@@ -1,0 +1,8 @@
+\begin{tikzpicture}
+  \node[boxdark,minimum width=54mm,minimum height=9mm] (n) at (0,0) {\texttt{192 . 168 . 10}};
+  \node[boxwarm,minimum width=20mm,minimum height=9mm,right=0mm of n] (h) {\texttt{. 40}};
+  \node[lbl,above=1mm of n] {network part (nettverksdel): 24 bits};
+  \node[lbl,right=2mm of h,align=left] {machine part\\ (vertsdel)};
+  \node[lbl,below=4mm of n.south east] (m) {the mask /24 draws the line here};
+  \draw[arrred] (m.north) -- (n.south east);
+\end{tikzpicture}

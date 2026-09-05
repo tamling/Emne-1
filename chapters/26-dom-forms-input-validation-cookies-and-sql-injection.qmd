@@ -1,0 +1,332 @@
+# DOM, forms, input validation, cookies and SQL injection {#sec-26-dom-forms-input-validation-cookies-and-sql-injection}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L26. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025): Sect. 11.7.1 (SQL injection and its parameterised fix), 11.7.2 (cross-site scripting), 11.6.3 (OWASP Top 10), 6.1.2 (HTTP methods), 1.10 (authentication and sessions), 3.3 (unpatched components). The DOM and cookie facts follow MDN; this reader closes Emne 1.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+L25 built a page and loaded a script. This chapter follows a value the whole way: a visitor types into a form, the field becomes a request, the request reaches the server, and the server builds a query from it. The question underneath is where a value came from, because that decides whether the server may trust it. Part 1 is the DOM, the page in memory that a script can rewrite. Part 2 is the form, and why the check that counts runs on the server. Part 3 is cookies and sessions, how the server knows who is asking. Part 4 is SQL injection, live, and the one-character fix from L22. Part 5 is the company that lost 156,959 customers' data to exactly this.
+
+Every idea here has appeared before. The form field is L15's "always text". The server-side check is L16's validation. The query is L22's, and the injection is the book's, made to run against a real page [Jøsang, Sect. 11.7.1]{.src}.
+
+::: {.callout-tip}
+## Nordvik's form, and what it trusts
+
+The browser turns Nordvik's page into a tree of objects a script can change, and a form field becomes a parameter that travels to the server. A cookie says who is asking, and a query decides which rows come back. Today: how a value reaches the query, and why every value must be checked again on the server it was never allowed to trust.
+
+:::
+
+[→ The page arrives as text. Part 1 is what the browser turns it into.]{.bridge}
+
+## The DOM
+
+### The page arrives as text, the browser builds a tree
+
+The server sends a web page as a stream of characters and nothing more. HTML is written for a program to read, and the browser has to turn that text into something it can draw. Each tag becomes a node, and the nodes form a tree that starts at a single node called `document` and branches downward. Every element sits inside another, which makes a parent and a child. This tree is the **DOM**, the Document Object Model, and it lives in the browser, on the visitor's machine.
+
+### What a node holds, and how a script reaches it
+
+```
+const felt = document.getElementById("bruker");
+felt.value = "admin";
+felt.removeAttribute("maxlength");
+document.querySelector("h1").textContent = "Endret i nettleseren";
+```
+
+A node knows its tag name, its attributes and the text inside it. JavaScript reaches a node by id, by tag name or by its place in the tree. `document.getElementById` finds one node using the id written in the HTML. Assigning to `value` fills the field without anyone typing. `removeAttribute` takes the length limit off the field completely. Changing a node changes what is drawn on screen straight away, and the file on the server does not change at all. These lines run inside the browser and never reach the server.
+
+### The trap: the page is not the file
+
+  **What the server sent**                                            **What the visitor has**
+  ------------------------------------------------------------------- -----------------------------------------------------------
+  The HTML text is fixed the moment the response leaves the server    The DOM is a live tree the visitor's scripts can rewrite
+  A copy fetched with `curl` shows exactly those characters           The screen may show something those characters never said
+  The rules written into the tags are the rules the author intended   Any rule written into a tag can be removed in the browser
+
+The file the server sent and the page the visitor holds are two different things. The visitor controls the second. This is L25's "assembled, not delivered", taken one step further: not only assembled from many files, but editable after assembly by anyone whose script the page loaded, or by the visitor themselves.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does the browser build out of the HTML text? Where does the DOM live, on the server or the visitor's machine? Name one thing a script can change after the page loads. If a script edits the DOM, does the server's file change?
+
+:::
+
+[→ A form is a request waiting to be sent. Part 2 is where the value goes, and who may trust it.]{.bridge}
+
+## Forms and validation
+
+### A form is a request waiting to be sent
+
+```{.html}
+<form action="/sok" method="get">
+  <label for="bruker">Brukernavn</label>
+  <input id="bruker" name="bruker" maxlength="10" required>
+  <button type="submit">Sok</button>
+</form>
+```
+
+The `form` element says where the request goes (`action`) and which method it uses (`method`). Each `input` carries a `name`, and that name becomes the parameter name. Whatever stands in the field becomes the value of that parameter. The form is a request that has not been sent yet.
+
+### GET in the address, POST in the body
+
+The book names both methods in its HTTP section [Jøsang, Sect. 6.1.2, p. 121]{.src}. With `GET`, the parameters are written into the address after a question mark, visible in the bar, in the browser history and in the server's logs; a `GET` is meant to ask for something rather than change it. With `POST`, the parameters travel in the body of the request, out of the address bar, which suits a password or anything that changes state. Neither hides the value from the network in itself; that is what the HTTPS of L07 and L25 is for.
+
+### Rules written into the form
+
+`required` stops the browser sending the form while the field is empty. `maxlength="10"` stops an eleventh character being typed. Both rules run in the browser, on a machine the visitor controls, and a message shown before the request is sent is a courtesy to an honest user. Part 1 already removed `maxlength` with one line of JavaScript.
+
+### The request does not need the page
+
+```{.code-out}
+student@kali:~/nettapp$ curl -s -G --data-urlencode "bruker=admin' OR '1'='1" http://localhost:5000/sok
+SQL: SELECT tid, bruker, resultat FROM hendelser WHERE bruker = 'admin' OR '1'='1'
+Rader: 21
+```
+
+Any program that speaks HTTP can send the request the form would have sent. `curl` builds the address itself and never loads the HTML at all, so `required` and `maxlength` never run. The value here is sixteen characters against a limit of ten, and the server accepts it, uses it and reports what it did. This is L23's `curl` and L20's "check the arguments" meeting the web.
+
+### The check that counts runs on the server
+
+The browser runs on hardware the visitor owns and may change at will. A rule written into the page is advice to a visitor who wants to follow it. The server is the only machine in the exchange that you control, so every value must be checked again there. This is L16's validation with the reason made sharp: the book's OWASP entry "Broken Access Control" is exactly the failure of not re-checking on the server, "Restrictions on what authenticated users are allowed to do are often not enforced properly" [Jøsang, Sect. 11.6.3, p. 259]{.src}, and its input-validation advice from L16 assumed the check ran where you control it.
+
+::: {.callout-warning}
+## Checkpoint
+
+Where do the parameters of a `GET` request travel? Where do a `POST`'s? What does `maxlength` prevent, and for whom? Why can a request arrive that the form itself would never have sent?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+The browser turns the page into a tree that any script it loads can change, so nothing the page does can be trusted by the server: any program can send the request, and even a `GET` that only reads can change which rows a query returns. Where a value came from is the only thing that decides whether to trust it, and the answer is always outside.
+
+:::
+
+[→ HTTP forgets you between requests. Part 3 is how the server knows who is asking.]{.bridge}
+
+## Cookies and sessions
+
+### HTTP forgets you between requests
+
+Each request arrives on its own, and the server remembers nothing by default. A second request from you looks exactly like a first request from a stranger. Something inside the request has to say which visitor is asking, and that something is a **cookie**. This is the counterpart to the book's authentication chapter: authentication proves who you are once, and the session is how the server keeps knowing it across requests [Jøsang, Sect. 1.10.1, p. 17]{.src}.
+
+### Set-Cookie hands out the session
+
+```{.code-out}
+student@kali:~/nettapp$ curl -s -c kake.txt -X POST -d "bruker=student" http://localhost:5000/logginn
+Innlogget
+student@kali:~/nettapp$ cat kake.txt
+#HttpOnly_localhost  FALSE  /  FALSE  0  session  eyJicnVrZXIiOiJzdHVkZW50In0.aoAmTg.48bKjUScLl5nWAtzRm42GCTyEBc
+student@kali:~/nettapp$ curl -s -b kake.txt http://localhost:5000/minside
+Innlogget som student
+```
+
+The server answers a login with a `Set-Cookie` header in the response. The name here is `session` and the value is what the browser sends back on every later request. `HttpOnly` tells the browser to hide the cookie from scripts in the page, which limits the XSS damage of Part 4's cousin. `curl -c` saves the cookie the login hands out, and `curl -b` sends it back; the server now knows the user.
+
+### Without a cookie the server refuses
+
+```{.code-out}
+student@kali:~/nettapp$ curl -s -i http://localhost:5000/minside | head -3
+HTTP/1.1 401 UNAUTHORIZED
+```
+
+The first request arrives with no cookie and is refused with 401, one of L07's status codes. Nothing about the user is different and nothing was typed wrongly; the request simply carried no proof of who was asking. The cookie decides what the server answers.
+
+### Signed against change, open to reading
+
+The cookie value comes in three parts separated by full stops. The first part is the data, encoded with base64 so it travels safely; base64 is an encoding, not encryption, so anyone can decode it, and the username `student` is plainly readable in it. A signature made with a secret key sits in the third part and lets the server detect any change. So a Flask session cookie is signed against change and open to reading. `HttpOnly` stops page scripts from reading it, and whoever holds the value still can. The book's warning about sessions is the OWASP entry "Identification and Authentication Failures", where attackers "compromise passwords, keys, or cookies to steal identities or take over control of a session" [Jøsang, Sect. 11.6.3, p. 260]{.src}.
+
+::: {.callout-warning}
+## Checkpoint
+
+What problem does a cookie solve for a server that forgets every request? What does `HttpOnly` stop, and what does it leave untouched? What does the signature on a Flask session cookie prevent, and what does it not? Why is `student` readable inside the cookie?
+
+:::
+
+[→ The field lands inside the sentence. Part 4 is the injection, and the one-character fix.]{.bridge}
+
+## SQL injection, on the web
+
+### The field lands inside the sentence
+
+```{.python}
+@app.route("/sok")
+def sok():
+    bruker = request.args.get("bruker", "")
+    sporring = ("SELECT tid, bruker, resultat FROM hendelser "
+                f"WHERE bruker = '{bruker}'")
+    ...
+```
+
+`request.args.get` reads the parameter the form put into the address. The value is pasted straight into the query text with an f-string, which is L22's unsafe version exactly. The database receives one finished sentence and cannot see the join. A quote inside the value ends the value early, and the rest becomes SQL. The book: "The attack is possible if SQL commands take parameters directly from user input" [Jøsang, Sect. 11.7.1, p. 261]{.src}.
+
+### One endpoint, three answers
+
+```{.code-out}
+student@kali:~/nettapp$ curl -s "http://localhost:5000/sok?bruker=admin"
+SQL: SELECT tid, bruker, resultat FROM hendelser WHERE bruker = 'admin'
+Rader: 4
+student@kali:~/nettapp$ curl -s -G --data-urlencode "bruker=admin' OR '1'='1" http://localhost:5000/sok
+SQL: SELECT tid, bruker, resultat FROM hendelser WHERE bruker = 'admin' OR '1'='1'
+Rader: 21
+student@kali:~/nettapp$ curl -s -G --data-urlencode "bruker=admin' OR '1'='1" http://localhost:5000/sok-trygg
+Rader: 0
+```
+
+The first request asks for `admin` and gets the four rows admin owns. The second sends a quote and a test that holds true for all 21 rows, the book's `’ OR 1=1` in a username field [Jøsang, Sect. 11.7.1, p. 262]{.src}. The third sends that same value to the endpoint built with a placeholder, and gets zero. Same input, two endpoints, two outcomes.
+
+### The placeholder keeps the value outside
+
+```{.python}
+@app.route("/sok-trygg")
+def sok_trygg():
+    bruker = request.args.get("bruker", "")
+    rader = db.execute(
+        "SELECT tid, bruker, resultat FROM hendelser WHERE bruker = ?",
+        (bruker,)
+    ).fetchall()
+    ...
+```
+
+The question mark marks a slot, and the value never joins the query text. The database compiles the query first and receives the value afterwards, which is the book's prepare--compile--execute from L22 [Jøsang, Sect. 11.7.1, p. 263]{.src}. A quote inside the value is then just a character in a username, so the injected string matches no user and returns zero. The safe endpoint answered zero, not four, because `admin’ OR ’1’=’1` is not the name of any user.
+
+### A list of dangerous words is not the fix
+
+A blocklist has to name every string an attacker might think of sending. The value used today carried a quote and an `OR`, and no keyword a simple list would catch; banning the letters `OR` would also reject an ordinary surname such as *Nordmann*. This is L16's deny-list, which fails silently and incompletely. The book calls SQL injection "a solved problem that can be easily prevented by standard controls", and names the control: parameterised commands [Jøsang, Sect. 11.7.1, p. 262]{.src}. Not a word list. A placeholder.
+
+::: {.callout-warning}
+## Checkpoint
+
+What turned four rows into 21 in the demonstration? Where does the value travel when a query uses a placeholder? Why did the safe endpoint answer zero rather than four? Name one legitimate username a blocklist for injection might wrongly reject.
+
+:::
+
+[→ One unchecked field. Part 5 is what it cost a company that shipped one.]{.bridge}
+
+## TalkTalk, October 2015
+
+### The case
+
+The attack on the telecoms company TalkTalk in October 2015 was SQL injection. Personal data belonging to 156,959 customers was accessed, and for 15,656 of them the data included bank account numbers and sort codes. The vulnerable webpages had entered the company through its 2009 acquisition of Tiscali's UK operations, and the database software behind those pages was outdated and no longer supported. The Information Commissioner's Office fined the company 400,000 pounds, a record at the time.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that one developer wrote one careless line last year. The pages had entered the company through an acquisition six years earlier, and a fix for the exact bug that was exploited had been available before the attack. Three of the book's OWASP risks line up: injection, because a field reached a query unparameterised [Jøsang, Sect. 11.6.3, p. 260]{.src}; vulnerable and outdated components, because "known vulnerabilities that are not patched expediently" leave the organisation exposed "for long periods" [Jøsang, Sect. 11.6.3, p. 260]{.src}, which is L11's and L07's patch race; and, underneath, an asset nobody had mapped, the L03 first step and L07's "services nobody chose". The fix was one character per query, known and available. Nobody had gone through the inherited pages to apply it.
+
+::: {.callout-important}
+## Key idea
+
+A form rule helps an honest user and stops nobody: any program can send the request, so the validation that matters runs on the server, and every value goes into a query as a placeholder, beside it and never inside it. TalkTalk lost 156,959 customers' data to SQL injection on inherited, unpatched pages, and the book calls injection a solved problem, prevented by the one control this course has taught twice.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS, and the end of Emne 1
+
+Nordvik's one server holds the same shape as every case in this chapter: a form, a query, a session, a supplier's access. Every tool in Module 4 has now met the same data, the failed logins from `auth.log`: counted in Python, kept in a dictionary, written to CSV, loaded into SQLite, queried safely, wrapped in Bash, checked every morning, and shown on a page. The one habit that runs through all of it is L04's first question, asked of every value: where did this come from, and am I allowed to trust it? For a value from outside, the answer is always no, and the placeholder is how you act on it.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                     **Correction**
+  -------------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  The browser validated the input, so the server can trust it.   Any program can send the request; `curl` sent one today. The field really does refuse an eleventh character, for an honest user only.
+  `HttpOnly` makes the session cookie secret.                    Page scripts lose access, and whoever holds the value still reads it. The flag sounds like a lock on the whole cookie and is not [Jøsang, Sect. 11.6.3]{.src}.
+  A blocklist of dangerous words stops injection.                It has to name every string an attacker might send, and it rejects ordinary names. The fix is a placeholder [Jøsang, Sect. 11.7.1]{.src}.
+  SQL injection is an advanced, rare attack.                     The book calls it a solved problem still widely exploited; TalkTalk lost 156,959 records to it [Jøsang, Sect. 11.7.1]{.src}.
+
+## Summary: five points, closing Emne 1 {#summary-five-points-closing-emne-1 .unnumbered}
+
+1.  The browser builds the page into a tree, the DOM, that any script it loads can change; the page the visitor holds is not the file the server sent.
+
+2.  A form is a request waiting to be sent; `GET` puts values in the address, `POST` in the body, and a program can send the request without the page.
+
+3.  Rules written into the page help an honest user and stop nobody; the validation that counts runs on the server, the only machine you control.
+
+4.  HTTP forgets you between requests; a session cookie says who is asking, signed against change and open to reading.
+
+5.  A value from outside goes into a query as a placeholder, beside the SQL and never inside it; that one control, taught in L22 and again here, is the fix for the attack that took TalkTalk.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Which forms you use every day send their values in the address bar? (Part 2)
+
+2.  How would you check that a search page on your own machine uses a placeholder? (Part 4)
+
+3.  What would you want written to a log when a query returns far more rows than usual? (Parts 4--5; L14's logging)
+
+4.  Why does removing `maxlength` in the browser not help an attacker who uses `curl` anyway? (Parts 1--2)
+
+5.  Explain, in the book's three steps, why the placeholder query returned zero rows for the injected input. (Part 4)
+
+6.  Name the three OWASP risks that line up in the TalkTalk case, and the earlier reader each one came from. (Part 5)
+
+## Before the exam {#before-the-exam .unnumbered}
+
+Rebuild today's injection demo against your own exercise database, then write the one-line fix with a placeholder. If you can explain why the fix works, in the book's prepare--compile--execute terms, you are ready for the exam question. Then look back across the four modules: the field, the network, the machine, the script. The exam asks you to follow one value through them and say, at each step, where it came from and whether it could be trusted.
+
+## Glossary {#glossary .unnumbered}
+
+DOM
+
+:   The Document Object Model: the page built into a tree of nodes in the browser.
+
+Node / `document`
+
+:   One element in the tree; the root of it.
+
+`getElementById` / `value` / `removeAttribute`
+
+:   Reach a node; set a field; strip an attribute, in the browser.
+
+Form / `action` / `method` / `name`
+
+:   A request waiting to send; where; how; the parameter name.
+
+GET / POST
+
+:   Values in the address; values in the body. [Jøsang, Sect. 6.1.2]{.src}
+
+Client-side validation
+
+:   `required`, `maxlength`: advice to an honest user; runs where the visitor controls it.
+
+Server-side validation
+
+:   The check on the machine you control; the one that counts. [Jøsang, Sect. 11.6.3]{.src}
+
+Cookie / `Set-Cookie` / session
+
+:   What a request carries to say who is asking; the header that hands it out; the state it keeps. [Jøsang, Sect. 1.10.1]{.src}
+
+`HttpOnly`
+
+:   Hides a cookie from page scripts; not from whoever holds the value.
+
+base64 / signature
+
+:   Encoding, not encryption, so readable; a check that detects change.
+
+SQL injection
+
+:   Input that becomes part of the query; `’ OR ’1’=’1`. [Jøsang, Sect. 11.7.1]{.src}
+
+Placeholder / parameterised query
+
+:   `?`; the value bound after the query is compiled; the fix. [Jøsang, Sect. 11.7.1]{.src}
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. <https://doi.org/10.1007/978-3-031-68483-8>. Sect. 1.10, 3.3, 6.1.2, 11.6.3, 11.7.1--11.7.2.
+
+-   MDN Web Docs. (n.d.). *Introduction to the DOM*; *Using HTTP cookies*. Mozilla.
+
+-   OWASP. (n.d.). *SQL injection prevention cheat sheet*. OWASP Cheat Sheet Series.
+
+-   Information Commissioner's Office. (2016, October 5). *TalkTalk gets record £400,000 fine for failing to prevent October 2015 attack* \[Press release\].

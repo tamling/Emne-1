@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[boxfill,text width=28mm] (a) {\textbf{Associate}\\ the wireless version of plugging in};
+  \node[boxfill,text width=28mm,right=of a] (b) {\textbf{Authenticate}\\ usually, prove you know the password};
+  \node[box,text width=28mm,right=of b] (c) {\textbf{Ask for settings}\\ DHCP, exactly as in L06};
+  \node[box,text width=28mm,right=of c] (d) {\textbf{Look up names}\\ DNS, exactly as in L06};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+  \node[lbl,below=1.5mm of {$(a.south)!0.5!(b.south)$}] {new: radio only};
+  \node[lbl,below=1.5mm of {$(c.south)!0.5!(d.south)$}] {unchanged from cable};
+\end{tikzpicture}

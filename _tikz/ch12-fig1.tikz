@@ -1,0 +1,10 @@
+\begin{tikzpicture}[node distance=3mm]
+  \node[boxdark,minimum width=22mm,minimum height=9mm] (v) {\texttt{find}};
+  \node[boxfill,minimum width=24mm,minimum height=9mm,right=of v] (s) {\texttt{/etc}};
+  \node[boxwarm,minimum width=34mm,minimum height=9mm,right=of s] (t) {\texttt{-name "*.conf"}};
+  \node[boxgrey,minimum width=34mm,minimum height=9mm,right=of t] (a) {\texttt{-exec \dots\ \{\} \textbackslash;}};
+  \node[lbl,below=1mm of v] {verb};
+  \node[lbl,below=1mm of s] {where to start};
+  \node[lbl,below=1mm of t] {test to apply};
+  \node[lbl,below=1mm of a] {optional action};
+\end{tikzpicture}

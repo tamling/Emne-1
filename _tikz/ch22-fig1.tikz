@@ -1,0 +1,7 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=28mm] (a) {\textbf{connect()}\\ opens the file, returns a connection};
+  \node[boxfill,text width=28mm,right=of a] (b) {\textbf{cursor()}\\ a place to run one statement at a time};
+  \node[boxwarm,text width=28mm,right=of b] (c) {\textbf{execute()}\\ sends the SQL text, and the values separately};
+  \node[boxdark,text width=28mm,right=of c] (d) {\textbf{fetchall()}\\ returns the rows the statement produced};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+\end{tikzpicture}

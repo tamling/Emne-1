@@ -1,0 +1,7 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[boxred,text width=27mm] (a) {\textbf{A familiar name}\\ announced by anybody at all};
+  \node[boxred,text width=27mm,right=of a] (b) {\textbf{A stronger signal}\\ so the device prefers it};
+  \node[box,text width=27mm,right=of b] (c) {\textbf{Your device joins}\\ without asking you first};
+  \node[boxwarm,text width=27mm,right=of c] (d) {\textbf{Everything passes through}\\ on its way to the real internet};
+  \draw[arrred] (a)--(b); \draw[arrred] (b)--(c); \draw[arrred] (c)--(d);
+\end{tikzpicture}

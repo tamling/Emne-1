@@ -1,0 +1,464 @@
+# Keeping many things {#sec-17-keeping-many-things}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L17. **Reading time.** About 45 minutes.\
+**Primary reading.** Horstmann & Necaise, *Python for Everyone* (3rd ed.): Chapter 6 (lists: creating, accessing, appending, common algorithms), Sect. 8.1 (sets), 8.2 (dictionaries), 8.3 (complex structures), Sect. 2.2 (the standard library and `import`). Jøsang (2025) Sect. 6.1.1 for private addresses, 14.5.2 for why a finding has parts.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+One name held one value in L15, and a tally held one number in L16. This chapter puts many values behind one name, and the driving question is the difference between a number and a finding. "Three refusals" is a number. "Two refusals for `student` and one for `admin`, all from one internal address" is a finding, and it takes three structures to hold.
+
+Part 1 is the list, many values kept in order. Part 2 is the dictionary, a value reached by name. Part 3 is three tools that replace bookkeeping you would otherwise write. Part 4 is the library those tools came from, and the habit of looking there first. Part 5 reads `auth.log` once and answers three questions at once.
+
+::: {.callout-tip}
+## Keeping Nordvik's many things
+
+Reviewing Nordvik's server hands you many things at once: its user accounts, the ports it is listening on, the lines of its log, a list of findings. Each needs a structure that keeps it in order and lets you ask questions of it. By the end of this chapter, one script reads Nordvik's log and reports which accounts were refused, how often, and from how many addresses.
+
+:::
+
+[→ One name held one value in L15. Part 1 puts many behind it, kept in order.]{.bridge}
+
+## Lists
+
+### Many values, one name
+
+::: {.callout-note}
+## List
+
+A list is a container that stores a sequence of values. [Python for Everyone, Sect. 6.1]{.src}
+
+:::
+
+```
+brukere = ["student", "anneli", "timo", "student"]
+```
+
+Square brackets make a list, and the commas separate the values inside it. A list keeps its order, so what you put in first stays first. It also keeps duplicates, because two refusals from one account are two facts, not one. L15 gave one value per name; this is the same idea with many values kept in order.
+
+### Reaching one value by position
+
+```{.bash}
+print(brukere[0])      # student
+print(brukere[-1])     # student, the last one
+print(brukere[1:3])    # ['anneli', 'timo']
+```
+
+Counting starts at zero, exactly as it did for the characters of a string in L15. The book: "list positions are counted starting with 0" [Python for Everyone, Sect. 6.1]{.src}. A negative number counts from the end, so `[-1]` is the last value however long the list is. Two numbers with a colon take a slice, and the slice stops before the second number, the same rule applied to a different kind of sequence.
+
+### Building one as you go
+
+```{.python}
+adresser = []
+for linje in open("auth.log"):
+    if "Failed password" in linje:
+        adresser.append(linje.split()[-4])
+print(adresser)
+```
+
+An empty list is created before the loop, exactly as the counter was in L16. The method `.append()` puts one value on the end of it. After the loop the list holds one entry for every line that passed the check. This is the same three-place pattern as the counter: create, add, read. The book lists it as "Collecting and Counting Matches" among the common list algorithms [Python for Everyone, Sect. 6.3]{.src}.
+
+### What you can ask a list
+
+Five things, and you already met four of them on strings in L15. The same words work on anything Python treats as a sequence.
+
+  **You write**          **It answers**
+  ---------------------- -------------------------------------------------
+  `len(brukere)`         How many values are in it
+  `"admin" in brukere`   Whether that value is there, True or False
+  `brukere[0]`           The value at that position
+  `brukere.append(x)`    Nothing; it adds `x` to the end
+  `sorted(brukere)`      A new list in order, leaving the original alone
+
+The last row catches people out. `sorted()` hands back a new list rather than rearranging the old one; `brukere.sort()` rearranges in place. The book covers both [Python for Everyone, Sect. 6.2]{.src}.
+
+### Lists in security work
+
+A firewall rule is built from a list of addresses, and an access review works through a list of accounts. A list of open ports comes out of the `ss` output you read in L14. A list of lines is what a log file becomes the moment a script opens it. The structure is chosen for the question, not for the syntax you remember.
+
+::: {.callout-important}
+## Key idea
+
+A list keeps many values under one name, in order and with duplicates kept, because two refusals from one account are two facts. Almost everything in security work arrives as a list, addresses, accounts, open ports, log lines, findings, and the order is itself information.
+
+:::
+
+[→ A position says where. Part 2 reaches a value by its name instead.]{.bridge}
+
+## Dictionaries
+
+### What a list cannot answer
+
+::: {.callout-note}
+## The limit of a list
+
+A list keeps values in order, but cannot say how many for each name. A dictionary holds one value per name: a count per account, or a whole record. A missing key raises `KeyError`, which usually means the data was not the shape you assumed.
+
+:::
+
+Set the problem before the syntax. "How many refusals for `student`?" is a question a list can only answer by walking the whole thing every time. A dictionary answers it directly.
+
+### A name and a value
+
+```{.python}
+antall = {"student": 2, "admin": 1}
+print(antall["student"])         # 2
+for konto, n in antall.items():
+    print(konto, n)
+```
+
+Curly brackets rather than square ones, and inside them a name, a colon, then a value. The name is called the **key**, and you reach the value by writing the key in square brackets. The book: "A dictionary is a container that keeps associations between keys and values" [Python for Everyone, Sect. 8.2]{.src}. The method `.items()` walks the pairs, which is how a report loop reads it. Compare `antall["student"]` with `biter[6]`: the name says what it is, and the number says nothing.
+
+### A key that is not there
+
+```{.code-out}
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+KeyError: 'root'
+```
+
+Asking for a key the dictionary does not have stops the script. It does not come back as zero or as empty, and that is deliberate: a missing key usually means the data was not the shape you assumed. The book: "It is an error to access a key that is not in the dictionary" [Python for Everyone, Sect. 8.2]{.src}. The traceback is short, and the last line still carries the whole message.
+
+### Asking gently
+
+```{.python}
+linje = {'tid': '14:47:12', 'konto': 'student'}
+print(linje.get('adresse'))          # None
+print(linje.get('adresse', '?'))     # ?
+print('konto' in linje)              # True
+```
+
+The method `.get()` hands back `None` when the key is missing, instead of stopping. Give it a second argument and that is what comes back instead of `None`. The book: "you can use the get method, which returns a default value if the key is not in the dictionary" [Python for Everyone, Sect. 8.2]{.src}. The word `in` works on a dictionary too, and asks whether a key is there. `None` is a value in its own right, and it means nothing is here rather than zero.
+
+### Which handle fits the question
+
+  **The question**                         **List**              **Dictionary**
+  ---------------------------------------- --------------------- ------------------------
+  How many altogether                      Good                  Good
+  What came third                          Good                  Not what it is for
+  How many for this account                Painful               Straightforward
+  Does this name appear                    Slow on a long list   Immediate
+  What is the whole record for this line   No                    Yes, one key per field
+
+Choose the structure from the question you are asking. Both are ordinary Python, and both are walked by the same `for` loop. The fourth row becomes a real difference at scale, and the book's "Hashing" note explains why: a dictionary finds a key without searching [Python for Everyone, Sect. 8.1, ST 1]{.src}.
+
+### When a finding has parts
+
+::: {.callout-note}
+## A finding has parts
+
+Host, port, service, time; rarely one number. One dictionary per finding keeps its parts together. A list of those dictionaries is what almost every security tool hands you.
+
+:::
+
+```{.python}
+funn = [
+    {"host": "srv-web01", "port": 8080, "service": "python3", "tid": "14:47"},
+    {"host": "srv-web01", "port": 22,   "service": "sshd",    "tid": "14:47"},
+]
+for f in funn:
+    print(f["host"], f["port"], f["service"])
+```
+
+This is the shape of JSON, which you will meet constantly without being taught it separately; the book's toolbox on JSON shows the same list-of-dictionaries shape coming back from the web [Python for Everyone, Sect. 8.3, Toolbox 1]{.src}. It is also the shape of Jøsang's incident record: a finding is "a sign that an incident may already have occurred" [Jøsang, Sect. 14.5.2, p. 311]{.src}, and a sign has a where, a what and a when.
+
+::: {.callout-important}
+## Key idea
+
+A dictionary answers what a list cannot: one value per name, so you can count per account or hold a whole record as named facts. A finding is rarely one number, so one dictionary per finding keeps its parts together, and a list of those dictionaries is what almost every security tool hands you.
+
+:::
+
+[→ You could write the bookkeeping yourself. Part 3 is the three tools that already did.]{.bridge}
+
+## Counting, grouping and sets
+
+### Somebody already wrote the counting
+
+```{.bash}
+# by hand: three lines of bookkeeping per pass
+if konto not in antall:
+    antall[konto] = 0
+antall[konto] = antall[konto] + 1
+
+# with Counter: one line
+from collections import Counter
+antall = Counter()
+antall[konto] += 1
+```
+
+Counting per key by hand takes three lines on every pass: check whether the key is there, start it at zero if not, then add one. The usual mistake is resetting a count that was already there. `Counter` does all of it, and a missing key counts as zero rather than stopping. That is the argument for the whole part.
+
+### Counting by position, which is wrong
+
+```{.bash}
+konto = biter[-4]        # looks like the account field
+```
+
+```{.code-out}
+[('127.0.0.1', 3)]
+```
+
+The account name looks like the fourth field from the end, so this counts that. The answer is an address rather than an account, and nothing in the run said so. The script did not fail. It produced a confident wrong answer, which is the expensive kind.
+
+### Why the two answers differ
+
+```{.code-out}
+... sshd[9166]: Failed password for student from 127.0.0.1 port 47596 ssh2
+... sshd[9170]: Failed password for student from 127.0.0.1 port 47612 ssh2
+... sshd[9174]: Failed password for invalid user admin from 127.0.0.1 port 47628 ssh2
+```
+
+The three refusal lines are not all the same shape. The third carries two extra words, `invalid user`, before the account name. So counting from the front lands on a different field for that line, and counting from the back lands on a different field for the other two. The difference is two words, and it moves every field after them.
+
+### Naming the field you want
+
+```
+konto = biter[biter.index("for") + 1]
+if konto == "invalid":
+    konto = biter[biter.index("user") + 1]
+```
+
+```{.code-out}
+[('student', 2), ('admin', 1)]
+```
+
+The method `.index()` finds where a word sits, so the field after it can be taken by name. The word after `for` is the account, unless that word is `invalid`, and then it is after `user`. Two extra lines, and the script now handles both shapes. The rule: name the field you want rather than counting to it. The book's version is its linear-search algorithm, find the position of a known value and work from there [Python for Everyone, Sect. 6.3]{.src}.
+
+### The most common ones
+
+`.most_common()` sorts by count and hands back the largest first. Give it a number and you get that many, which is how a report stays short. L12 asked this question with `sort | uniq -c | sort -rn`; this is the same answer, kept in a structure you can ask more of. The round brackets in the output make a **tuple**, a list that cannot be changed [Python for Everyone, Sect. 6.4, ST 5]{.src}. Name it and move on.
+
+### Grouping instead of counting
+
+```{.python}
+from collections import defaultdict
+adresser = defaultdict(list)
+adresser[konto].append(adresse)
+```
+
+```{.code-out}
+student ['127.0.0.1', '127.0.0.1']
+admin ['127.0.0.1']
+```
+
+A `Counter` keeps a number per key. A `defaultdict` keeps whatever you ask for per key. Ask for a list per key and you can collect the addresses each account was tried from. Grouping is not counting, and the two questions are answered by two structures. The book builds the same shape by hand, "A Dictionary of Lists" [Python for Everyone, Sect. 8.3.2]{.src}. The duplicate in the list is the point: it is a faithful record of what happened.
+
+### Only the distinct ones
+
+```
+adresser = defaultdict(set)
+adresser[konto].add(adresse)
+```
+
+```{.code-out}
+student 1 ['127.0.0.1']
+admin 1 ['127.0.0.1']
+```
+
+A **set** keeps one of each. Adding something already in it is not an error and not a duplicate. A set has no order, so it answers which ones rather than in what sequence. Ask a set whether a value is in it and the answer comes back at once. The book: "A set stores a collection of unique values", and "Sets use an unordered representation" [Python for Everyone, Sect. 8.1]{.src}. Its worked example is "Counting Unique Words", which is this problem with words instead of addresses [Python for Everyone, Sect. 8.1, WE 1]{.src}. Two entries became one, and the count of distinct addresses is now correct; the book's "Dictionary of Sets" is exactly this shape [Python for Everyone, Sect. 8.3.1]{.src}.
+
+[→ Counter came from a module. Part 4 is the library it belongs to, and the habit of looking first.]{.bridge}
+
+## The standard library
+
+### What comes with Python already
+
+The standard library is code installed with Python that nobody has to fetch. You bring a piece of it into a script with the word `import` at the top of the file. The book: "Python has a standard library that provides functions and data types for your code", and "A library module must be imported into your program before it can be used" [Python for Everyone, Sect. 2.2]{.src}. The `collections` module gave you `Counter` and `defaultdict`. Looking first is a professional habit, not laziness.
+
+### A pattern is not a check
+
+```{.python}
+from ipaddress import ip_address
+ip_address("999.999.999.999")
+```
+
+```{.code-out}
+Traceback (most recent call last):
+  File "<string>", line 2, in <module>
+  File "/usr/lib/python3.11/ipaddress.py", line 54, in ip_address
+    raise ValueError(f'{address!r} does not appear to be an IPv4 or IPv6 address')
+ValueError: '999.999.999.999' does not appear to be an IPv4 or IPv6 address
+```
+
+A pattern of four numbers with dots accepts `999.999.999.999` happily. The `ipaddress` module refuses it, because no such address can exist. The difference is between something shaped like an address and something that is one, which is L16's warning made concrete. This traceback shows two files: yours at the top, and Python's own below it.
+
+### Addresses as things, not text
+
+```{.python}
+from ipaddress import ip_address, ip_network
+print(ip_address('127.0.0.1').is_private)                     # True
+print(ip_address('8.8.8.8').is_private)                       # False
+print(ip_address('127.0.0.1') in ip_network('127.0.0.0/8'))   # True
+print(ip_address('8.8.8.8') in ip_network('127.0.0.0/8'))     # False
+```
+
+`ip_address()` turns a string into an object that knows it is an address. `ip_network()` does the same for a whole range written with a slash. Write one address `in` one network and Python answers L06's question, same network or not, which was real work by hand and is one line here. `is_private` knows the reserved ranges from L06 and L09, the ones Jøsang describes as used inside organisations while public addresses route across the internet [Jøsang, Sect. 6.1.1, p. 118]{.src}.
+
+### Look before you write
+
+A hand-written address check takes an afternoon and is wrong at the edges. The module took one import line and handles ranges, versions and malformed text. The same is true for dates, file paths, comma-separated files and JSON, all of which the book covers as toolboxes rather than as things to write yourself [Python for Everyone, Sect. 7.2 Toolbox 1; 7.3 Toolbox 2; 8.3 Toolbox 1]{.src}. The habit is two minutes of searching before any fiddly code.
+
+[→ Three structures, one import. Part 5 reads auth.log once and answers three questions.]{.bridge}
+
+## Summarising a real log
+
+### The task
+
+Read `auth.log` once and answer three questions in one run: which accounts were refused, how often, and from how many different addresses. Also say how many lines were not used, which is the L16 habit kept. Everything needed is behind us: `Counter`, `defaultdict`, a set, and one module import. Name the three structures before you write anything.
+
+### The finished script
+
+```{.python}
+from collections import Counter, defaultdict
+from ipaddress import ip_address
+
+antall = Counter()
+adresser = defaultdict(set)
+hoppet = 0
+with open("auth.log") as fil:
+    for linje in fil:
+        biter = linje.split()
+        if "Failed password" not in linje or len(biter) < 12:
+            hoppet = hoppet + 1
+            continue
+        konto = biter[biter.index("for") + 1]
+        if konto == "invalid":
+            konto = biter[biter.index("user") + 1]
+        adresse = biter[biter.index("from") + 1]
+        antall[konto] += 1
+        adresser[konto].add(adresse)
+
+for konto, n in antall.most_common():
+    interne = sum(1 for a in adresser[konto] if ip_address(a).is_private)
+    print(f"{n:3d}  {konto:10s} {len(adresser[konto])} address(es), {interne} internal")
+print(f"{hoppet} lines skipped")
+```
+
+Two imports, three things to fill in, one loop, and one report at the end. The skipping counter and the `continue` are unchanged from L16. The last loop reads the results, and nothing inside it touches the file again. Everything from line 8 down to line 18 is inside the file loop.
+
+### What it says when you run it
+
+```{.code-out}
+  2  student    1 address(es), 1 internal
+  1  admin      1 address(es), 1 internal
+66 lines skipped
+```
+
+Three questions answered, and a fourth sentence saying what the answer does not cover. The count of internal addresses comes from `is_private`. Sixty-six lines were skipped because most lines in this file are not password refusals; they are lines of other kinds, and the script says so.
+
+### The lines were being written the whole time
+
+Capital One has published that unauthorised access to its data happened on 22 and 23 March 2019. The company learned of it on 19 July 2019, after an outside researcher reported it. Roughly four months. The access left lines in logs that existed the whole time; nobody was summarising them. Stay on the counting point: a script like the one above, run every morning against the right log, turns a line nobody reads into a number somebody notices. How the access happened is Emne 2 and Emne 3 material.
+
+::: {.callout-warning}
+## Try it
+
+Run the script on your own `/var/log/auth.log`. Then add a fourth question: which hour of the day had the most refusals. You need one more `Counter` and the slice `biter[0][11:13]` from L15.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                              **Correction**
+  ------------------------------------------------------- -------------------------------------------------------------------------------------------------------------------
+  A field is always in the same position on every line.   Two extra words move every field after them. Name the field you want.
+  A set is a tidy list.                                   It keeps one of each, has no order, and answers membership at once [Python for Everyone, Sect. 8.1]{.src}.
+  A missing key comes back as zero.                       It stops the script, unless you ask with `get()` or use a `Counter` [Python for Everyone, Sect. 8.2]{.src}.
+  Writing it yourself is faster than searching.           The module handles the edge cases you have not met yet.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  A list keeps many values in order, duplicates included, and a position is how you reach one; create it before the loop, `append` inside, read after.
+
+2.  A dictionary reaches a value by name, which is how each account can carry its own count or its own record; a missing key stops the script unless you ask with `get`.
+
+3.  `Counter` counts per key, `defaultdict` groups per key, and a set keeps one of each; choose by the question.
+
+4.  Name the field you want rather than counting to it, because one line of another shape moves every field.
+
+5.  Look in the standard library before writing anything fiddly; `ipaddress` knows what an address is, and a pattern does not.
+
+## Self-check {#self-check .unnumbered}
+
+1.  When would you choose a set over a list, and what do you give up by doing that? (Part 3)
+
+2.  One counting script gave `127.0.0.1` and another gave `student`. Which was wrong, and why? (Part 3)
+
+3.  A dictionary is asked for a key it does not have. What are the three ways of handling that, and which is right for a count? (Parts 2--3)
+
+4.  Write the dictionary for one finding with a host, a port and a time, and the loop that prints a list of them. (Part 2)
+
+5.  Why does `ip_address("999.999.999.999")` fail where a pattern would not, and which reader was that warning from? (Part 4)
+
+6.  In the finished script, which line skips, which line counts, and which line groups? (Part 5)
+
+## Before L18 {#before-l18 .unnumbered}
+
+Read Chapter 6 and Sect. 8.1--8.2 of *Python for Everyone*. Then run the finished script on your own `auth.log` and write down the three numbers it produces. In L18 the pieces of this script become functions with names, so that the same reading can be done on any file without copying the code.
+
+## Glossary {#glossary .unnumbered}
+
+List
+
+:   An ordered sequence of values, duplicates allowed; `[...]`. [Python for Everyone, Sect. 6.1]{.src}
+
+Index / slice / negative index
+
+:   Position from 0; a range; counted from the end.
+
+`append` / `sorted` / `sort`
+
+:   Add to the end; a new ordered copy; reorder in place. [Python for Everyone, Sect. 6.2]{.src}
+
+Dictionary / key / value
+
+:   Associations from names to values; `{key: value}`. [Python for Everyone, Sect. 8.2]{.src}
+
+`KeyError` / `get` / `in`
+
+:   Missing key stops the script; ask with a default; test for a key.
+
+`None`
+
+:   The value meaning nothing is here; not zero.
+
+List of dictionaries
+
+:   The shape of findings and of JSON. [Python for Everyone, Sect. 8.3]{.src}
+
+`Counter` / `most_common`
+
+:   Count per key; largest first. (`collections`)
+
+`defaultdict`
+
+:   A dictionary that creates a default value for a missing key. (`collections`)
+
+Set
+
+:   Unique values, no order, immediate membership test. [Python for Everyone, Sect. 8.1]{.src}
+
+Tuple
+
+:   An unchangeable list; `(...)`. [Python for Everyone, Sect. 6.4, ST 5]{.src}
+
+Standard library / `import`
+
+:   Code shipped with Python; bring a module in at the top of the file. [Python for Everyone, Sect. 2.2]{.src}
+
+`ipaddress`
+
+:   Addresses and networks as objects; `is_private`, `in`.
+
+## Sources {#sources .unnumbered}
+
+-   Horstmann, C., & Necaise, R. (2019). *Python for everyone* (3rd ed.). Wiley. Sect. 2.2; Chapter 6; Sect. 8.1--8.3.
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 6.1.1, 14.5.2.
+
+-   Python Software Foundation. (n.d.). *collections: Container datatypes*; *ipaddress: IPv4/IPv6 manipulation library*. Python 3.11 documentation.
+
+-   Capital One. (n.d.). *2019 Capital One cyber incident: What happened*.

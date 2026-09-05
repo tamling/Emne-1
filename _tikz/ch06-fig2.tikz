@@ -1,0 +1,11 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=27mm] (a) {\textbf{1\ \ Discover}\\ who can give me settings?};
+  \node[boxfill,text width=27mm,right=of a] (b) {\textbf{2\ \ Offer}\\ here is an address};
+  \node[box,text width=27mm,right=of b] (c) {\textbf{3\ \ Request}\\ I will take that one};
+  \node[boxfill,text width=27mm,right=of c] (d) {\textbf{4\ \ Acknowledge}\\ it is yours, for this long};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+  \node[lbl,below=1.5mm of a] {laptop, shouted to all};
+  \node[lbl,below=1.5mm of b] {server};
+  \node[lbl,below=1.5mm of c] {laptop};
+  \node[lbl,below=1.5mm of d] {server};
+\end{tikzpicture}

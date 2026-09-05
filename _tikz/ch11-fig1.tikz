@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=3mm]
+  \node[boxdark,minimum width=22mm,minimum height=9mm] (v) {\texttt{ls}};
+  \node[boxwarm,minimum width=22mm,minimum height=9mm,right=of v] (o) {\texttt{-l}};
+  \node[boxfill,minimum width=30mm,minimum height=9mm,right=of o] (t) {\texttt{/etc}};
+  \node[lbl,below=1mm of v] {verb: what to do};
+  \node[lbl,below=1mm of o] {option: how to do it};
+  \node[lbl,below=1mm of t] {target: what to do it to};
+  \node[lbl,above=1mm of o] {``List, in the long format, the directory called /etc''};
+\end{tikzpicture}

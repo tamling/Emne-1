@@ -1,0 +1,372 @@
+# Error handling, file paths and reliable scripts {#sec-20-error-handling-file-paths-and-reliable-scripts}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L20. **Reading time.** About 45 minutes.\
+**Primary reading.** Horstmann & Necaise, *Python for Everyone* (3rd ed.): Sect. 7.5 (exception handling: `try`, `except`, `finally`, "raise early, handle late"), Sect. 7.6 (handling input errors), Sect. 7.3 (command line arguments), Toolbox 7.2 (files and directories), Sect. 1.7 (errors). Jøsang (2025) Sect. 3.5, 14.5.2.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+In L19 everything worked because every file sat exactly where the script expected it. This chapter is about the other mornings: the log is missing, the argument is wrong, a line is not what it should be. The script has to survive those, say what happened, and tell the thing that ran it whether it succeeded. Part 1 is what an exception is and how to read one. Part 2 is `try` and `except`, and the one you must never write. Part 3 is why "it worked in my folder" is how scripts break. Part 4 is arguments, error streams and exit codes. Part 5 is the case where a program read past the end of what it was given.
+
+The book's programming tip for this whole reader is three words: "Raise Early, Handle Late" [Python for Everyone, Sect. 7.5, PT 1]{.src}.
+
+::: {.callout-tip}
+## A script Nordvik can run without you
+
+In L19 everything worked because every file sat exactly where the script expected it. Today the script survives a missing log, a wrong argument and a bad line, and reports what happened. The same log reader becomes a tool somebody at Nordvik can schedule every morning and trust when nobody is watching.
+
+:::
+
+[→ Python stops the program when it meets something it cannot do. Part 1 is what that stop is, and how to read it.]{.bridge}
+
+## Exceptions and tracebacks
+
+### What an exception is
+
+::: {.callout-note}
+## Exception
+
+Python stops the program when it meets something it cannot do. That stop is called an exception, and it carries a name and a message. An exception is not a fault in Python but a report about your data. Nothing after the failing line runs.
+
+:::
+
+The book: "When a program detects a problem that it cannot solve, it can throw an exception ... an exception object contains a description of the problem" [Python for Everyone, Sect. 7.5]{.src}. You met tracebacks in L15 and L18 as things that happened to you; this chapter treats them as things your script can decide about.
+
+### What a traceback shows you
+
+A traceback is the block of text Python prints on its way out. The middle lines show the path the program took to the failure, which is the call stack from L18. The last line names the exception type and adds the detail. The quoted value at the end is the thing Python could not handle.
+
+### Read it from the bottom up
+
+  **The line**                          **What to do with it**
+  ------------------------------------- ---------------------------------------------------
+  `Traceback (most recent call last)`   The same sentence every time; skip it
+  Your own code                         The frames you wrote, higher up; where to fix
+  Python, or a library you called       Nearest the exception line; usually not the fault
+  The type and the detail               Start here, at the bottom
+
+### The two you will meet most
+
+`FileNotFoundError` means the path you gave does not exist from here. `ValueError` means the value had the right type but the wrong content; the text `tjue` is a word Python cannot read as a number. Both stop the script at once, and both name exactly what was handed to them. The book's input-error section is built around the second: "int(\"tjue\")" style input "causes the int function to raise a ValueError" [Python for Everyone, Sect. 7.6]{.src}.
+
+### The trap: the top line is not the answer
+
+  **Not this**                                                              **But this**
+  ------------------------------------------------------------------------- -----------------------------------------------------------------------
+  The reader sees the first line and reports that Python crashed            The reader goes to the last line and names the type
+  The report reaches a colleague as "it does not work" with no type named   The report says `FileNotFoundError: auth.lg`, and the typo is visible
+  The next person starts the search with nothing to search for              The next person has a file, a line and a value
+
+::: {.callout-warning}
+## Checkpoint
+
+Which end of a traceback do you read first, and why? What does `FileNotFoundError` tell you that "an error occurred" does not? Name the exception raised by `int("tjue")` and say what it means.
+
+:::
+
+[→ try marks the lines that can fail for reasons outside your control. Part 2 is the shape.]{.bridge}
+
+## try and except
+
+### What they change
+
+`try` marks the lines that can fail for reasons outside your control. `except` names what should happen when one particular failure occurs. The script now decides what the failure means instead of ending abruptly. Use it where the world can go wrong, a missing file, a bad line, a network that did not answer, not to paper over your own mistakes. The book: "you handle an exception with a try statement", and the handler "should be placed where it makes sense to deal with the problem" [Python for Everyone, Sect. 7.5]{.src}.
+
+### The shape of try and except
+
+```{.python}
+import sys
+
+def les_linjer(sti):
+    """Read a file, or stop with a message the user can act on."""
+    try:
+        with open(sti, encoding="utf-8") as f:
+            return f.readlines()
+    except FileNotFoundError:
+        print(f"Fant ikke filen: {sti}", file=sys.stderr)
+        sys.exit(1)
+    except PermissionError:
+        print(f"Har ikke lov til aa lese: {sti}", file=sys.stderr)
+        sys.exit(1)
+```
+
+The risky call sits inside `try`, and nothing else goes in there. Each `except` block handles one named exception and nothing more. The message names the file, so the reader can check the spelling. `sys.exit(1)` ends the run with a code that Part 4 explains. The second handler is L13's permission check surfacing inside Python.
+
+### Catch what you expect
+
+Name the exception you can actually do something about. A missing file has an answer, which is to check the name and the folder. Catching `FileNotFoundError` alone leaves every other fault fully visible. A typo in your own code still produces a traceback, which is what you want, because a traceback is the fastest way to find it. The book's tip: catch exceptions "where you can handle them", and let the rest propagate [Python for Everyone, Sect. 7.5, PT 1]{.src}.
+
+### else and finally
+
+Code in `else` runs only when the `try` block finished without an exception. Code in `finally` runs either way, so cleanup happens even after a failure; the book: "the finally clause is executed whether or not an exception occurred" [Python for Everyone, Sect. 7.5]{.src}. Keeping the safe work in `else` keeps the `try` block down to one line. `with open` already gives you the cleanup that matters most, closing the file, which is why the book's special topic calls `with` the cleaner form [Python for Everyone, Sect. 7.5, ST 4]{.src}.
+
+### The trap: except with no name
+
+  **Not this**                                                                    **But this**
+  ------------------------------------------------------------------------------- --------------------------------------------------------------
+  A bare `except:` catches everything, including your own typo three lines down   `except FileNotFoundError:` catches one thing you can answer
+  The message says something went wrong and names neither file nor fix            The message names the file and what to check
+  An interrupt from the keyboard gets swallowed along with the rest               Ctrl-C still stops the script
+  The script keeps running with wrong data inside it                              The script stops, loudly, at the fault
+
+The book's own version of this warning is a programming tip: "Do Not Use except and finally in the Same try Statement" and, more generally, do not catch what you cannot handle [Python for Everyone, Sect. 7.5, PT 2]{.src}.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which lines belong inside a `try` block, and which outside? What does a bare `except` hide from the person running the script? When does `finally` run? What three things should a useful error message say?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+Read a traceback from the bottom, where the exception type sits, and catch only the exception you expect so the rest still reaches you. A relative path means nothing until you know the working directory: "it worked in my folder" is how a script breaks on another machine.
+
+:::
+
+[→ The missing file is usually not missing. Part 3 is where the script was standing when it looked.]{.bridge}
+
+## Paths and the working directory
+
+### Relative paths and absolute paths
+
+  **Absolute**                                                            **Relative**
+  ----------------------------------------------------------------------- ----------------------------------------------------------------------
+  Begins at the root with a slash: `/home/student/logganalyse/auth.log`   Begins where the program is standing: `auth.log`, `../logs/auth.log`
+  Means the same file no matter which folder you are standing in          Means a different file from every folder
+  Long to type, and tied to the layout of one machine                     Short, and portable between machines with the same layout
+
+The book's toolbox on files and directories introduces the same distinction, and the "current working directory" that a relative path is completed from [Python for Everyone, Toolbox 7.2]{.src}.
+
+### The working directory decides
+
+```{.python}
+from pathlib import Path
+p = Path("auth.log")
+print(p.resolve())      # /home/student/logganalyse/auth.log, from that folder
+print(p.exists())       # True there, False from /home/student
+```
+
+The working directory is the folder the shell was standing in at launch, L11's `pwd`. Python completes a relative path with that folder before opening anything. `resolve()` shows the absolute path that a relative one turned into. `exists()` asks whether it is there before you try to open it, which is a cheaper question than an exception.
+
+### pathlib builds paths safely
+
+```{.python}
+from pathlib import Path
+mappe = Path("/var/log")
+fil = mappe / "auth.log"
+```
+
+`Path` treats a path as an object rather than as a piece of text. The slash operator joins parts without gluing strings together by hand. A missing separator and a doubled separator both stop being possible, and the same code runs on Windows, where the separator is different. The book's common-error box on backslashes in file names is the problem this avoids [Python for Everyone, Sect. 7.1, CE 1]{.src}.
+
+### The trap: it worked in my folder
+
+The script found `auth.log` because the shell stood right next to it. Run from the home folder, the same line raises `FileNotFoundError`. A path written into the code is a promise about where it will be run, and a scheduled job runs from wherever the scheduler was standing, which is usually not your folder. Checking `exists()` first, and printing `resolve()` in the error message, turns "it does not work" into "it looked in `/root/auth.log`".
+
+::: {.callout-warning}
+## Checkpoint
+
+What is the working directory, and what decides its value? What does `resolve()` do to a relative path? Why does joining with `pathlib` beat adding two strings? Name one reason a working script fails after it is scheduled.
+
+:::
+
+[→ The script takes a filename from the person who runs it. Part 4 checks it, and tells the shell how it went.]{.bridge}
+
+## Arguments, streams and exit codes
+
+### Check the arguments first
+
+```{.python}
+import sys
+if len(sys.argv) != 2:
+    print("Bruk: python3 lesfil_trygg.py <loggfil>", file=sys.stderr)
+    sys.exit(2)
+sti = sys.argv[1]
+```
+
+`sys.argv` is a list holding the script name and everything typed after it. The book: "the command line arguments are available in the list sys.argv", with the program name at position 0 [Python for Everyone, Sect. 7.3]{.src}. A run with no filename produces a list of length one. Check the count before opening anything, and stop when it is wrong. The usage line shows the exact shape of a correct call. This is L16's "check the shape before you use it", applied to the command line.
+
+### Where the message goes and what the number means
+
+Results belong on standard output, where another program can read them. Problems belong on standard error, which stays visible when output is redirected; you met the two streams in L12 as `>` and `2>`. Adding `file=sys.stderr` to a `print` call is the whole change. The **exit code** is a single number the shell keeps after a program ends: zero means success, anything else means a kind of failure, and the script chooses the number. A person reads the message; the thing that scheduled the script reads the number.
+
+### The hardened log reader
+
+```{.python}
+import sys
+
+def les_linjer(sti):
+    """Read a file, or stop with a message the user can act on."""
+    try:
+        with open(sti, encoding="utf-8") as f:
+            return f.readlines()
+    except FileNotFoundError:
+        print(f"Fant ikke filen: {sti}", file=sys.stderr)
+        sys.exit(1)
+    except PermissionError:
+        print(f"Har ikke lov til aa lese: {sti}", file=sys.stderr)
+        sys.exit(1)
+
+if len(sys.argv) != 2:
+    print("Bruk: python3 lesfil_trygg.py <loggfil>", file=sys.stderr)
+    sys.exit(2)
+
+linjer = les_linjer(sys.argv[1])
+print(f"Leste {len(linjer)} linjer")
+```
+
+The reader from L18 now checks its argument and its file. Two named exceptions are caught, and each says where the problem is. Every message goes to stderr, and every failure sets an exit code. The successful path is untouched, and ends with code zero without anybody writing it.
+
+### The three exits, seen from the shell
+
+```{.code-out}
+student@kali:~/logganalyse$ python3 lesfil_trygg.py auth.lg
+Fant ikke filen: auth.lg
+student@kali:~/logganalyse$ echo $?
+1
+student@kali:~/logganalyse$ python3 lesfil_trygg.py
+Bruk: python3 lesfil_trygg.py <loggfil>
+student@kali:~/logganalyse$ echo $?
+2
+student@kali:~/logganalyse$ python3 lesfil_trygg.py auth.log
+Leste 69 linjer
+student@kali:~/logganalyse$ echo $?
+0
+```
+
+`echo $?` prints the exit code of the command that just finished. A misspelled filename gives a message and the code 1. No filename at all gives the usage line and the code 2. The real log gives the line count and the code 0. Three runs, three codes, and a scheduler can tell them apart without reading a word. L23 builds on exactly this.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which stream should an error message go to, and why? What does `$?` hold after a command finishes? Which exit code does this script use for wrong usage? Why is stopping better than reading a file you were not given?
+
+:::
+
+[→ Count what arrived before you use it. Part 5 is what happens at scale when nobody does.]{.bridge}
+
+## CrowdStrike, 19 July 2024
+
+### The case
+
+CrowdStrike's Falcon sensor runs inside Windows on millions of machines. It reads templates that define how many input fields a detection rule carries. One template type defined 21 input parameter fields. The code that ran the template supplied only 20 input values. That mismatch had existed for months without harm, because no rule had used the 21st field. On 19 July 2024 new template content was delivered that required the 21st field. Reading past the end of the 20 values it had been given, the sensor read memory that was not its own, and about 8.5 million Windows machines stopped with a blue screen. Airlines, hospitals and banks lost most of a day.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that a file was pushed out without any testing. The tests ran, and they used a wildcard in the 21st field. A wildcard matched without ever touching the value that was missing. Three gaps line up: no check that the number of values matched the number of fields, a test that could not see the gap, and a rollout to everything at once. The check that would have caught it is one line and one second: count what arrived, compare it with what was expected, and refuse the rest. That is Part 4's argument check, at kernel scale. Jøsang's chapter on system security describes the general class, reading or writing beyond a buffer, as the vulnerability that "can be exploited by attackers to take control of a system" [Jøsang, Sect. 3.5, p. 50]{.src}; here nobody exploited it. It went off by itself.
+
+::: {.callout-important}
+## Key idea
+
+Count what arrived before you use it, whether fields or arguments, because a check at the start costs one line and one second. A script that stops loudly names the fault; one that catches everything keeps running with wrong data inside it. CrowdStrike read past the end of 20 values because nobody counted to 21.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik's morning script now stops with a message and a code when the log is missing. The person who reads the message knows which file and which folder. The scheduler that reads the code knows the report did not happen, which L24 turns into an alert.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                          **Correction**
+  ------------------------------------------------------------------- ---------------------------------------------------------------------------------------------------------------
+  Catching every exception makes a script more robust.                A bare `except` keeps a script running with wrong data inside it. It stops crashing, so it looks healthy.
+  An error message is written for the person who wrote the script.    The message is read by whoever runs it, often months later. The author is only the first reader.
+  If the file opened yesterday it will open today.                    The working directory, the name and the permissions can all change. Nothing about the script itself needs to.
+  The exit code does not matter, because a person reads the output.   Scheduled jobs read the code and never look at the screen. Nobody checks a code while testing by hand.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  Read a traceback from the bottom, where the exception type sits; the two you will meet most are `FileNotFoundError` and `ValueError`.
+
+2.  Catch the one you expect and let the rest reach the traceback; a bare `except` hides your own mistakes and swallows Ctrl-C.
+
+3.  A relative path means nothing until you know the working directory; `pathlib` joins paths safely and `exists()` asks before `open()` fails.
+
+4.  Check `sys.argv` before opening anything; errors go to stderr, results to stdout, and the exit code tells the scheduler how it went.
+
+5.  Count what arrived before you use it; one line at the start is cheaper than 8.5 million blue screens.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Which line of your own script would fail first if the log file were empty? (Parts 1--2)
+
+2.  How would a scheduled job learn that your script exited with 1? (Part 4)
+
+3.  What check would have caught a template with 21 fields and 20 values? (Part 5)
+
+4.  Why does a bare `except` make a script look healthier while making it worse? (Part 2)
+
+5.  A script works in `~/logganalyse` and fails from `~`. What changed, and what two lines make the failure message useful? (Part 3)
+
+6.  Which stream does `Leste 69 linjer` go to, and which does `Fant ikke filen` go to? Why does it matter when the output is redirected to a file? (Part 4)
+
+## Before L21 {#before-l21 .unnumbered}
+
+Read Sect. 7.3, 7.5 and 7.6 of *Python for Everyone*. Run the hardened reader twice: once with a path that does not exist, once with the real log. Write down what `echo $?` shows after each run. In L21 the same data goes into a database, and the questions you asked with `Counter` become questions you ask in SQL.
+
+## Glossary {#glossary .unnumbered}
+
+Exception
+
+:   Python's report that it met something it could not do; a type and a message. [Python for Everyone, Sect. 7.5]{.src}
+
+Traceback
+
+:   The path to the failure; read from the bottom.
+
+`FileNotFoundError` / `ValueError` / `PermissionError`
+
+:   No such path; right type, wrong content; not allowed.
+
+`try` / `except` / `else` / `finally`
+
+:   The risky line; the named handler; the safe continuation; the cleanup that always runs. [Python for Everyone, Sect. 7.5]{.src}
+
+Bare except
+
+:   `except:` with no name; catches everything; do not write it.
+
+Raise early, handle late
+
+:   Detect the problem where it appears; handle it where you can do something. [Python for Everyone, Sect. 7.5, PT 1]{.src}
+
+Absolute / relative path
+
+:   From the root; from the working directory.
+
+Working directory
+
+:   Where the shell stood at launch; completes every relative path.
+
+`pathlib.Path` / `resolve` / `exists`
+
+:   Paths as objects; the absolute form; is it there.
+
+`sys.argv`
+
+:   The script name and the arguments, as a list. [Python for Everyone, Sect. 7.3]{.src}
+
+stdout / stderr
+
+:   Results; problems. `file=sys.stderr`.
+
+Exit code / `sys.exit` / `$?`
+
+:   Zero is success; the script chooses the rest; the shell keeps the last one.
+
+## Sources {#sources .unnumbered}
+
+-   Horstmann, C., & Necaise, R. (2019). *Python for everyone* (3rd ed.). Wiley. Sect. 1.7, 7.1 CE 1, 7.3, 7.5--7.6; Toolbox 7.2.
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 3.5, 14.5.2.
+
+-   CrowdStrike. (2024, August 6). *Channel File 291 incident: Root cause analysis*.
+
+-   Python Software Foundation. (2026). *Errors and exceptions* (tutorial); *pathlib*; *sys*. Python documentation.

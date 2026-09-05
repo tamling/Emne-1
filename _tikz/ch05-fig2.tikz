@@ -1,0 +1,11 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=24mm] (a) {\textbf{Your laptop}\\ sends a packet};
+  \node[boxfill,text width=24mm,right=of a] (s) {\textbf{The switch}\\ which port?};
+  \node[boxred,text width=24mm,right=of s] (f) {\textbf{The firewall}\\ allowed or not?};
+  \node[boxfill,text width=24mm,right=of f] (r) {\textbf{The router}\\ which network next?};
+  \node[box,text width=22mm,right=of r] (o) {\textbf{Outside}\\ the next network};
+  \draw[arr] (a)--(s); \draw[arr] (s)--(f); \draw[arr] (f)--(r); \draw[arr] (r)--(o);
+  \node[lbl,below=1.5mm of s] {reads MAC};
+  \node[lbl,below=1.5mm of f] {reads rules};
+  \node[lbl,below=1.5mm of r] {reads IP};
+\end{tikzpicture}

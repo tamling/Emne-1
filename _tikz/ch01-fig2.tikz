@@ -1,0 +1,10 @@
+\begin{tikzpicture}[node distance=3mm]
+  \node[boxdark,minimum width=118mm] (g) {\textbf{GOVERN}\ \ \ the board decides how much risk is acceptable};
+  \node[boxfill,minimum width=118mm,below=of g] (m) {\textbf{MANAGE}\ \ \ the security manager, or CISO, turns that into policy};
+  \node[box,minimum width=118mm,below=of m] (o) {\textbf{OPERATE}\ \ \ admins and engineers turn policy into a setting on a real machine};
+  \node[lbl,right=3mm of g] {Sect.\,18.1.1};
+  \node[lbl,right=3mm of m] {Sect.\,18.1.3};
+  \node[lbl,right=3mm of o] {your first job};
+  \draw[arr] ($(g.south)+(-45mm,0)$) -- ($(m.north)+(-45mm,0)$);
+  \draw[arr] ($(m.south)+(-45mm,0)$) -- ($(o.north)+(-45mm,0)$);
+\end{tikzpicture}

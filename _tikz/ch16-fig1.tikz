@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=5mm]
+  \node[box,text width=27mm] (a) {\textbf{Open}\\ the file, by name};
+  \node[boxfill,text width=27mm,right=of a] (b) {\textbf{Loop}\\ one line at a time};
+  \node[boxwarm,text width=27mm,right=of b] (c) {\textbf{Check and count}\\ shape first, then the question};
+  \node[boxdark,text width=27mm,right=of c] (d) {\textbf{Report}\\ once, after the loop};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d);
+  \node[lbl,below=1.5mm of c] {inside the loop};
+  \node[lbl,below=1.5mm of d] {outside the loop};
+\end{tikzpicture}

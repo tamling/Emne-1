@@ -1,0 +1,440 @@
+# Writing it down {#sec-15-writing-it-down}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L15. **Reading time.** About 45 minutes.\
+**Primary reading.** Horstmann & Necaise, *Python for Everyone* (3rd ed.): Chapter 1 (what a program is, the interpreter, errors), Sect. 2.1 (variables), 2.4 (strings), 2.5 (input and output). Jøsang (2025) Sect. 1.10.2 and 14.5.2 for why a script beats a pipeline in security work.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+Module 4 begins here, and its question is the whole module in one sentence: how do you make the machine do the reading for you, and write down what it found? L14 ended with four commands and four files. This chapter takes the counting pipeline from L12, which was already a program, and turns it into a file you can keep, name and run again.
+
+Part 1 gives that pipeline the word "program" and a file to live in. Part 2 is the smallest idea in the module: a name for a value. Part 3 is the six operations that take text apart. Part 4 is what goes in, what comes out, and what breaks. Part 5 writes six lines you keep and extend.
+
+The book's definition is deliberately plain: "A computer program is a sequence of instructions and decisions" [Python for Everyone, Chap. 1]{.src}. Nothing in it says difficult.
+
+::: {.callout-tip}
+## Nordvik's first script
+
+The pipeline you built in L12 already counted failed logins in Nordvik's log. That was a program, even if nobody called it one. Today you move from one throwaway line to a file Nordvik can keep, name and run again, and by L20 that file will run every morning and write its answer where a colleague can read it.
+
+:::
+
+[→ You wrote a program in week 6 without the word. Part 1 gives it the word, and a file to live in.]{.bridge}
+
+## From pipeline to script
+
+### You have already written a program
+
+```{.bash}
+student@kali:~$ grep "Failed password" auth.log | wc -l
+3
+```
+
+Four steps in a fixed order, each one handed what the step before it produced. You built that and it worked. The point is not the answer; it is that you already assembled steps into one thing that produces a result.
+
+### What a program actually is
+
+::: {.callout-note}
+## Program
+
+A list of steps a machine carries out, in order. The pipeline you already wrote in L12 counts; nobody had to call it a program. A script keeps those steps in a file read from the top.
+
+:::
+
+Keep the definition wide on purpose. A beginner who thinks programming starts at some threshold of difficulty will keep waiting to arrive. The book describes the same thing as "a sequence of instructions and decisions" and adds the property that makes it worth doing: the computer "executes the program" exactly, every time [Python for Everyone, Sect. 1.1]{.src}.
+
+### Where a pipeline runs out
+
+A pipeline is one line, read left to right, with no memory between the steps. The moment a question needs a decision or a second pass, the line stops being enough.
+
+  **What you want to ask**          **On one line**        **In a script**
+  --------------------------------- ---------------------- ------------------------
+  Count the refusals                Comfortable            Comfortable
+  Count refusals per account        Awkward but possible   Straightforward
+  React when the count passes ten   Not really             A single `if`
+  Do the same for six files         Painful                A loop
+  Read it again next year           It is one long line    It has names and lines
+
+The first two rows are honest about the shell being good at this. The turn comes at row three, and the last row is the security reason: the book's incident-handling rule is that every step be documented so that it can be repeated and checked [Jøsang, Jøsang, Sect. 14.5.2, p. 311]{.src}, and a file with names in it is a document. A one-line pipeline in somebody's terminal history is not.
+
+### A script is a file the machine reads from the top
+
+A script is a plain text file holding those steps, one per line, saved with a name. Python starts at line one and works down. Nothing runs until it is reached.
+
+```{.python}
+antall = 0
+with open("auth.log") as fil:
+    for linje in fil:
+        if "Failed password" in linje:
+            antall = antall + 1
+print(f"{antall} refusals in auth.log")
+```
+
+Do not read the whole file yet. Line one and line six are today's. Python reads downwards, and the middle is promised for Part 5 and for L16.
+
+### Running it
+
+```{.bash}
+student@kali:~$ python3 --version
+Python 3.11.15
+student@kali:~$ python3 tellfeil.py
+3 refusals in auth.log
+```
+
+You run a script by naming the program that reads it, then the file. The file must be in the directory you are standing in, or you give its path. There is no compiling and no building; the book's word for what `python3` is doing is **interpreting**: "the Python interpreter reads your program and carries out its instructions" [Python for Everyone, Sect. 1.3]{.src}. The file is the program. Check the version first every time on a machine you do not know; Python 2 is long dead and still installed in places.
+
+### The book you will actually read
+
+The course book for Module 4 is *Python for Everyone* by Horstmann and Necaise. Chapter 1 gets Python running, and Chapter 2, "Programming with Numbers and Strings", is Parts 2 and 3 of this chapter: variables in Sect. 2.1, strings in 2.4, input and output in 2.5. It is written for somebody who has never programmed, which is most of the room. Read Chapter 2 before L16.
+
+::: {.callout-important}
+## Key idea
+
+A program is just a list of steps in order that a machine carries out; the pipeline you already wrote counts. A script keeps those steps in a file read from the top, with names and lines, so you can reuse it, react to what it finds, and hand it to somebody else.
+
+:::
+
+[→ A script needs somewhere to keep what it finds. Part 2 is the smallest idea in the module.]{.bridge}
+
+## Variables and values
+
+### Giving a value a name
+
+::: {.callout-note}
+## Variable
+
+A variable is a storage location with a name. An assignment statement stores a value in a variable. [Python for Everyone, Sect. 2.1]{.src}
+
+:::
+
+```
+navn = "student"
+antall = 0
+antall = antall + 1
+```
+
+You make a variable by writing the name, an equals sign, and the value. The equals sign is an instruction, not a claim. Read the first line aloud as one: put the text `student` behind the name `navn`. Do not say "`navn` equals `student`". The book is exact about this: "The assignment operator = does not denote mathematical equality" [Python for Everyone, Sect. 2.1]{.src}, and the third line is the proof, because it would be nonsense as an equation and is perfectly ordinary as an instruction: take what is behind `antall`, add one, put the result back.
+
+### Every value has a type
+
+A **string** is text between quotation marks. It can hold a name, an address or a whole log line. An **integer** is a whole number with no quotation marks, and a **float** has a decimal point. Python works out which you meant from how you wrote it. The words `str`, `int` and `float` are the ones Python itself uses, so learn them now rather than saying text and number. The book: "The data type of a value specifies how the value is stored in the computer and what operations can be performed on the value" [Python for Everyone, Sect. 2.1]{.src}.
+
+### Text that looks like a number
+
+The same character on the screen, and two entirely different things inside the machine. This is the first bug nearly every beginner writes, so it is worth meeting on purpose.
+
+  **Ask this**            **The text `"5"`**                 **The number `5`**
+  ----------------------- ---------------------------------- ----------------------------------
+  How you write it        5 inside quotation marks           5 with no quotation marks
+  Add it to itself        `"55"`, the characters joined up   `10`, which is arithmetic
+  Ask `len()` about it    1, because it is one character     An error; a number has no length
+  Ask `type()` about it   `class str`                        `class int`
+
+Row two is the whole table. Adding text joins it, adding numbers adds them, and the plus sign means both. The book's word for joining is concatenation: "Use the + operator to concatenate strings" [Python for Everyone, Sect. 2.4]{.src}.
+
+### Converting between them
+
+`int()` turns text that looks like a whole number into a number you can compute with. `str()` goes the other way, so a number can be joined onto a sentence. `float()` does the same for text with a decimal point. The book: "The str function converts an integer or floating-point value to a string", and "The int and float functions convert a string containing a number to the numerical value" [Python for Everyone, Sect. 2.4]{.src}.
+
+```
+>>> "3" + "4"
+'34'
+>>> int("3") + int("4")
+7
+>>> "Total: " + str(int("3") + int("4"))
+'Total: 7'
+```
+
+### Names that say what they hold
+
+`failed_logins` tells the next reader what is behind the name. `x`, `data` and `temp` tell them nothing. Python runs both happily, so nothing in the machine will ever correct you here. The book's rule is a programming tip with its own heading, "Choose Descriptive Variable Names" [Python for Everyone, Sect. 2.1, PT 1]{.src}. A good name is documentation that cannot go out of date, because it is the code rather than a comment beside it. The same holds for files: `count_failed_logins.py` is readable next year, and `test2.py` is not.
+
+### Four spaces, always
+
+Most languages mark which lines belong together with brackets. Python uses the space at the start of the line. An indented line belongs to the line above it, and a line that is not indented does not. So the shape of the code on the screen is the structure of the program, not decoration. Use four spaces, never tabs; mixing the two is why correct-looking code refuses to run, because it is invisible on screen and fatal to the parser. The book: "the statements in the body must be indented" and the indentation "is not optional" [Python for Everyone, Chap. 3, syntax box]{.src}.
+
+[→ Logs, names, addresses: all of it is text. Part 3 is the six operations that take it apart.]{.bridge}
+
+## Working with strings
+
+### Nearly everything you handle is text
+
+Log lines, usernames, addresses, configuration files and command output are all text. The whole of Module 3 was text: `grep` searched it, `cut` sliced it, `sort` ordered it. None of it was ever a number to the machine, however much it looked like one. The book: "Strings are sequences of characters" [Python for Everyone, Sect. 2.4]{.src}, and a sequence is something you can measure, cut, and ask questions of.
+
+### Measuring it, and taking a piece out
+
+```{.python}
+stempel = '2026-08-08T14:47:12.159276+00:00'
+print(len(stempel))        # 32
+print(stempel[0:10])       # 2026-08-08
+print(stempel[11:19])      # 14:47:12
+print(stempel[11:13])      # 14
+```
+
+`len()` is a function: it takes what you put in the brackets and hands back an answer. Counting starts at zero, so the first character of a string sits at position zero; the book: "String positions are counted starting with 0" [Python for Everyone, Sect. 2.4]{.src}. Two numbers with a colon between them mean from the first position up to, but not including, the second. That is the timestamp field from L12, and this is how a script takes the date, the time or the hour out of it.
+
+### Splitting a line into fields
+
+```{.python}
+linje = "2026-08-08T14:47:12.159276+00:00 kali sshd[9166]: Failed password for student from 127.0.0.1 port 47596 ssh2"
+deler = linje.split()
+print(len(linje))    # 108
+print(len(deler))    # 12
+print(deler[0])      # 2026-08-08T14:47:12.159276+00:00
+print(deler[2])      # sshd[9166]:
+```
+
+The method `.split()` cuts a string at every run of spaces and hands back the pieces. Once a line is a sequence of pieces, you can reach any one of them by its position. This is `cut -d" "` from L12, inside Python. The line is 108 characters, it splits into 12 pieces, and pieces zero and two are the timestamp and the service.
+
+### Cleaning it before you compare it
+
+```{.python}
+raw = "  Student \n"
+print(repr(raw))              # '  Student \n'
+print(repr(raw.strip()))      # 'Student'
+print(raw.strip().lower())    # student
+print(raw == "student")       # False
+print(raw.strip().lower() == "student")   # True
+```
+
+A line read from a file ends with an invisible newline, and typed text often carries a stray space. `.strip()` removes whitespace from both ends, and `.lower()` converts everything to lower case. Compare uncleaned text and the comparison fails for reasons you cannot see; `repr()` shows what is really in the string, including the newline, and that is the only reason it is here. The book introduces `strip` exactly for this, when reading lines from a file [Python for Everyone, Sect. 7.2]{.src}.
+
+### Asking a line a yes or no question
+
+```{.bash}
+print(linje.startswith("2026-08-08"))     # True
+print("Failed password" in linje)         # True
+print("Accepted" in linje)                # False
+```
+
+`.startswith()` answers whether a string begins with what you gave it. The word `in` asks the same kind of question about anywhere in the line. The book: "Use the in operator to test whether a string occurs in another" [Python for Everyone, Chap. 3 summary]{.src}. Both hand back `True` or `False`, values in their own right with capital letters, and they are the two values every decision in L16 turns on.
+
+### Building a sentence with an f-string
+
+```{.python}
+konto = 'student'
+forsok = 3
+print(f'{konto} failed {forsok} times')
+print(f'That is {forsok / 69 * 100:.1f} percent of the file')
+```
+
+```{.code-out}
+student failed 3 times
+That is 4.3 percent of the file
+```
+
+An f-string carries an `f` before the opening quote. Anything in braces is worked out and dropped in. It saves you converting numbers to text by hand, which the Part 2 table showed was needed. A colon inside the braces controls the format: `.1f` means one decimal place. The book covers the older `%` format operator [Python for Everyone, Sect. 2.5]{.src}; the f-string does the same job and is the one piece of syntax in this chapter worth memorising, because you will write it every day.
+
+[→ Scripts meet people, and people mistype. Part 4 is what goes in, what comes out, and what breaks.]{.bridge}
+
+## Input, output and errors
+
+### Asking a person for something
+
+```{.python}
+grense = input("Alert above how many failures? ")
+print("You said", grense)
+```
+
+`print()` writes what you give it and adds a line break at the end. `input()` stops the script and waits until somebody presses enter. Whatever you put in the brackets of `input()` is written out as the question. The book: "Use the input function to read keyboard input" [Python for Everyone, Sect. 2.5]{.src}.
+
+### What comes back is always text
+
+::: {.callout-note}
+## Always text
+
+Anything from a person, a file or a network is text until you convert it. Type a number at an `input()` prompt and you get back a string. You must convert and check it before you compute with it.
+
+:::
+
+The book says it in the same breath as introducing `input`: "To read an integer or floating-point value, use the input function followed by the int or float function" [Python for Everyone, Sect. 2.5]{.src}, with a programming tip called "Don't Wait to Convert". This is the most common first bug in Python, and it is worth meeting deliberately rather than by accident.
+
+### Watching it break
+
+```{.bash}
+student@kali:~$ python3 grense.py
+Alert above how many failures? tre
+Traceback (most recent call last):
+  File "/home/student/grense.py", line 2, in <module>
+    grense = int(input("Alert above how many failures? "))
+ValueError: invalid literal for int() with base 10: 'tre'
+```
+
+The script asked for a number and the person typed the word *tre*. Python refused rather than guessing, and printed where it stopped. The word *literal* means the text as written: Python is saying it cannot read `tre` as a base-ten number.
+
+### Reading the red text
+
+A traceback is not the machine being angry. It is the machine being unusually specific. Read the last line first, because that line says what actually failed. Then the line above it names the file and the line number. Read it in this order, and most errors are fixed before you have finished reading. Beginners read tracebacks from the top and give up in the middle; the useful sentence is always at the bottom. The book's name for this kind of error is a **run-time error**, one the interpreter finds while running, as opposed to a **syntax error** it finds before starting [Python for Everyone, Sect. 1.7]{.src}.
+
+### A name that is not there
+
+```{.python}
+Traceback (most recent call last):
+  File "/home/student/tellfeil.py", line 6, in <module>
+    print(f"{antal} refusals in auth.log")
+             ^^^^^
+NameError: name 'antal' is not defined. Did you mean: 'antall'?
+```
+
+A misspelt name is not a small error. Python has no value behind it and stops. The row of carets points at the exact characters. Since version 3.10 it looks at the names you did make and suggests the nearest one. The suggestion is a guess, so read it rather than accepting it. The book has a common-error box for exactly this, "Using Undefined Variables" [Python for Everyone, Sect. 2.1, CE 1]{.src}.
+
+### Looking something up
+
+Typing `python3` with no file name gives a prompt, three arrows, where you try one line at a time. A prompt starting with `>>>` is Python rather than the shell. The function `help()` explains any other function without leaving that prompt. Professionals look things up constantly. Nobody memorises this, and the book's Appendix D is a reference for exactly that reason.
+
+::: {.callout-important}
+## Key idea
+
+Anything reaching your script from a person, a file or a network is text until you convert it. When it breaks, a traceback is not anger but precision: read the last line first, and it names the file, the line and the one thing it could not do.
+
+:::
+
+[→ Four parts, four pieces. Part 5 writes them into six lines you keep and extend.]{.bridge}
+
+## Writing a first script
+
+### The task
+
+Count how many refused password attempts are recorded in `auth.log`, then say so in a sentence. That is the same question L12 answered with `grep`, now answered by a file you keep. Nothing here is new: a variable, a file, a question about a line, and `print()`. Write it one line at a time and run it after each one.
+
+### Building it, one line at a time
+
+```{.bash}
+student@kali:~$ python3 tellfeil.py      # after line 1 and a print
+0
+student@kali:~$ python3 tellfeil.py      # after opening the file and counting lines
+69
+student@kali:~$ python3 tellfeil.py      # after the if
+3
+student@kali:~$ python3 tellfeil.py      # after the f-string
+3 refusals in auth.log
+```
+
+Four runs of the same file, each after one more line was added to it. The zero says the tally exists. The 69 says the file is being read. The 3 says the question works. Write four lines, run once, and a failure has four suspects; write one, run, and it has one. This is the book's advice made into a habit: "first do it by hand" and check each step against a known answer [Python for Everyone, Sect. 2.3]{.src}. The known answer here is L12's `grep -c`.
+
+### The finished script
+
+```{.python}
+antall = 0
+with open("auth.log") as fil:
+    for linje in fil:
+        if "Failed password" in linje:
+            antall = antall + 1
+print(f"{antall} refusals in auth.log")
+```
+
+Six lines, and every one of them uses something from earlier in this chapter. Line 4 is the question from Part 3, and line 6 is the f-string from the same part. Walk the indentation: lines 3, 4 and 5 are each inside the line above them, and the shape carries that meaning. The two words `for` and `with` are L16 and L17 material, so take them on trust for now: `with open` hands you the file and closes it afterwards [Python for Everyone, Sect. 7.1]{.src}, and `for linje in fil` gives you each line in turn [Python for Everyone, Sect. 7.2]{.src}.
+
+### A script that says what it is about to do
+
+On 31 January 2017 a GitLab engineer removed a database directory to restore replication. In GitLab's own words, the engineer was "errantly thinking they were doing so on the secondary". It was the primary. About 300 GB of production data went, and the backups turned out not to have been working. GitLab published the postmortem openly, which is the only reason it can be taught, and the lesson is not carelessness. It is that a script which prints which machine it is on and what it is about to delete, and asks, costs three lines. The book's "Provide a Python program" step ends with the same habit: output that tells the reader what was computed and on what [Python for Everyone, Sect. 2.5, HT 1]{.src}.
+
+::: {.callout-warning}
+## Try it
+
+Add one line at the top of `tellfeil.py` that prints the file name it is about to read. Then change the pattern to `"Accepted"` and run it again. Your two numbers should match L12's.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                                 **Correction**
+  -------------------------------------------------------------------------- ------------------------------------------------------------------------------------------------------------------------------
+  Programming is a different kind of ability from the rest of the subject.   It is writing steps down in order, which the L12 pipeline already was.
+  `input()` gives you a number when the person types a number.               It always gives back a string, holding the characters that spell the number [Python for Everyone, Sect. 2.5]{.src}.
+  An error message means the code is badly broken.                           It usually means one word is wrong on one line, and the message names both.
+  Variable names do not matter as long as the script runs.                   The machine does not care, and every person who reads it afterwards does [Python for Everyone, Sect. 2.1, PT 1]{.src}.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  A program is steps in a fixed order, written down so they can be run again; a script is those steps in a file Python reads from the top.
+
+2.  A variable is a name for a value, and the equals sign is an instruction; a good name is documentation that cannot go stale.
+
+3.  Text and numbers are different things. Use `int()`, `str()` or `float()` to cross between them, and remember that `+` means both join and add.
+
+4.  Six operations take text apart: `len`, slicing, `split`, `strip` and `lower`, `startswith` and `in`, and the f-string builds it back.
+
+5.  Anything from a person, a file or a network is text until converted; a traceback is read from the bottom, and it names the file, the line and the fault.
+
+## Self-check {#self-check .unnumbered}
+
+1.  What does the equals sign do in `antall = 0`, and why is it an instruction rather than a claim? (Part 2)
+
+2.  Somebody types `12` at an `input()` prompt. What comes back, what breaks, and what is the fix? (Part 4)
+
+3.  Given one line of `auth.log`, which two calls give you the timestamp and the service name as separate pieces? (Part 3)
+
+4.  Why does `"5" + "5"` give `55` and `5 + 5` give `10`? (Part 2)
+
+5.  A traceback is twelve lines long. Which line do you read first, and what will it tell you? (Part 4)
+
+6.  Write the f-string that prints "`student failed 3 times`" from two variables. (Part 3)
+
+## Before L16 {#before-l16 .unnumbered}
+
+Read Chapter 2 of *Python for Everyone*. Then extend `tellfeil.py` so that it also counts the `Accepted` lines and prints both numbers in one sentence. Bring the file. In L16 the script learns to decide and to repeat: `if`, `for`, and checking what you were handed before you use it.
+
+## Glossary {#glossary .unnumbered}
+
+Program / script
+
+:   Steps in order; those steps in a file the interpreter reads from the top. [Python for Everyone, Chap. 1]{.src}
+
+Interpreter
+
+:   `python3`, which reads your file and carries out its instructions. [Python for Everyone, Sect. 1.3]{.src}
+
+Variable / assignment
+
+:   A named storage location; `=` stores a value in it. [Python for Everyone, Sect. 2.1]{.src}
+
+str / int / float
+
+:   Text; whole number; number with a decimal point. [Python for Everyone, Sect. 2.1, 2.4]{.src}
+
+Concatenation
+
+:   Joining strings with `+`. [Python for Everyone, Sect. 2.4]{.src}
+
+Index / slice
+
+:   Position, counted from 0; `[a:b]` from a up to but not including b. [Python for Everyone, Sect. 2.4]{.src}
+
+`split` / `strip` / `lower`
+
+:   Cut at spaces; remove edge whitespace; lower-case.
+
+`in` / `startswith`
+
+:   Yes-or-no questions about a string; return True or False.
+
+f-string
+
+:   `f"{name}"` drops a value into text; `:.1f` formats it.
+
+`input` / `print`
+
+:   Read a line of text from a person; write text and a newline. [Python for Everyone, Sect. 2.5]{.src}
+
+Traceback
+
+:   Python's report of where and why it stopped; read the last line first. [Python for Everyone, Sect. 1.7]{.src}
+
+Indentation
+
+:   Four spaces; the structure of the program, not decoration.
+
+## Sources {#sources .unnumbered}
+
+-   Horstmann, C., & Necaise, R. (2019). *Python for everyone* (3rd ed.). Wiley. Chapter 1; Sect. 2.1, 2.3--2.5; Sect. 7.1--7.2 (previewed).
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 1.10.2, 14.5.2.
+
+-   GitLab. (2017, February 10). *Postmortem of database outage of January 31*.
+
+-   Python Software Foundation. (n.d.). *Built-in functions*. Python 3.11 documentation.
+
+-   van Rossum, G., Warsaw, B., & Coghlan, N. (2001). *PEP 8: Style guide for Python code*.

@@ -1,0 +1,9 @@
+# Quarto build output
+_site/
+.quarto/
+/.quarto/
+
+# LaTeX intermediates from _tikz/build.sh
+*.aux
+*.log
+*.synctex.gz

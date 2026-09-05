@@ -1,0 +1,9 @@
+\begin{tikzpicture}[node distance=4mm]
+  \node[box,text width=17mm] (a) {\textbf{Laptop}\\ \scriptsize src 192.168.10.40};
+  \node[boxfill,text width=17mm,right=of a] (b) {\textbf{Gateway}\\ \scriptsize decides};
+  \node[boxfill,text width=17mm,right=of b] (c) {\textbf{Provider}\\ \scriptsize decides};
+  \node[boxfill,text width=17mm,right=of c] (d) {\textbf{Exchange}\\ \scriptsize decides};
+  \node[box,text width=17mm,right=of d] (e) {\textbf{Server}\\ \scriptsize dst 185.15.59.224};
+  \draw[arr] (a)--(b); \draw[arr] (b)--(c); \draw[arr] (c)--(d); \draw[arr] (d)--(e);
+  \node[lbl,below=1mm of {$(a.south)!0.5!(e.south)$}] {IP addresses unchanged end to end; MAC addresses rewritten on every cable; TTL down by one at every router};
+\end{tikzpicture}

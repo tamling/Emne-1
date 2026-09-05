@@ -1,0 +1,346 @@
+# What are databases, basic SQL {#sec-21-what-are-databases-basic-sql}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L21. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025): Sect. 11.7.1 (SQL and the DBMS; how a query is built and how it is attacked), Sect. 1.9.2--1.9.3 (integrity), Sect. 2.2.2 (backups that are tested). The SQL syntax follows the SQLite documentation, *SQL as understood by SQLite*. *Python for Everyone* has no SQL chapter; L22 connects the two.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+In L20 Nordvik's numbers still lived in one CSV file on one machine, and every program that wanted them had to read and split the file itself. This chapter puts the same rows into a database that answers questions about them, asked by description rather than by position. Part 1 is what a table is and why it refuses things a file accepts. Part 2 is `SELECT`: describing the rows you want. Part 3 counts and groups. Part 4 adds, joins, changes and deletes, and meets the statement with no `WHERE`. Part 5 is the night GitLab deleted its primary database and found four of its five backups had never worked.
+
+The book's definition sits in its chapter on secure design: "SQL (Structured Query Language) is a machine-readable language with commands for interacting with a DBMS (Database Management System). A DBMS is the application used to manage databases containing tables and collections of structured data" [Jøsang, Sect. 11.7.1, p. 261]{.src}. The same page introduces the attack against it, which L26 takes up.
+
+::: {.callout-tip}
+## Where Nordvik's data lives
+
+In L20 Nordvik's numbers still lived in one CSV file on one machine, and every program had to read and split it. Today the same rows go into a database that answers questions about them, asked by description rather than by position, and that refuses a row that does not fit.
+
+:::
+
+[→ A CSV file stops being enough sooner than you expect. Part 1 is what replaces it.]{.bridge}
+
+## Tables
+
+### When a CSV file stops being enough
+
+The CSV file from L19 holds twenty-one rows of events. Finding one user in that file means reading every line from the top. Two programs writing to the file at the same time overwrite each other. Nothing in the file refuses a row with three fields where four were expected, or a word where a number should be. A database answers all four: it finds by description, it serialises writers, and it enforces the shape of every row.
+
+### A table is rows and columns
+
+::: {.callout-note}
+## Table
+
+A grid with named columns and one row for each event. Every column has a name and holds one kind of value. A row is one complete record, and the order of the rows means nothing until you ask for one.
+
+:::
+
+Today's table is called `hendelser`, and it holds the four columns of L19's event file: `tid`, `bruker`, `resultat`, `kilde`.
+
+### The column decides what a valid value is
+
+Every column carries a data type, such as text or a whole number. The type is decided once when the table is created, not row by row. The database program checks each arriving row against those rules, and one rule set serves every program that writes to the table. This is the book's **system integrity** at the data layer, "the correct configuration" enforced by the system rather than by every writer remembering [Jøsang, Sect. 1.9.3, p. 16]{.src}, and the book's definition of data integrity, that data "has not been altered or destroyed in an unauthorized manner" [Jøsang, Sect. 1.9.2, p. 15]{.src}, starts with the database refusing what does not fit.
+
+### The primary key names one row
+
+A **primary key** is a column whose value differs in every single row. The key lets another table point at exactly one row and no other. A second row with a key that already exists is refused. The user table in this chapter uses `bruker` as its key, because one account has one name.
+
+### The CSV file becomes a table
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 sikkerhet.db ".mode csv" ".import hendelser.csv hendelser" ".tables"
+hendelser
+student@kali:~/logganalyse$ sqlite3 sikkerhet.db ".schema hendelser"
+CREATE TABLE IF NOT EXISTS "hendelser"(
+"tid" TEXT, "bruker" TEXT, "resultat" TEXT, "kilde" TEXT);
+```
+
+A database lives in a file, and `sqlite3` opens that file. `.import` reads the CSV file and builds a table with matching columns; the first line of the CSV supplied the four column names, which is why L19 insisted on a header row. `.schema` prints the definition, which is the rule the table now enforces.
+
+::: {.callout-warning}
+## Checkpoint
+
+What is the difference between a row and a column? Name the four columns of `hendelser` in order. What does a primary key guarantee? Why can several programs write to a database when two cannot safely write to one CSV file?
+
+:::
+
+[→ SQL says what you want. Part 2 is the four words that read a table.]{.bridge}
+
+## SELECT
+
+### SQL says what you want
+
+SQL is a language for describing the rows you want back. You describe the result, and the database works out how to find it. Python needed a loop, a condition and a counter for the same job in L18. The same query runs unchanged over twenty-one rows or twenty million.
+
+### SELECT columns FROM table
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 -header -column sikkerhet.db "SELECT * FROM hendelser LIMIT 4;"
+tid              bruker   resultat   kilde
+---------------  -------  ---------  ---------
+Jan 14 09:05:12  student  mislykket  127.0.0.1
+Jan 14 09:05:19  student  mislykket  127.0.0.1
+Jan 14 09:05:27  student  mislykket  127.0.0.1
+Jan 14 09:11:44  admin    mislykket  127.0.0.1
+```
+
+`SELECT` lists the columns you want, and `FROM` names the table. A star asks for every column, which helps while you are exploring; naming the columns keeps the result narrow and readable. `LIMIT 4` asks for the first four rows and stops there. The header line and the dashes come from the two options before the query. Three failed attempts by `student` sit seconds apart at the top; these are the same events the L19 script wrote, and the same lines L12 found with `grep`.
+
+### WHERE keeps only the rows you asked for
+
+```{.sql}
+SELECT tid, bruker FROM hendelser WHERE resultat = 'mislykket';
+SELECT * FROM hendelser WHERE bruker = 'admin';
+```
+
+`WHERE` tests every row and keeps the ones where the test is true. Text values go inside single quotes, and numbers do not. A single equals sign compares in SQL, where Python needs two. A query without `WHERE` hands back the whole table, which is fine for reading and, in Part 4, catastrophic for deleting.
+
+### ORDER BY and LIMIT
+
+Rows arrive in no promised order until you ask for one. `ORDER BY` sorts on a column, smallest first unless you write `DESC`. `LIMIT` cuts the result after the number of rows you name. Sorting first and cutting second is what makes "the five most recent" a single query; L12's `sort -rn | head` was the same idea in a pipe.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which keyword names the table a query reads from? Write a query that returns every row for the user `admin`. What does a query hand back when no row matches? Why does `LIMIT` mean very little without `ORDER BY`?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+A table gives every row the same columns and refuses values a spreadsheet would accept without comment. `SELECT` describes the rows you want and lets the database find them; `GROUP BY` with `COUNT(*)` turns many rows into one per group; and a `JOIN` needs a column that both tables share.
+
+:::
+
+[→ Reading twenty-one rows by eye is possible and reading two million is not. Part 3 counts where the data lives.]{.bridge}
+
+## Counting and grouping
+
+### COUNT(\*) returns one number
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 -header -column sikkerhet.db "SELECT COUNT(*) AS antall FROM hendelser;"
+antall
+------
+21
+```
+
+A count answers a question about the whole table in one row. `COUNT(*)` counts rows and does not care what is inside them. The count comes back as a table with one row and one column, and `AS` renames that column so the answer arrives with a label. Twenty-one events came out of the CSV file and into the table; the file itself held twenty-two lines, because the header row is a line, which is L19's row check again. The counting happens where the data lives, and nothing is copied to your machine.
+
+### GROUP BY makes one row per value
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 -header -column sikkerhet.db "SELECT bruker, COUNT(*) AS forsok FROM hendelser WHERE resultat = 'mislykket' GROUP BY bruker ORDER BY forsok DESC;"
+bruker   forsok
+-------  ------
+student  5
+admin    3
+backup   1
+```
+
+`GROUP BY` gathers rows that share a value and counts each group. Each column in the `SELECT` is either grouped or counted, never loose. `WHERE` runs before the grouping, so it decides which rows get counted. The result holds one row per distinct value.
+
+### The same three numbers, from a different tool
+
+Student failed five times, admin three times and backup once. These are the same three numbers the Python script produced in L18, and the same three L19 wrote to a file. One SQL statement replaced the loop, the condition and the counter. Two tools agreeing is the check from L18, now across three tools.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does `COUNT(*)` count when one column happens to be empty? What does `AS` do? Which runs first, the `WHERE` test or the grouping? How many rows come back from a `GROUP BY` on a column with three distinct values?
+
+:::
+
+[→ Reading is safe. Part 4 changes the table, and meets the statement that empties it.]{.bridge}
+
+## Changing the table
+
+### CREATE TABLE and INSERT
+
+```{.sql}
+sqlite3 sikkerhet.db "CREATE TABLE brukere (bruker TEXT PRIMARY KEY, rolle TEXT, aktiv INTEGER);"
+sqlite3 sikkerhet.db "INSERT INTO brukere VALUES ('student','elev',1),('admin','drift',1),('backup','tjeneste',0);"
+```
+
+`CREATE TABLE` defines the columns and their types before any row exists, and names the primary key. `INSERT` adds one row, or several in a single statement; the values arrive in the same order as the columns were defined. A successful insert prints nothing, which is the L12 rule again: silence is not an error, and `SELECT COUNT(*)` is how you check.
+
+### JOIN puts two tables side by side
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 -header -column sikkerhet.db "SELECT h.bruker, b.rolle, COUNT(*) AS forsok FROM hendelser h JOIN brukere b ON h.bruker = b.bruker WHERE h.resultat = 'mislykket' GROUP BY h.bruker, b.rolle;"
+bruker   rolle     forsok
+-------  --------  ------
+admin    drift     3
+backup   tjeneste  1
+student  elev      5
+```
+
+`JOIN` pairs each event with the row that describes that user. The two tables share one column, `bruker`, and `ON` states which columns must match; no join happens without it. `h` and `b` are short names for the two tables, so the columns can be told apart. Now the report says not only who failed but what kind of account it was. Three failures on a `drift` account is a different finding from five on an `elev` account.
+
+### UPDATE changes the rows that match
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 -header -column sikkerhet.db "SELECT bruker, rolle FROM brukere WHERE aktiv = 0;"
+bruker  rolle
+------  --------
+backup  tjeneste
+student@kali:~/logganalyse$ sqlite3 sikkerhet.db "UPDATE brukere SET aktiv = 0 WHERE bruker = 'admin';" "SELECT changes();"
+1
+```
+
+`UPDATE` writes new values into every row the `WHERE` clause matches. `SET` names the column and the value it should now hold. `changes()` reports how many rows the last statement actually touched, and reading the table before and after is how you check that the number is the one you meant. The `SELECT` with the same `WHERE`, run first, shows exactly what the `UPDATE` would touch.
+
+### The trap: DELETE without WHERE
+
+```{.bash}
+student@kali:~/logganalyse$ sqlite3 -header -column kopi.db "SELECT COUNT(*) AS for_sletting FROM hendelser;"
+for_sletting
+------------
+21
+student@kali:~/logganalyse$ sqlite3 kopi.db "DELETE FROM hendelser WHERE resultat = 'avbrutt';" "SELECT changes();"
+3
+student@kali:~/logganalyse$ sqlite3 kopi.db "DELETE FROM hendelser;" "SELECT changes();"
+18
+student@kali:~/logganalyse$ sqlite3 -header -column kopi.db "SELECT COUNT(*) AS igjen FROM hendelser;"
+igjen
+-----
+0
+```
+
+`DELETE` removes whole rows and never single values inside a row. The first delete named a result value and removed three rows. The second carried no `WHERE` clause and removed the remaining eighteen. The table still exists, empty, and nothing asked whether you meant it. This was run on `kopi.db`, a copy, on purpose. The `WHERE` clause is the blast radius of an `UPDATE` or a `DELETE`, and the habit is always the same: `SELECT` with that `WHERE` first, read the count, then change.
+
+::: {.callout-warning}
+## Checkpoint
+
+Which clause decides how many rows an `UPDATE` touches? What does a `DELETE` without `WHERE` do? What must exist in both tables before you can join them? What would you run to check a `DELETE` before running it?
+
+:::
+
+[→ A backup nobody has restored is a belief. Part 5 is the night that proved it.]{.bridge}
+
+## GitLab.com, 31 January 2017
+
+### The case
+
+An engineer ran a delete command against the primary database server. The command was meant for the secondary, which held a copy. About 300 GB was removed before the process was stopped a second or two later. Data created in the previous six hours, issues, merge requests, comments, was lost for good. L15 used this case for a script that says which machine it is on; here the subject is what came after.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that one engineer typed one wrong path. Five recovery paths were meant to exist on the day this happened. The `pg_dump` backups had failed silently for months, because the backup tool was an older version than the database and produced empty files; the warning emails went to a folder nobody read. Disk snapshots were not enabled on the database servers. Replication to the secondary had been broken by the same incident. The one path that worked was a manual snapshot an engineer had taken six hours earlier for another reason. Four of five recovery paths had failed, and nobody knew, because nobody had restored from any of them.
+
+The book's ransomware advice is the same rule, written for a different threat: backups "should be stored offline from the network" and "routines for recovering from backups must be tested regularly" [Jøsang, Sect. 2.2.2, p. 37]{.src}. Tested regularly. A backup file that exists is L19's file that exists: not the same as one that is complete, and not the same as one that restores.
+
+::: {.callout-important}
+## Key idea
+
+A `SELECT` with the same `WHERE` shows exactly what a `DELETE` would remove, and `WHERE` decides the blast radius of an `UPDATE` or a `DELETE`. A backup nobody has ever restored is a belief, not a backup: GitLab found four of its five recovery paths had failed on the day it needed them.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik's events now live in `sikkerhet.db`, with a `brukere` table that says which accounts are people and which are services. The backup of that file is L03's top risk again: it is a backup only if somebody has copied it somewhere the server cannot reach and opened it there with `sqlite3` to see the rows.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                             **Correction**
+  ------------------------------------------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------
+  A database is a spreadsheet with room for more rows.   The table refuses values that a spreadsheet accepts without comment. Both show a grid; only one enforces it.
+  A `SELECT` can damage the data.                        `SELECT` only reads; `INSERT`, `UPDATE` and `DELETE` do the changing. Every statement is typed at the same prompt, which is why the distinction matters.
+  A delete can be undone with a key combination.         The rows are gone, and only a restored backup brings them back.
+  A query that returns rows has answered the question.   A wrong `WHERE` returns rows too, and they look equally convincing. An empty result feels wrong and rows feel like success.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  One table, one set of rules: every row gets the same columns and types, and the primary key names one row.
+
+2.  `SELECT` describes the rows; `WHERE` filters, `ORDER BY` sorts, `LIMIT` cuts; the database works out how.
+
+3.  `GROUP BY` with `COUNT(*)` turns many rows into one per group, and `WHERE` runs before the grouping.
+
+4.  A `JOIN` needs a shared column; `UPDATE` and `DELETE` touch every row `WHERE` matches, and `changes()` says how many.
+
+5.  `SELECT` first with the same `WHERE`, then change; and a backup counts only once it has been restored.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Which column in `hendelser` would make a poor primary key, and why? (Part 1)
+
+2.  How would you find users who exist in `brukere` but never appear in `hendelser`? (Part 4)
+
+3.  If a `DELETE` removed the wrong rows this morning, what would you need to get them back? (Parts 4--5)
+
+4.  Write the query that gives failed attempts per user, most first, and say which clause does each job. (Parts 2--3)
+
+5.  Why does `COUNT(*)` say 21 when `wc -l` on the CSV said 22? (Part 3)
+
+6.  Name the four GitLab recovery paths that failed and the one reason they shared. (Part 5)
+
+## Before L22 {#before-l22 .unnumbered}
+
+Take the CSV your report script wrote in L19 and import it into a SQLite table, then run one `SELECT` with a `WHERE`. Then read Jøsang Sect. 11.7.1 to the end: the second half describes the attack on exactly the queries you have been typing, and the fix. L22 does today's work from inside Python, and the fix is one character.
+
+## Glossary {#glossary .unnumbered}
+
+DBMS
+
+:   The program that manages databases; `sqlite3` here. [Jøsang, Sect. 11.7.1]{.src}
+
+SQL
+
+:   The language for describing the rows you want. [Jøsang, Sect. 11.7.1]{.src}
+
+Table / row / column
+
+:   A grid with named, typed columns; one record; one kind of value.
+
+Data type
+
+:   Decided once per column; enforced on every arriving row.
+
+Primary key
+
+:   A column whose value is unique in every row; refuses duplicates.
+
+`.import` / `.schema` / `.tables`
+
+:   SQLite shell commands: load a CSV; show a definition; list tables.
+
+`SELECT` / `FROM` / `WHERE` / `ORDER BY` / `LIMIT`
+
+:   Columns; table; filter; sort; cut.
+
+`COUNT(*)` / `AS` / `GROUP BY`
+
+:   Count rows; label the result; one row per distinct value.
+
+`JOIN` ... `ON`
+
+:   Pair rows from two tables on a shared column.
+
+`INSERT` / `UPDATE` / `DELETE` / `changes()`
+
+:   Add; change matching rows; remove matching rows; how many.
+
+Blast radius
+
+:   Everything a `WHERE` matches; `SELECT` it first.
+
+Tested backup
+
+:   One that has been restored and read; the others are beliefs. [Jøsang, Sect. 2.2.2]{.src}
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. <https://doi.org/10.1007/978-3-031-68483-8>. Sect. 1.9.2--1.9.3, 2.2.2, 11.7.1, 14.5.2.
+
+-   SQLite. (2026). *SQL as understood by SQLite*. <https://www.sqlite.org/lang.html>
+
+-   GitLab. (2017, February 10). *Postmortem of database outage of January 31*.
+
+-   Ward, B. (2021). *How Linux works: What every superuser should know* (3rd ed.). No Starch Press.

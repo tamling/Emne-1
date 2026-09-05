@@ -1,0 +1,360 @@
+# Bash: variables, conditions, loops and repeatable tasks {#sec-23-bash-variables-conditions-loops-and-repeatable-tasks}
+
+::: {.callout-note appearance="simple" icon="false"}
+**Module.** Module 4: Scripting and Automation\
+**Accompanies.** Lecture L23. **Reading time.** About 45 minutes.\
+**Primary reading.** Jøsang, *Cybersecurity: Technology and Governance* (Springer, 2025): Sect. 3.4 (a script runs with the privilege of the account that starts it), 1.9.3 (change management), 14.5.2 (documentation). The shell facts follow the GNU *Bash Reference Manual*, Ward (2021) Chapter 11 and Shotts (2026) Part 4. Neither course book covers Bash; the ideas are those of L15--L20 in a second language.
+:::
+
+## The question this chapter answers {#the-question-this-chapter-answers .unnumbered}
+
+Python builds an answer out of statements you write yourself. Bash mostly starts other programs and passes their output along. Every command in Module 3, `grep`, `ss`, `df`, `journalctl`, is a program a shell script can start, and this chapter wraps them in a file that takes an argument, checks it, and reports how it went. Part 1 is the whole script and the two things that make it runnable. Part 2 is variables, and the one rule that decides how many arguments a command receives. Part 3 is the number every command hands back. Part 4 is the loop, and a wrong answer that two tools disagreed about. Part 5 is a script that deleted from the root of the filesystem because a variable came back empty.
+
+Everything here you have met in Python. The words change; the ideas from L15 to L20 do not.
+
+::: {.callout-tip}
+## Nordvik's morning routine in Bash
+
+Instead of new logic, Bash starts the programs you already use on Nordvik's server, `grep`, `ss`, `df`, and holds them in one file. A script keeps the commands you would otherwise retype every morning. The same `auth.log` is counted again, and by the end the count must match the Python count from L18, or one of the two is wrong.
+
+:::
+
+[→ A whole script first, then take it apart. Part 1 is the script, and what makes it run.]{.bridge}
+
+## A shell script
+
+### Bash glues existing commands together
+
+`grep`, `wc` and `ls` are separate programs, not parts of the shell. A shell script is a file holding the commands you would type at the prompt, in order, and the shell reads it from the top exactly as Python read L15's file. The difference is what a line does: a Python line computes, a Bash line usually starts a program and waits for it.
+
+### A whole script, before we take it apart
+
+```{.bash}
+student@kali:~/logganalyse$ cat tell.sh
+#!/bin/bash
+# Count failed logins in a log file given as the first argument.
+LOGG="$1"
+
+if [[ ! -r "$LOGG" ]]; then
+    echo "Finner ikke loggfilen: $LOGG" >&2
+    exit 1
+fi
+
+ANTALL=$(grep -c "Failed password for" "$LOGG")
+echo "Mislykkede innlogginger: $ANTALL"
+
+for BRUKER in student admin backup; do
+    TREFF=$(grep -c "Failed password for $BRUKER" "$LOGG")
+    echo "  $BRUKER: $TREFF"
+done
+```
+
+The script counts failed logins in whatever log file it is handed. Four things are new: a shebang, variables, a condition and a loop. Every command inside it is one you could type at the prompt.
+
+### The first line names the interpreter
+
+The first two characters are a hash and an exclamation mark together, the **shebang**. That line names the program that will read the rest of the file, and `/bin/bash` is the full path to the shell on this machine. A comment also starts with a hash, but only the first line's hash-bang is read by the system. This is Python's `python3 tellfeil.py` with the interpreter written into the file instead of typed before it.
+
+### Permission to run, and the dot slash in front
+
+```{.bash}
+student@kali:~/logganalyse$ chmod +x tell.sh
+student@kali:~/logganalyse$ ./tell.sh auth.log
+```
+
+A new file is readable and writable, and neither of those means runnable. `chmod +x` adds the permission that lets the file be executed, L13's third letter. The dot and the slash tell the shell to look in this folder; without them the shell searches only the directories on its path, and your folder is not one of them, on purpose.
+
+### The trap: the script that will not start
+
+A missing execute bit stops the run before a single line is read; the shell answers `Permission denied` and names your own file back to you. A missing shebang leaves the system guessing which program should read the text. Running `bash tell.sh` bypasses both, which is useful for a test and wrong for a scheduled job, because the job should not depend on somebody remembering.
+
+::: {.callout-warning}
+## Checkpoint
+
+What do the first two characters of a shell script tell the system? Which command adds the permission that lets a file be run? Why does `./tell.sh` carry a dot and a slash? Name one command in the script you could type at the prompt unchanged.
+
+:::
+
+[→ A variable is a name for a piece of text. Part 2 is how it is set, read and, above all, quoted.]{.bridge}
+
+## Variables and quoting
+
+### A variable is a name for a piece of text
+
+A variable holds text, and the shell puts that text back when asked. Bash treats nearly everything as text, including things that look like numbers, which is L15's "always text" with no `int()` to cross over. `LOGG` holds a filename, and `ANTALL` holds a count written as characters. Upper-case names are a convention for script variables, not a rule.
+
+### Assignment tolerates no spaces
+
+```{.bash}
+LOGG="$1"        # right
+LOGG = "$1"      # wrong: runs a command called LOGG with two arguments
+echo "$LOGG"     # reading needs the dollar sign
+```
+
+The equals sign must touch the name on its left and the value on its right. A space before the equals sign turns the name into a command to run. Setting a value uses no dollar sign, and reading one always needs it. Python's `navn = "student"` tolerated the spaces; Bash does not.
+
+### The argument arrives as \$1
+
+The shell numbers the words typed after the name of the script: `$1` is the first argument, `$2` the second. Copying `$1` into a named variable makes the rest of the script readable, the L15 rule about names that say what they hold. The script works on any log file, because the path arrives as an argument, which is L18's parameter and L20's `sys.argv[1]` in one.
+
+### Command substitution keeps what a command printed
+
+```
+ANTALL=$(grep -c "Failed password for" "$LOGG")
+```
+
+The dollar sign with parentheses runs the command written inside them. Whatever that command printed comes back as text, and the text is stored in the variable on the left. The inner command runs first, and its output replaces the whole `$(…)`. This is the L12 pipeline's answer captured in a name instead of scrolling past.
+
+### The trap: an unquoted variable falls apart
+
+```{.bash}
+student@kali:~/logganalyse$ FIL="min logg.txt"; ls -l $FIL
+ls: cannot access 'min': No such file or directory
+ls: cannot access 'logg.txt': No such file or directory
+student@kali:~/logganalyse$ FIL="min logg.txt"; ls -l "$FIL"
+-rw-r--r-- 1 root root 0 Aug 15 08:40 min logg.txt
+```
+
+The variable holds one filename that happens to contain a space. Without quotes the shell hands `ls` two separate words instead of one name, and `ls` reports two failures for two files that do not exist. The quoted version keeps the name whole. Quotes are not style. They decide how many arguments the command receives.
+
+::: {.callout-warning}
+## Checkpoint
+
+Why does an assignment fail when a space follows the variable name? What does `$(…)` hand back? What happened to the filename with a space when the quotes were missing? Which Python idea is `$1`?
+
+:::
+
+::: {.callout-important}
+## Key idea
+
+In Bash a value with a space becomes two arguments unless you quote it, so quote every variable. There are no spaces around the equals sign, a dollar sign reads it back, and zero means success, the opposite of every other language here, with `$?` holding the code of the command that just finished.
+
+:::
+
+[→ Every command reports how it went. Part 3 is the number nobody prints.]{.bridge}
+
+## Exit codes and conditions
+
+### Every command reports how it went
+
+A command finishes and hands the shell a number that nobody prints. Zero means the command did what it was asked to do. Any other number means something went wrong on the way. Bash reads zero as success, which is the opposite of Python's `True`, and the exit codes your Python scripts set in L20 are exactly these numbers read from the other side.
+
+### \$? holds the last code, and grep -q asks a question
+
+```{.bash}
+student@kali:~/logganalyse$ grep -q "Accepted" auth.log; echo $?
+0
+student@kali:~/logganalyse$ grep -q "Accepted" finnesikke.log; echo $?
+2
+```
+
+`$?` holds the exit code from the command that just finished, and the next command replaces it, so read it straight away or store it. `grep -q` prints nothing at all and answers only with its exit code: zero for a match, one for none, two for an error such as a missing file. A condition in Bash is a command, and `if` asks whether its code was zero.
+
+### The guard at the top of the script
+
+```
+if [[ ! -r "$LOGG" ]]; then
+    echo "Finner ikke loggfilen: $LOGG" >&2
+    exit 1
+fi
+```
+
+The double brackets test whether this file exists and can be read; `-r` is the permission question from L13. The exclamation mark reverses the answer, so the block runs when the file cannot be read. `>&2` sends the message to the error stream, L12's stream two and L20's `file=sys.stderr`. `exit 1` stops the script with a code that says why. This is L20's hardened reader in four lines of Bash.
+
+### The script hands its own code back
+
+```{.bash}
+student@kali:~/logganalyse$ ./tell.sh finnesikke.log
+Finner ikke loggfilen: finnesikke.log
+student@kali:~/logganalyse$ echo $?
+1
+```
+
+A script that stops early should say so in the number it returns. The message goes to the person, and the exit code goes to the shell. Another script, or a scheduler, can read that code and act on it, which is L24.
+
+::: {.callout-warning}
+## Checkpoint
+
+What number does a command hand back when it worked? What does `grep -q` print when it finds a match? What does the test with `-r` ask? Why would a script exit with 1 rather than just print a message?
+
+:::
+
+[→ A loop repeats the same work over a list. Part 4 is the loop, and the number that came out wrong.]{.bridge}
+
+## Loops, and a wrong answer
+
+### A loop repeats the same work over a list
+
+```{.python}
+for BRUKER in student admin backup; do
+    TREFF=$(grep -c "Failed password for $BRUKER" "$LOGG")
+    echo "  $BRUKER: $TREFF"
+done
+```
+
+`for` takes each item from a list and puts it into a variable. The list here is three usernames written into the script by hand. Everything between `do` and `done` runs once for every name in the list, which is L16's indented block with words instead of spaces. The counting command is written once and runs three times.
+
+### The script on the real log
+
+```{.code-out}
+student@kali:~/logganalyse$ ./tell.sh auth.log
+Mislykkede innlogginger: 9
+  student: 5
+  admin: 3
+  backup: 0
+```
+
+The first line reports nine, which matches the corrected count from L18, after the `sudo` line was excluded by requiring the phrase `Failed password for`. Two different tools now agree on the same question about the same file. Five and three match L18 and L21. The last line does not.
+
+### The trap: backup is 0 here and was 1 in L18
+
+The loop searched the file for the text `Failed password for backup`. The log line actually reads `Failed password for invalid user backup`. Three words sit between `for` and `backup`, so `grep` found no match. L17 met this line and named the field after `user`; this pattern counts to it, and counting to a field is what L17 said not to do. Each tool answers the pattern it was given, not your question. The fix is a pattern that allows the extra words, `"Failed password for .*$BRUKER"`, and a test that would have caught it: the three per-user counts must add up to the total, and 5+3+0 is not 9.
+
+### The trap: an empty variable inside a path
+
+```{.bash}
+student@kali:~/logganalyse$ TOM=""; echo "rm -rf $TOM/*"
+rm -rf /*
+```
+
+A variable that was never set holds nothing, and nothing is a valid value. The shell removes the empty value and joins whatever text is left around it. The path in quotes collapses to a slash and a star, which is the whole disk. Nothing refused to run. Part 5 is this line in production.
+
+::: {.callout-warning}
+## Checkpoint
+
+What does the loop put into `BRUKER` on its second pass? Why did the script report zero attempts for `backup`? What does an unset variable expand to inside a longer path? What arithmetic check would have flagged the wrong count?
+
+:::
+
+[→ A path assembled from a variable is only as safe as that variable. Part 5 is the case.]{.bridge}
+
+## Steam for Linux, January 2015
+
+### The case
+
+Steam's Linux client shipped a shell script that set a variable to the folder the script itself was sitting in. If that folder had been moved, the command that found it produced an empty value. The next line removed everything under the path built from that variable, with `rm -rf "$STEAMROOT/"*`. With the variable empty, that was `rm -rf /*`, and it ran with the permissions of whoever started Steam, on everything they could write to, including mounted drives with backups on them.
+
+### The reasoning, including the wrong turn
+
+The tempting reading is that one developer wrote one careless line. The delete in that script carried a comment beside it that said "Scary!". Somebody had already seen the danger and wrote a warning instead of a test. A comment tells the next reader; a test tells the shell. Two lines would have done it: check that the variable is not empty, and check that the path exists, before building anything from it, which is the L20 argument check in Bash.
+
+The privilege point is Jøsang's: a process "can access data and code defined with the same or lower privilege level" [Jøsang, Sect. 3.4, p. 49]{.src}, and a script runs as the account that started it. Steam deleted only what the user could delete, which was everything the user owned. The same script run with `sudo` would have deleted the machine.
+
+::: {.callout-important}
+## Key idea
+
+A path assembled from a variable is only as safe as that variable: if it comes back empty, the command runs on whatever text is left, and Steam's script deleted from the root of the filesystem when a folder had moved. Test a value before you build a path from it, and never let a comment stand where a test belongs.
+
+:::
+
+::: {.callout-tip}
+## On Nordvik AS
+
+Nordvik's morning script starts with a guard: the log path must be readable, and any variable that becomes part of a path must be non-empty. That is six lines, and it is the difference between a script that reports and one that empties the server on the morning somebody renames a folder.
+
+:::
+
+## Common misconceptions {#common-misconceptions .unnumbered}
+
+  **Belief**                                                 **Correction**
+  ---------------------------------------------------------- ----------------------------------------------------------------------------------------------------------------------------------------
+  Quotes around a variable are a matter of personal style.   Quotes decide how many arguments the command actually receives. Most values hold no spaces, so it works for months, and then one does.
+  A non-zero exit code means the script crashed.             It means the script reported a failure it chose to report; `exit 1` is a decision, not an accident.
+  Two tools reading one file have to produce one answer.     Each tool answers the pattern it was given, not your question. The file is the same; the patterns were not.
+  An empty variable will make the command refuse to run.     The shell removes it and runs whatever text is left over. An empty value looks like missing information and is not treated as such.
+
+## Summary: five points {#summary-five-points .unnumbered}
+
+1.  A shebang and `chmod +x`: one names the interpreter, one lets it run; `./` says look here.
+
+2.  No spaces around the equals sign, a dollar sign to read a variable back, and `$(…)` to keep what a command printed.
+
+3.  Quote every variable: a value with a space becomes two arguments, and an empty one disappears.
+
+4.  Zero means success in Bash; `$?` holds the last code; `grep -q` answers with a code only; a guard at the top exits with a code and a message on stderr.
+
+5.  A `for` loop runs a block once per item; check the parts against the whole; and never build a path from a variable you have not tested.
+
+## Self-check {#self-check .unnumbered}
+
+1.  Which pattern counts the `backup` attempt without also counting the `sudo` line? (Part 4)
+
+2.  How would you build the list of usernames from the log itself, instead of writing three names by hand? (Part 4; L12 has the pipe)
+
+3.  What should your script print tomorrow if the log file is empty, and what code should it return? (Part 3)
+
+4.  Rewrite the guard so that it also refuses an empty `$1`. (Parts 3, 5)
+
+5.  Why did `ls -l $FIL` report two errors, and what one change fixes it? (Part 2)
+
+6.  What did the "Scary!" comment in Steam's script fail to do that two lines of test would have done? (Part 5)
+
+## Before L24 {#before-l24 .unnumbered}
+
+Put the guard from Part 3 at the top of a script of your own and make it exit with code 1 when the argument is missing. Check the code with `echo $?`. In L24 the same shape wraps four questions about a running machine, service, disk, ports and log, into one morning check with one exit code.
+
+## Glossary {#glossary .unnumbered}
+
+Shell script
+
+:   A file of commands the shell reads from the top; `#!/bin/bash` names the reader.
+
+Shebang
+
+:   The first line, `#!`, naming the interpreter.
+
+`chmod +x` / `./`
+
+:   Add the execute bit; run from this folder.
+
+Variable
+
+:   `NAME="value"`, no spaces; read with `$NAME`; always text.
+
+`$1`, `$2`
+
+:   The script's arguments, by position.
+
+Command substitution
+
+:   `$(command)`: run it and keep what it printed.
+
+Quoting
+
+:   `"$VAR"` keeps a value as one argument; unquoted, it splits on spaces and vanishes if empty.
+
+Exit code / `$?`
+
+:   A number every command hands back; 0 is success; the shell keeps the last one.
+
+`grep -q`
+
+:   Match quietly; answer only with the exit code.
+
+`[[ -r "$F" ]]` / `!`
+
+:   Test: readable file; reverse the answer.
+
+`>&2` / `exit 1`
+
+:   Message to stderr; stop with a code.
+
+`for … in …; do …; done`
+
+:   Once per item in a list.
+
+Guard
+
+:   The check at the top that stops a script before it builds anything from bad input.
+
+## Sources {#sources .unnumbered}
+
+-   Jøsang, A. (2025). *Cybersecurity: Technology and governance*. Springer. Sect. 1.9.3, 3.4, 14.5.2.
+
+-   Free Software Foundation. (2026). *Bash reference manual*. <https://www.gnu.org/software/bash/manual/bash.html>
+
+-   Ward, B. (2021). *How Linux works: What every superuser should know* (3rd ed.), Chapter 11. No Starch Press.
+
+-   Shotts, W. (2026). *The Linux command line* (3rd ed.), Part 4. No Starch Press.
+
+-   Nichols, S. (2015, January 17). *Scary code of the week: Valve Steam cleans Linux PCs*. The Register.

@@ -76,7 +76,7 @@ Nordvik's Wi-Fi reaches the car park and the flats next door. A hidden name and 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why does hiding the network name not hide the network?","options":["Every device that saved it asks for it by name wherever it goes","Hidden networks cannot use encryption","The name is still printed on the router","Hiding only works on the 5 GHz band"],"correct":[0],"ok":"Right.","why":"The announcement moves from the ceiling into every pocket that saved it - a readable identifier in the open, which is also why MAC filtering does not protect."}
+{"type": "quiz", "title": "Check yourself", "q": "Why does hiding the network name not hide the network?", "options": ["Every device that saved it asks for it by name wherever it goes", "Hidden networks cannot use encryption", "The name is still printed on the router", "Hiding only works on the 5 GHz band"], "correct": [0], "ok": "Right.", "why": "Every device that saved the network asks for it by name wherever it goes, so the announcement just moves into every pocket that saved it.", "ref": "Part 1 of this chapter"}
 </script>
 ```
 
@@ -92,7 +92,7 @@ Part 1 ended with everyone in range receiving every frame. That is not a flaw i
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: four generations","instr":"Put the Wi-Fi security generations in the order they arrived.","steps":["WEP","WPA","WPA2","WPA3"],"ok":"1999 to 2018 - and only the last is sound."}
+{"type": "order", "title": "Try it: four generations", "instr": "Put the Wi-Fi security generations in the order they arrived.", "steps": ["WEP", "WPA", "WPA2", "WPA3"], "ok": "1999 to 2018 - and only the last is sound.", "why": "WEP was trivially breakable, WPA had serious weaknesses, WPA2 replaced it in 2004, and WPA3 arrived in 2018.", "ref": "Part 2; Jøsang, Sect. 7.2.2, p. 148"}
 </script>
 ```
 
@@ -127,7 +127,7 @@ All three encrypt what you send. They differ in what somebody gains from a recor
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: WPA2 or WPA3?","instr":"Sort each fact into the generation it describes.","buckets":["WPA2","WPA3"],"items":[["Arrived 2004; still the ordinary case",0],["Offline guessing works on a recording",0],["The shared password reads others' traffic",0],["Uses SAE for mutual authentication",1],["Arrived 2018; the current generation",1],["Each session gets its own keys",1]],"ok":"Joining feels the same; what the key protects does not."}
+{"type": "buckets", "title": "Try it: WPA2 or WPA3?", "instr": "Sort each fact into the generation it describes.", "buckets": ["WPA2", "WPA3"], "items": [["Arrived 2004; still the ordinary case", 0], ["Offline guessing works on a recording", 0], ["The shared password reads others' traffic", 0], ["Uses SAE for mutual authentication", 1], ["Arrived 2018; the current generation", 1], ["Each session gets its own keys", 1]], "ok": "Joining feels the same; what the key protects does not.", "why": "WPA2's shared PSK allows offline guessing and shared reading; WPA3's SAE gives mutual authentication and per-session keys.", "ref": "Part 2; Jøsang, Sect. 7.2.3, p. 149"}
 </script>
 ```
 
@@ -162,7 +162,7 @@ The zone grid from L08 does not change because the medium changed. Guest wireles
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"An employee leaves an organisation running WPA2-Personal. What has to happen for their access to end?","options":["The shared password changes for everybody","One account is disabled, and nobody else notices","Their device forgets the key by itself","The access points must be replaced"],"correct":[0],"ok":"Right.","why":"Personal mode means one password for everybody, so revoking one person means changing it for all - which is why nobody ever changes it. Revocation is the whole argument for Enterprise mode."}
+{"type": "quiz", "title": "Check yourself", "q": "An employee leaves an organisation running WPA2-Personal. What has to happen for their access to end?", "options": ["The shared password changes for everybody", "One account is disabled, and nobody else notices", "Their device forgets the key by itself", "The access points must be replaced"], "correct": [0], "ok": "Right.", "why": "Personal mode means one password for everybody, so revoking one person means changing it for all; Enterprise mode disables one account instead.", "ref": "Part 3; Jøsang, Sect. 7.2.3, Fig. 7.5, p. 148"}
 </script>
 ```
 
@@ -208,7 +208,7 @@ A laptop in Nordvik's car park could announce the office network's name with a s
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why does a longer password not defend against an evil twin?","options":["The fake network never needed to know the password","Long passwords slow down the handshake","SAE ignores the password entirely","Evil twins can only imitate open networks"],"correct":[0],"ok":"Right.","why":"An open twin, or one that lets the handshake fail and offers a captive portal, gets the device anyway. What defends is the device checking the network's identity."}
+{"type": "quiz", "title": "Check yourself", "q": "Why does a longer password not defend against an evil twin?", "options": ["The fake network never needed to know the password", "Long passwords slow down the handshake", "SAE ignores the password entirely", "Evil twins can only imitate open networks"], "correct": [0], "ok": "Right.", "why": "An open twin, or one that lets the handshake fail and offers a captive portal, gets the device anyway; the defence is the device verifying the network.", "ref": "Part 4; Jøsang, Sect. 7.2.3, p. 149"}
 </script>
 ```
 
@@ -276,7 +276,7 @@ Four of these come from L05 to L09, and the last one is today.
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: name it","instr":"Drag each term onto its description. Two terms are distractors and stay on the bench.","zones":[{"label":"A spoofed network announcing a genuine name","answer":"Evil twin"},{"label":"2017 key-reinstallation attack on WPA2","answer":"KRACK"},{"label":"Encryption on open networks, no password","answer":"OWE"},{"label":"WPA3's mutual authentication protocol","answer":"SAE"}],"extra":["PSK","Beacon"],"ok":"That is the vocabulary of the wireless chapter."}
+{"type": "match", "title": "Try it: name it", "instr": "Drag each term onto its description. Two terms are distractors and stay on the bench.", "zones": [{"label": "A spoofed network announcing a genuine name", "answer": "Evil twin"}, {"label": "2017 key-reinstallation attack on WPA2", "answer": "KRACK"}, {"label": "Encryption on open networks, no password", "answer": "OWE"}, {"label": "WPA3's mutual authentication protocol", "answer": "SAE"}], "extra": ["PSK", "Beacon"], "ok": "That is the vocabulary of the wireless chapter.", "why": "The chapter names each: the spoofed network, the 2017 handshake attack, encryption without a password, and WPA3's authentication protocol.", "ref": "Parts 2 and 4 of this chapter"}
 </script>
 ```
 

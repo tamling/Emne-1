@@ -76,7 +76,7 @@ What do the first two characters of a shell script tell the system? Which comman
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: tell.sh from top to bottom","instr":"Tap the parts of the script in the order they appear (tap a step, then a slot - or just tap steps in order).","steps":["Shebang names /bin/bash","Guard: exit 1 if the log is unreadable","grep -c counts all failed logins","A for loop counts per user"],"ok":"That is the script, top to bottom."}
+{"type":"order","title":"Try it: tell.sh from top to bottom","instr":"Tap the parts of the script in the order they appear (tap a step, then a slot - or just tap steps in order).","steps":["Shebang names /bin/bash","Guard: exit 1 if the log is unreadable","grep -c counts all failed logins","A for loop counts per user"],"ok":"That is the script, top to bottom.","why":"The shebang names the interpreter, the guard checks the argument, then the total and the per-user counts run.","ref":"Part 1 of this chapter"}
 </script>
 ```
 
@@ -136,7 +136,7 @@ In Bash a value with a space becomes two arguments unless you quote it, so quote
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"FIL holds the single filename min logg.txt, which contains a space. What does ls -l $FIL do without quotes?","options":["ls receives two words and reports two files that do not exist","ls lists the file, since the variable holds one filename","The shell refuses to run an unquoted variable","ls asks which of the two names you meant"],"correct":[0],"ok":"Right.","why":"Without quotes the shell splits the value on the space. Quotes decide how many arguments the command receives."}
+{"type":"quiz","title":"Check yourself","q":"FIL holds the single filename min logg.txt, which contains a space. What does ls -l $FIL do without quotes?","options":["ls receives two words and reports two files that do not exist","ls lists the file, since the variable holds one filename","The shell refuses to run an unquoted variable","ls asks which of the two names you meant"],"correct":[0],"ok":"Right.","why":"Without quotes the shell splits the value on the space. Quotes decide how many arguments the command receives.","ref":"Part 2 of this chapter"}
 </script>
 ```
 
@@ -189,7 +189,7 @@ What number does a command hand back when it worked? What does `grep -q` print w
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: zero or not zero?","instr":"Every command hands the shell a number. Sort each situation by the exit code it produces.","buckets":["Exit code 0","Non-zero exit code"],"items":[["The command did what it was asked",0],["grep -q found a match",0],["grep -q found no match",1],["grep -q was given a missing file",1],["The guard stopped the script early",1],["What Bash reads as success",0]],"ok":"Zero means success - the opposite of Python's True."}
+{"type":"buckets","title":"Try it: zero or not zero?","instr":"Every command hands the shell a number. Sort each situation by the exit code it produces.","buckets":["Exit code 0","Non-zero exit code"],"items":[["The command did what it was asked",0],["grep -q found a match",0],["grep -q found no match",1],["grep -q was given a missing file",1],["The guard stopped the script early",1],["What Bash reads as success",0]],"ok":"Zero means success - the opposite of Python's True.","why":"Zero means success in Bash; grep -q answers 1 for no match and 2 for an error, and the guard chooses exit 1.","ref":"Part 3 of this chapter"}
 </script>
 ```
 
@@ -241,7 +241,7 @@ What does the loop put into `BRUKER` on its second pass? Why did the script repo
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"The loop reported zero failed attempts for backup, but L18 counted one. Why?","options":["The log line reads Failed password for invalid user backup, so the pattern missed it","grep cannot search for a phrase of several words","The loop never reached the name backup","The log file had rotated overnight"],"correct":[0],"ok":"Right.","why":"Three words sit between for and backup, so grep found no match. Each tool answers the pattern it was given, not your question - and 5+3+0 is not 9."}
+{"type":"quiz","title":"Check yourself","q":"The loop reported zero failed attempts for backup, but L18 counted one. Why?","options":["The log line reads Failed password for invalid user backup, so the pattern missed it","grep cannot search for a phrase of several words","The loop never reached the name backup","The log file had rotated overnight"],"correct":[0],"ok":"Right.","why":"Three words sit between for and backup, so grep found no match. Each tool answers the pattern it was given, not your question - and 5+3+0 is not 9.","ref":"Part 4 of this chapter"}
 </script>
 ```
 
@@ -274,7 +274,7 @@ Nordvik's morning script starts with a guard: the log path must be readable, and
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: how Steam emptied a disk","instr":"Tap the events in the order they happened in the January 2015 case.","steps":["The folder the script sat in had been moved","The command that found it produced nothing","The variable was empty inside the path","rm -rf ran on the root of the filesystem"],"ok":"A comment said Scary! - a test would have stopped it."}
+{"type":"order","title":"Try it: how Steam emptied a disk","instr":"Tap the events in the order they happened in the January 2015 case.","steps":["The folder the script sat in had been moved","The command that found it produced nothing","The variable was empty inside the path","rm -rf ran on the root of the filesystem"],"ok":"A comment said Scary! - a test would have stopped it.","why":"The locating command returned nothing, the empty value vanished from the path, and rm -rf ran on what was left.","ref":"Part 5 of this chapter"}
 </script>
 ```
 
@@ -301,7 +301,7 @@ Nordvik's morning script starts with a guard: the log path must be readable, and
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: name the piece","instr":"Drag each piece of Bash onto what it does in this chapter. Two chips stay on the bench.","zones":[{"label":"Python's sys.argv[1], in Bash","answer":"$1"},{"label":"Names the program that reads the file","answer":"#!/bin/bash"},{"label":"Keeps what a command printed","answer":"$(command)"},{"label":"Sends a message to the error stream","answer":">&2"}],"extra":["chmod +x","$?"],"ok":"The words change; the ideas from L15 to L20 do not."}
+{"type":"match","title":"Try it: name the piece","instr":"Drag each piece of Bash onto what it does in this chapter. Two chips stay on the bench.","zones":[{"label":"Python's sys.argv[1], in Bash","answer":"$1"},{"label":"Names the program that reads the file","answer":"#!/bin/bash"},{"label":"Keeps what a command printed","answer":"$(command)"},{"label":"Sends a message to the error stream","answer":">&2"}],"extra":["chmod +x","$?"],"ok":"The words change; the ideas from L15 to L20 do not.","why":"$1 is the first argument, the shebang names the interpreter, command substitution keeps output, and >&2 goes to stderr.","ref":"Parts 1-3 of this chapter"}
 </script>
 ```
 

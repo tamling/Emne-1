@@ -82,7 +82,7 @@ If Nordvik's name-server setting is wrong, its staff reach everything by number 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: four settings, four questions","instr":"Drag each setting onto the question it answers. Two terms are distractors and stay on the bench.","zones":[{"label":"Which machine am I, on which network?","answer":"The IP address"},{"label":"Where does my own network end?","answer":"The subnet mask"},{"label":"Where do I send everything else?","answer":"The default gateway"},{"label":"Who do I ask about names?","answer":"The name server"}],"extra":["The broadcast address","The MAC address"],"ok":"Those are the four fields on every network settings screen."}
+{"type": "match", "title": "Try it: four settings, four questions", "instr": "Drag each setting onto the question it answers. Two terms are distractors and stay on the bench.", "zones": [{"label": "Which machine am I, on which network?", "answer": "The IP address"}, {"label": "Where does my own network end?", "answer": "The subnet mask"}, {"label": "Where do I send everything else?", "answer": "The default gateway"}, {"label": "Who do I ask about names?", "answer": "The name server"}], "extra": ["The broadcast address", "The MAC address"], "ok": "Those are the four fields on every network settings screen.", "why": "Each setting answers one question: who am I, where does my network end, where does everything else go, and who translates names.", "ref": "Part 1; Jøsang, Sect. 6.1.1, p. 118"}
 </script>
 ```
 
@@ -139,7 +139,7 @@ Your machine is `192.168.1.20/24`. Which of these does it reach without the gate
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: straight there or via the gateway?","instr":"All machines use a /24 mask. Cover the last number, compare what is left, and sort each pair.","buckets":["Same network, straight there","Via the gateway"],"items":[["192.168.1.20 → 192.168.1.90",0],["192.168.1.20 → 192.168.2.20",1],["10.0.4.7 → 10.0.4.212",0],["10.10.1.5 → 10.10.2.5",1],["192.168.1.20 → 192.168.1.254",0],["192.168.1.20 → 10.0.0.1",1]],"ok":"If the network parts match, straight there; otherwise everything goes to the gateway."}
+{"type": "buckets", "title": "Try it: straight there or via the gateway?", "instr": "All machines use a /24 mask. Cover the last number, compare what is left, and sort each pair.", "buckets": ["Same network, straight there", "Via the gateway"], "items": [["192.168.1.20 → 192.168.1.90", 0], ["192.168.1.20 → 192.168.2.20", 1], ["10.0.4.7 → 10.0.4.212", 0], ["10.10.1.5 → 10.10.2.5", 1], ["192.168.1.20 → 192.168.1.254", 0], ["192.168.1.20 → 10.0.0.1", 1]], "ok": "If the network parts match, straight there; otherwise everything goes to the gateway.", "why": "With a /24 mask the network part is the first three numbers; matching parts mean direct delivery, anything else goes to the gateway.", "ref": "Part 2 of this chapter"}
 </script>
 ```
 
@@ -186,7 +186,7 @@ A machine that answers faster than the real server wins. That is how a **rogue D
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: four messages","instr":"Tap the DHCP messages in the order they are sent (tap a step, then a slot - or just tap steps in order).","steps":["Discover","Offer","Request","Acknowledge"],"ok":"Four messages and a second of time, every time a machine joins a network."}
+{"type": "order", "title": "Try it: four messages", "instr": "Tap the DHCP messages in the order they are sent (tap a step, then a slot - or just tap steps in order).", "steps": ["Discover", "Offer", "Request", "Acknowledge"], "ok": "Four messages and a second of time, every time a machine joins a network.", "why": "A joining machine asks who can give it settings, one server offers, the machine accepts, and the server confirms.", "ref": "Part 3; Jøsang, Sect. 6.1.1, p. 120; RFC 2131"}
 </script>
 ```
 
@@ -210,7 +210,7 @@ Nobody holds the whole list of names, and no single machine anywhere could. The 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: read the name from the right","instr":"Put the parts of www.uio.no in the order you read them.","steps":["no - the top of the tree","uio - one organisation under it","www - one machine or service they run"],"ok":"Rightmost first: that is how the inverted tree is read."}
+{"type": "order", "title": "Try it: read the name from the right", "instr": "Put the parts of www.uio.no in the order you read them.", "steps": ["no - the top of the tree", "uio - one organisation under it", "www - one machine or service they run"], "ok": "Rightmost first: that is how the inverted tree is read.", "why": "A domain name is an inverted tree read from the right: the country code first, then the organisation, then the machine or service.", "ref": "Part 4; Jøsang, Sect. 6.1.1, Fig. 6.1, p. 119"}
 </script>
 ```
 
@@ -244,7 +244,7 @@ Nordvik depends on DNS it does not control. A poisoned answer would send its sta
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why did the attack on Dyn in 2016 take Twitter offline without touching Twitter's servers?","options":["Dyn ran the name service, and a name nobody can resolve is a site nobody reaches","The Mirai botnet infected Twitter's own routers","Poisoned DNS answers sent users to wrong addresses","Twitter's servers were flooded with traffic"],"correct":[0],"ok":"Right.","why":"Name resolution is a service like any other. When it fails, everything that depends on a name fails with it, however healthy the servers behind the name are."}
+{"type": "quiz", "title": "Check yourself", "q": "Why did the attack on Dyn in 2016 take Twitter offline without touching Twitter's servers?", "options": ["Dyn ran the name service, and a name nobody can resolve is a site nobody reaches", "The Mirai botnet infected Twitter's own routers", "Poisoned DNS answers sent users to wrong addresses", "Twitter's servers were flooded with traffic"], "correct": [0], "ok": "Right.", "why": "Dyn ran the name service; when resolution fails, everything that depends on a name fails with it, however healthy the servers behind the name are.", "ref": "Part 4; Jøsang, Sect. 6.1.1, p. 121"}
 </script>
 ```
 
@@ -295,7 +295,7 @@ What is the machine reporting, and which service never answered it?
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A laptop's address begins 169.254. What is the machine reporting?","options":["No DHCP server answered, so it gave itself an address","The name server is down","Its lease was given to somebody else","The gateway refused the connection","The subnet mask was typed wrongly"],"correct":[0],"ok":"Right.","why":"169.254 is a range reserved for exactly that purpose: the machine has an address, but no mask that matches the office, no gateway and no name server."}
+{"type": "quiz", "title": "Check yourself", "q": "A laptop's address begins 169.254. What is the machine reporting?", "options": ["No DHCP server answered, so it gave itself an address", "The name server is down", "Its lease was given to somebody else", "The gateway refused the connection", "The subnet mask was typed wrongly"], "correct": [0], "ok": "Right.", "why": "A 169.254 address is one the machine gave itself because no DHCP server answered its Discover, so it has no usable mask, gateway or name server.", "ref": "Parts 3 and 5 of this chapter"}
 </script>
 ```
 

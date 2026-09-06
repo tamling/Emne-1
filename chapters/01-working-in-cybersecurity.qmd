@@ -232,7 +232,7 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
     });
     if (wrong.length === 0) {
       solved = true;
-      setMsg('✓ Correct - confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners.', 'ok');
+      setMsg('✓ Correct - confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners. (See Part 1 and Jøsang, Sect. 1.3, p. 4.)', 'ok');
       return;
     }
     var usedAuth = wrong.some(function (c) { return c.dataset.goal === 'Authenticity'; });
@@ -321,7 +321,7 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
         .find(function (c) { return c.dataset.goal === z.dataset.answer; });
       if (chip) { z.appendChild(chip); z.classList.add('cia-filled', 'cia-right'); }
     });
-    setMsg('Solution shown - the triad is confidentiality, integrity and availability. Hit Reset to try it properly.', 'ok');
+    setMsg('Solution shown - the triad is confidentiality, integrity and availability; authenticity is the supporting fourth goal. See Part 1 and Jøsang, Sect. 1.3, p. 4. Hit Reset to try it properly.', 'ok');
   });
   reset();
 })();
@@ -355,7 +355,7 @@ At Nordvik, a trusted supplier's attachment or a convincing message would open t
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "An organisation buys a firewall. According to the book's four dimensions, what decides whether the purchase is worth anything?", "options": ["People, Partner and Process around the Product", "The price paid for the firewall", "How new the firewall model is", "Whether the staff would ever click a link"], "correct": [0], "ok": "Right.", "why": "A Product without staff who can operate it, a vendor who supports it and a routine for using it has little value."}
+{"type": "quiz", "title": "Check yourself", "q": "An organisation buys a firewall. According to the book's four dimensions, what decides whether the purchase is worth anything?", "options": ["People, Partner and Process around the Product", "The price paid for the firewall", "How new the firewall model is", "Whether the staff would ever click a link"], "correct": [0], "ok": "Right.", "why": "A Product without staff who can operate it, a vendor who supports it and a routine for using it has little value.", "ref": "Part 1; Jøsang, Sect. 1.6, pp. 10-11"}
 </script>
 ```
 
@@ -396,7 +396,7 @@ It is January. The organisation had no security incidents last year. The finance
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "match", "title": "Try it: name the kind of control", "instr": "Drag each kind of control onto its description. Two terms are not kinds of control and stay on the bench.", "zones": [{"label": "Stops incidents; likelihood-reducing", "answer": "Preventive"}, {"label": "Raises alarms; shortens time to action", "answer": "Detective"}, {"label": "Restores operation; impact-reducing", "answer": "Corrective"}, {"label": "Organises the other three; often an ISMS", "answer": "Governance"}], "extra": ["Accountability", "Triage"], "ok": "Right. Authentication and access control prevent, intrusion detection detects, backups and contingency plans correct, and governance organises the three."}
+{"type": "match", "title": "Try it: name the kind of control", "instr": "Drag each kind of control onto its description. Two terms are not kinds of control and stay on the bench.", "zones": [{"label": "Stops incidents; likelihood-reducing", "answer": "Preventive"}, {"label": "Raises alarms; shortens time to action", "answer": "Detective"}, {"label": "Restores operation; impact-reducing", "answer": "Corrective"}, {"label": "Organises the other three; often an ISMS", "answer": "Governance"}], "extra": ["Accountability", "Triage"], "ok": "Right. Authentication and access control prevent, intrusion detection detects, backups and contingency plans correct, and governance organises the three.", "why": "Preventive controls reduce likelihood, detective ones raise alarms, corrective ones restore operation, and governance organises the other three.", "ref": "Part 2; Jøsang, Sect. 1.5, pp. 8-9"}
 </script>
 ```
 
@@ -414,7 +414,7 @@ The book's formal version of this loop is the incident management process, with 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "order", "title": "Try it: the incident management process", "instr": "Tap the book's four phases in the order they run (tap a step, then a slot - or just tap steps in order).", "steps": ["Preparation", "Triage", "Response", "Post-incident"], "ok": "That is the formal loop. The lessons-learned meeting sits in the last phase, and it is what improves the next round of prevention."}
+{"type": "order", "title": "Try it: the incident management process", "instr": "Tap the book's four phases in the order they run (tap a step, then a slot - or just tap steps in order).", "steps": ["Preparation", "Triage", "Response", "Post-incident"], "ok": "That is the formal loop. The lessons-learned meeting sits in the last phase, and it is what improves the next round of prevention.", "why": "The process runs preparation, triage, response and post-incident; the lessons-learned meeting sits in the last phase.", "ref": "Part 2; Jøsang, Fig. 14.3, p. 308"}
 </script>
 ```
 
@@ -551,7 +551,7 @@ An insider is rarely a spy. Far more often it is someone who left in March and i
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: who wants what", "instr": "Sort each fact onto the threat actor it describes.", "buckets": ["Criminals", "States", "Hacktivists", "Insiders"], "items": [["Want money above all", 0], ["Automated and loud once inside", 0], ["Want information and lasting access", 1], ["Quiet, patient, well resourced", 1], ["Want attention for a cause", 2], ["Public and short-lived", 2], ["Already hold a key", 3], ["Often an account nobody disabled", 3]], "ok": "Sorted. What an attacker wants predicts their behaviour better than how skilled they are."}
+{"type": "buckets", "title": "Try it: who wants what", "instr": "Sort each fact onto the threat actor it describes.", "buckets": ["Criminals", "States", "Hacktivists", "Insiders"], "items": [["Want money above all", 0], ["Automated and loud once inside", 0], ["Want information and lasting access", 1], ["Quiet, patient, well resourced", 1], ["Want attention for a cause", 2], ["Public and short-lived", 2], ["Already hold a key", 3], ["Often an account nobody disabled", 3]], "ok": "Sorted. What an attacker wants predicts their behaviour better than how skilled they are.", "why": "Criminals want money, states want information and lasting access, hacktivists want attention for a cause, and insiders already hold a key.", "ref": "Part 4; Jøsang, Fig. 10.5, p. 237"}
 </script>
 ```
 
@@ -597,7 +597,7 @@ The book describes the general activity these reports support as Cyber Threat In
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "Which of the three February assessments is published by Politiets sikkerhetstjeneste (PST)?", "options": ["Nasjonal trusselvurdering", "Fokus", "Risiko", "All three of them"], "correct": [0], "ok": "Right.", "why": "PST looks inwards with Nasjonal trusselvurdering. Fokus is Etterretningstjenesten looking outwards, and Risiko is NSM on how well protection works in practice."}
+{"type": "quiz", "title": "Check yourself", "q": "Which of the three February assessments is published by Politiets sikkerhetstjeneste (PST)?", "options": ["Nasjonal trusselvurdering", "Fokus", "Risiko", "All three of them"], "correct": [0], "ok": "Right.", "why": "PST looks inwards with Nasjonal trusselvurdering. Fokus is Etterretningstjenesten looking outwards, and Risiko is NSM on how well protection works in practice.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

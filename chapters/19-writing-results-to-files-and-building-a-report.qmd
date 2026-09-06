@@ -63,13 +63,13 @@ What does `"w"` do to a file that already exists? Which mode suits a script that
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: write mode or append mode?","instr":"Sort each statement onto the file mode it describes.","buckets":["Write mode \"w\"","Append mode \"a\""],"items":[["Empties the file the moment it opens",0],["New content goes on the end",1],["Right for a report rebuilt each run",0],["Right for a log the script adds to",1],["A crash leaves a file shorter than before",0],["The file grows every run",1]],"ok":"The mode decides what survives a run."}
+{"type": "buckets", "title": "Try it: write mode or append mode?", "instr": "Sort each statement onto the file mode it describes.", "buckets": ["Write mode \"w\"", "Append mode \"a\""], "items": [["Empties the file the moment it opens", 0], ["New content goes on the end", 1], ["Right for a report rebuilt each run", 0], ["Right for a log the script adds to", 1], ["A crash leaves a file shorter than before", 0], ["The file grows every run", 1]], "ok": "The mode decides what survives a run.", "why": "Write mode empties the file the moment it opens; append adds to the end, so the mode decides what survives a run.", "ref": "Part 1; Python for Everyone, Sect. 7.1"}
 </script>
 ```
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"What decides whether Norwegian letters survive the trip through a CSV file?","options":["The writing side and the reading side assuming the same encoding","The file mode the writer used","The spreadsheet's language setting","How many columns the file has"],"correct":[0],"ok":"Right.","why":"encoding=\"utf-8\" tells Python which bytes stand for each character; leave it out and two machines may choose differently."}
+{"type": "quiz", "title": "Check yourself", "q": "What decides whether Norwegian letters survive the trip through a CSV file?", "options": ["The writing side and the reading side assuming the same encoding", "The file mode the writer used", "The spreadsheet's language setting", "How many columns the file has"], "correct": [0], "ok": "Right.", "why": "encoding=\"utf-8\" tells Python which bytes stand for each character; leave it out and two machines may choose differently.", "ref": "Part 1; Python for Everyone, Sect. 7.2, ST 3"}
 </script>
 ```
 
@@ -119,7 +119,7 @@ Opening a file in write mode empties it before the first byte, while append adds
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the csv module's parts","instr":"Drag each piece onto its job. One is a distractor and stays on the bench.","zones":[{"label":"Wraps an open file, turns lists into rows","answer":"csv.writer"},{"label":"Writes one row from one list","answer":"writerow"},{"label":"Writes a list of lists, all at once","answer":"writerows"},{"label":"Lets the module write the line endings","answer":"newline=\"\""}],"extra":["readlines"],"ok":"The module writes the punctuation; you write the columns."}
+{"type": "match", "title": "Try it: the csv module's parts", "instr": "Drag each piece onto its job. One is a distractor and stays on the bench.", "zones": [{"label": "Wraps an open file, turns lists into rows", "answer": "csv.writer"}, {"label": "Writes one row from one list", "answer": "writerow"}, {"label": "Writes a list of lists, all at once", "answer": "writerows"}, {"label": "Lets the module write the line endings", "answer": "newline=\"\""}], "extra": ["readlines"], "ok": "The module writes the punctuation; you write the columns.", "why": "csv.writer wraps the file, writerow writes one row, writerows many, and newline lets the module write the line endings.", "ref": "Part 2; Python for Everyone, Toolbox 7.1"}
 </script>
 ```
 
@@ -184,7 +184,7 @@ What does `items()` give back? Why sort the rows before writing? What does the p
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: the report script","instr":"Tap the steps in the order the report script does them.","steps":["Read the log into lines","Count refusals per user","Write the header row","Write the sorted data rows","Print how many rows were written"],"ok":"Header before the loop, summary after - the same shape as the counter in L16."}
+{"type": "order", "title": "Try it: the report script", "instr": "Tap the steps in the order the report script does them.", "steps": ["Read the log into lines", "Count refusals per user", "Write the header row", "Write the sorted data rows", "Print how many rows were written"], "ok": "Header before the loop, summary after - the same shape as the counter in L16.", "why": "Header once before the loop, sorted rows inside, and the summary line after, so the report can be compared with yesterday's.", "ref": "Part 3 of this chapter"}
 </script>
 ```
 
@@ -256,7 +256,7 @@ Why does the script print the number of rows it wrote? Why is `wc -l` a better c
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"The script reported 21 events written, and wc -l counts 22 lines in the file. What does that mean?","options":["The check passes: the header row is a line as well","One event was silently dropped","wc -l counted a blank line by mistake","The file was opened in append mode"],"correct":[0],"ok":"Right.","why":"Two numbers differing by exactly one is the check passing; any other difference is the check failing."}
+{"type": "quiz", "title": "Check yourself", "q": "The script reported 21 events written, and wc -l counts 22 lines in the file. What does that mean?", "options": ["The check passes: the header row is a line as well", "One event was silently dropped", "wc -l counted a blank line by mistake", "The file was opened in append mode"], "correct": [0], "ok": "Right.", "why": "Two numbers differing by exactly one is the check passing; any other difference is the check failing.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -289,7 +289,7 @@ Nordvik's morning report is one file with a date in its name and a summary line 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Where in the chain were the nearly 16,000 COVID-19 cases lost?","options":["At the step converting results into the older XLS format with a row limit","In the CSV files, which ran out of rows","On the network between the testing firms and the process","The testing firms never submitted them"],"correct":[0],"ok":"Right.","why":"CSV has no row limit of its own; the rows beyond the XLS limit were dropped without an error. Count the rows going in, count the rows coming out, and compare."}
+{"type": "quiz", "title": "Check yourself", "q": "Where in the chain were the nearly 16,000 COVID-19 cases lost?", "options": ["At the step converting results into the older XLS format with a row limit", "In the CSV files, which ran out of rows", "On the network between the testing firms and the process", "The testing firms never submitted them"], "correct": [0], "ok": "Right.", "why": "CSV has no row limit of its own; the rows beyond the XLS limit were dropped without an error. Count the rows going in, count the rows coming out, and compare.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

@@ -40,7 +40,7 @@ The distinction that matters for security is the one between memory and disk. Me
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "match", "title": "Try it: the four working parts", "instr": "Drag each part onto what it does inside the machine. Two terms are not among the four parts and stay on the bench.", "zones": [{"label": "Executes the software", "answer": "CPU"}, {"label": "Holds current work; empties at power-off", "answer": "Memory (RAM)"}, {"label": "Keeps programs and data permanently", "answer": "Disk"}, {"label": "Carries questions and answers in and out", "answer": "Network interface"}], "extra": ["Kernel", "Hypervisor"], "ok": "Right. And the difference between memory and disk is the one that matters most for security."}
+{"type": "match", "title": "Try it: the four working parts", "instr": "Drag each part onto what it does inside the machine. Two terms are not among the four parts and stay on the bench.", "zones": [{"label": "Executes the software", "answer": "CPU"}, {"label": "Holds current work; empties at power-off", "answer": "Memory (RAM)"}, {"label": "Keeps programs and data permanently", "answer": "Disk"}, {"label": "Carries questions and answers in and out", "answer": "Network interface"}], "extra": ["Kernel", "Hypervisor"], "ok": "Right. And the difference between memory and disk is the one that matters most for security.", "why": "The CPU calculates, RAM holds the current work and empties at power-off, the disk keeps things permanently, and the network card carries traffic.", "ref": "Part 1; Jøsang, Sect. 3.1, Fig. 3.1, p. 44"}
 </script>
 ```
 
@@ -69,7 +69,7 @@ Every access control mechanism in this study programme rests on that one arrange
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "A process tries to call a disallowed instruction. What happens, according to the book?", "options": ["The operating system stops it - the program crashes", "The instruction runs at a lower privilege level", "The hardware executes it directly", "The process is promoted to level 0"], "correct": [0], "ok": "Right.", "why": "A program never touches hardware directly. The operating system checks every request, and a disallowed call means the process is stopped."}
+{"type": "quiz", "title": "Check yourself", "q": "A process tries to call a disallowed instruction. What happens, according to the book?", "options": ["The operating system stops it - the program crashes", "The instruction runs at a lower privilege level", "The hardware executes it directly", "The process is promoted to level 0"], "correct": [0], "ok": "Right.", "why": "A program never touches hardware directly. The operating system checks every request, and a disallowed call means the process is stopped.", "ref": "Part 1; Jøsang, Sect. 3.4, p. 49"}
 </script>
 ```
 
@@ -139,7 +139,7 @@ The same file needs both. One does not replace the other. Beginners mix them up 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: at rest or in motion?", "instr": "Sort each item into the state of data it belongs to.", "buckets": ["At rest", "In motion"], "items": [["On a disk", 0], ["In a backup", 0], ["Protected by disk encryption", 0], ["Guarded by the building's locks", 0], ["On a cable", 1], ["Over Wi-Fi", 1], ["Between two machines", 1], ["Protected by HTTPS", 1]], "ok": "Sorted. The same file needs both kinds of protection, and one does not replace the other."}
+{"type": "buckets", "title": "Try it: at rest or in motion?", "instr": "Sort each item into the state of data it belongs to.", "buckets": ["At rest", "In motion"], "items": [["On a disk", 0], ["In a backup", 0], ["Protected by disk encryption", 0], ["Guarded by the building's locks", 0], ["On a cable", 1], ["Over Wi-Fi", 1], ["Between two machines", 1], ["Protected by HTTPS", 1]], "ok": "Sorted. The same file needs both kinds of protection, and one does not replace the other.", "why": "Data on a disk, in a database or in a backup is at rest; data on a cable or over Wi-Fi is in motion, and each state needs its own protection.", "ref": "Part 2; Jøsang, Sect. 1.9.1, p. 15"}
 </script>
 ```
 
@@ -241,7 +241,7 @@ The trade-off is simple. More supplier responsibility means less work and less c
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "In PaaS, which is the topmost layer your organisation still runs itself?", "options": ["Applications", "Platform", "Operating system", "Hardware", "Networking"], "correct": [0], "ok": "Right.", "why": "PaaS hands the platform and every layer below it to the supplier; you run your own programs on top of it."}
+{"type": "quiz", "title": "Check yourself", "q": "In PaaS, which is the topmost layer your organisation still runs itself?", "options": ["Applications", "Platform", "Operating system", "Hardware", "Networking"], "correct": [0], "ok": "Right.", "why": "PaaS hands the platform and every layer below it to the supplier; you run your own programs on top of it.", "ref": "Part 4; Jøsang, Sect. 11.7.4, p. 266"}
 </script>
 ```
 
@@ -271,7 +271,7 @@ Nordvik runs Microsoft 365, so Microsoft patches the servers. Nordvik still own
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: whose job in SaaS?", "instr": "Nordvik runs Microsoft 365, a SaaS service. Sort each responsibility onto who carries it.", "buckets": ["The supplier", "Your organisation"], "items": [["Physical security of the halls", 0], ["Hypervisor and operating systems", 0], ["Network security of the service", 0], ["Data classification and management", 1], ["The laptops that connect", 1], ["Who may sign in", 1]], "ok": "Sorted. Renting the machines never hands over the data, the endpoints or the identities."}
+{"type": "buckets", "title": "Try it: whose job in SaaS?", "instr": "Nordvik runs Microsoft 365, a SaaS service. Sort each responsibility onto who carries it.", "buckets": ["The supplier", "Your organisation"], "items": [["Physical security of the halls", 0], ["Hypervisor and operating systems", 0], ["Network security of the service", 0], ["Data classification and management", 1], ["The laptops that connect", 1], ["Who may sign in", 1]], "ok": "Sorted. Renting the machines never hands over the data, the endpoints or the identities.", "why": "In SaaS the supplier runs the halls, systems and service; data classification, the connecting endpoints and identity stay with the customer.", "ref": "Part 4; Jøsang, Sect. 11.7.5, Fig. 11.9, p. 267"}
 </script>
 ```
 
@@ -321,7 +321,7 @@ Before reading on: what is the first question you would ask the caller? Write it
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "order", "title": "Try it: the system is down", "instr": "Tap the four questions of the worked example in the order the chapter asks them, cheapest first.", "steps": ["Check the network - are colleagues online?", "Ask what they were doing when it stopped", "Ask whether anybody else has the problem", "Ask what the screen says"], "ok": "That order eliminates layer by layer, cheapest first, until the fault has a name a supplier can be phoned about."}
+{"type": "order", "title": "Try it: the system is down", "instr": "Tap the four questions of the worked example in the order the chapter asks them, cheapest first.", "steps": ["Check the network - are colleagues online?", "Ask what they were doing when it stopped", "Ask whether anybody else has the problem", "Ask what the screen says"], "ok": "That order eliminates layer by layer, cheapest first, until the fault has a name a supplier can be phoned about.", "why": "Eliminate from cheapest to most expensive: the network first, then the program, then how many people are affected, then the error text.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

@@ -61,10 +61,7 @@ The first two rows are honest about the shell being good at this. The turn comes
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: one line, or a file?","instr":"Sort each fact onto the form it describes. The first rows of the chapter's table are honest: the shell is good at some of this.",
- "buckets":["A one-line pipeline","A script in a file"],
- "items":[["No memory between the steps",0],["React when a count passes ten: one if",1],["The same job for six files: a loop",1],["Names and lines to read next year",1],["One long line in terminal history",0],["Counting the refusals: comfortable",0]],
- "ok":"Sorted. The turn comes when a question needs a decision or a second pass."}
+{"type": "buckets", "title": "Try it: one line, or a file?", "instr": "Sort each fact onto the form it describes. The first rows of the chapter's table are honest: the shell is good at some of this.", "buckets": ["A one-line pipeline", "A script in a file"], "items": [["No memory between the steps", 0], ["React when a count passes ten: one if", 1], ["The same job for six files: a loop", 1], ["Names and lines to read next year", 1], ["One long line in terminal history", 0], ["Counting the refusals: comfortable", 0]], "ok": "Sorted. The turn comes when a question needs a decision or a second pass.", "why": "A pipeline is one line with no memory between the steps; a script has names and lines, can decide with an if and repeat with a loop.", "ref": "Part 1; Jøsang, Sect. 14.5.2, p. 311"}
 </script>
 ```
 
@@ -144,10 +141,7 @@ Row two is the whole table. Adding text joins it, adding numbers adds them, and 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: text or number?","instr":"The same character on the screen, two different things inside the machine. Sort each fact onto the value it is true of.",
- "buckets":["The text '5'","The number 5"],
- "items":[["Written inside quotation marks",0],["Added to itself gives 55",0],["Added to itself gives 10",1],["len() answers 1",0],["len() is an error",1],["type() says class int",1]],
- "ok":"Sorted. Adding text joins it, adding numbers adds them, and the plus sign means both."}
+{"type": "buckets", "title": "Try it: text or number?", "instr": "The same character on the screen, two different things inside the machine. Sort each fact onto the value it is true of.", "buckets": ["The text '5'", "The number 5"], "items": [["Written inside quotation marks", 0], ["Added to itself gives 55", 0], ["Added to itself gives 10", 1], ["len() answers 1", 0], ["len() is an error", 1], ["type() says class int", 1]], "ok": "Sorted. Adding text joins it, adding numbers adds them, and the plus sign means both.", "why": "Adding text joins it and adding numbers adds them: '5' plus '5' is 55, 5 plus 5 is 10, and only a string has a length.", "ref": "Part 2; Python for Everyone, Sect. 2.4"}
 </script>
 ```
 
@@ -246,10 +240,7 @@ An f-string carries an `f` before the opening quote. Anything in braces is worke
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: take the text apart","instr":"Drag each operation onto what it does. Two chips are distractors and stay on the bench.",
- "zones":[{"label":"Cuts a string at every run of spaces","answer":".split()"},{"label":"Removes whitespace from both ends","answer":".strip()"},{"label":"How many characters","answer":"len()"},{"label":"Does it begin with what you gave it?","answer":".startswith()"}],
- "extra":[".lower()","repr()"],
- "ok":"Those are the operations that take a log line apart. lower() converts case, and repr() only shows what is really in the string."}
+{"type": "match", "title": "Try it: take the text apart", "instr": "Drag each operation onto what it does. Two chips are distractors and stay on the bench.", "zones": [{"label": "Cuts a string at every run of spaces", "answer": ".split()"}, {"label": "Removes whitespace from both ends", "answer": ".strip()"}, {"label": "How many characters", "answer": "len()"}, {"label": "Does it begin with what you gave it?", "answer": ".startswith()"}], "extra": [".lower()", "repr()"], "ok": "Those are the operations that take a log line apart. lower() converts case, and repr() only shows what is really in the string.", "why": "split cuts at spaces, strip removes edge whitespace, len counts characters, and startswith asks a yes-or-no question.", "ref": "Part 3; Python for Everyone, Sect. 2.4"}
 </script>
 ```
 
@@ -279,8 +270,7 @@ The book says it in the same breath as introducing `input`: "To read an integer 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A person types 12 at an input() prompt. What does the script receive?","options":["The string '12'","The integer 12","The float 12.0","True","A ValueError, immediately"],"correct":[0],
- "ok":"Right.","why":"input() always hands back a string, holding the characters that spell the number. Convert it with int() before computing - the book's tip is Don't Wait to Convert."}
+{"type": "quiz", "title": "Check yourself", "q": "A person types 12 at an input() prompt. What does the script receive?", "options": ["The string '12'", "The integer 12", "The float 12.0", "True", "A ValueError, immediately"], "correct": [0], "ok": "Right.", "why": "input() always hands back a string holding the characters typed. Convert with int() before computing - the book's tip is Don't Wait to Convert.", "ref": "Part 4; Python for Everyone, Sect. 2.5"}
 </script>
 ```
 
@@ -303,8 +293,7 @@ A traceback is not the machine being angry. It is the machine being unusually sp
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A traceback is twelve lines long. Which line do you read first?","options":["The last line, which says what actually failed","The first line, where Python started","The middle, where the code is quoted","None of it - rerun the script instead","The line with the file name, wherever it is"],"correct":[0],
- "ok":"Right.","why":"The useful sentence is always at the bottom; the line above it names the file and the line number. Beginners read from the top and give up in the middle."}
+{"type": "quiz", "title": "Check yourself", "q": "A traceback is twelve lines long. Which line do you read first?", "options": ["The last line, which says what actually failed", "The first line, where Python started", "The middle, where the code is quoted", "None of it - rerun the script instead", "The line with the file name, wherever it is"], "correct": [0], "ok": "Right.", "why": "The useful sentence is always at the bottom; the line above it names the file and the line number. Beginners read from the top and give up in the middle.", "ref": "Part 4; Python for Everyone, Sect. 1.7"}
 </script>
 ```
 
@@ -355,9 +344,7 @@ Four runs of the same file, each after one more line was added to it. The zero s
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: four runs, one script","instr":"tellfeil.py was run after each new line was added. Tap the four printed answers in the order they appeared.",
- "steps":["0 - the tally exists","69 - the file is being read","3 - the question works","3 refusals in auth.log - the sentence"],
- "ok":"Write one line, run once, and a failure has one suspect. The known answer was L12's grep -c."}
+{"type": "order", "title": "Try it: four runs, one script", "instr": "tellfeil.py was run after each new line was added. Tap the four printed answers in the order they appeared.", "steps": ["0 - the tally exists", "69 - the file is being read", "3 - the question works", "3 refusals in auth.log - the sentence"], "ok": "Write one line, run once, and a failure has one suspect. The known answer was L12's grep -c.", "why": "0 says the tally exists, 69 says the file is read, 3 says the question works, and the f-string turns the count into a sentence.", "ref": "Part 5; Python for Everyone, Sect. 2.3"}
 </script>
 ```
 

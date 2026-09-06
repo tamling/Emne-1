@@ -75,7 +75,7 @@ On Nordvik's flat network, a supplier's remote session or a guest on the Wi-Fi c
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why can the edge firewall not stop a guest laptop reaching the payroll server on a flat network?","options":["Traffic that stays inside never reaches the edge","Firewalls cannot read internal addresses","Guests are trusted once they are inside","The switch refuses to forward to the firewall"],"correct":[0],"ok":"Right.","why":"A firewall at the edge protects the edge of the network. It cannot refuse what it never sees."}
+{"type": "quiz", "title": "Check yourself", "q": "Why can the edge firewall not stop a guest laptop reaching the payroll server on a flat network?", "options": ["Traffic that stays inside never reaches the edge", "Firewalls cannot read internal addresses", "Guests are trusted once they are inside", "The switch refuses to forward to the firewall"], "correct": [0], "ok": "Right.", "why": "A firewall at the edge protects the edge of the network; it cannot refuse what it never sees.", "ref": "Part 1; Jøsang, Sect. 6.6, p. 138"}
 </script>
 ```
 
@@ -118,7 +118,7 @@ One command creates the VLAN, and one more puts a port into it. A third prints t
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: by itself, or configured?","instr":"Sort each behaviour: does the switch do it on its own, or did somebody have to set it up?","buckets":["The switch does it by itself","Somebody configured it"],"items":[["Learning card addresses by watching",0],["Flooding unknown addresses to every port",0],["Grouping ports into VLAN 10 and VLAN 20",1],["A trunk carrying labelled frames",1],["A crossing between two VLANs",1]],"ok":"Separation is text in a configuration - and so is every crossing."}
+{"type": "buckets", "title": "Try it: by itself, or configured?", "instr": "Sort each behaviour: does the switch do it on its own, or did somebody have to set it up?", "buckets": ["The switch does it by itself", "Somebody configured it"], "items": [["Learning card addresses by watching", 0], ["Flooding unknown addresses to every port", 0], ["Grouping ports into VLAN 10 and VLAN 20", 1], ["A trunk carrying labelled frames", 1], ["A crossing between two VLANs", 1]], "ok": "Separation is text in a configuration - and so is every crossing.", "why": "The switch learns and floods on its own; VLANs, trunks and crossings exist only because somebody typed them into the configuration.", "ref": "Part 2 of this chapter"}
 </script>
 ```
 
@@ -179,7 +179,7 @@ The book's own pairings are gatekeeper, drawbridge and moat for the external fir
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the castle on the network","instr":"Drag each network item onto its castle pairing. Two are distractors.","zones":[{"label":"The gate and the drawbridge","answer":"The gateway and its firewall"},{"label":"The inner gate","answer":"The internal firewall"},{"label":"The lookout tower","answer":"The intrusion detection system"},{"label":"The outer court","answer":"The DMZ, facing outward"}],"extra":["The trunk port","The routing table"],"ok":"And a castle assumes everybody inside belongs there."}
+{"type": "match", "title": "Try it: the castle on the network", "instr": "Drag each network item onto its castle pairing. Two are distractors.", "zones": [{"label": "The gate and the drawbridge", "answer": "The gateway and its firewall"}, {"label": "The inner gate", "answer": "The internal firewall"}, {"label": "The lookout tower", "answer": "The intrusion detection system"}, {"label": "The outer court", "answer": "The DMZ, facing outward"}], "extra": ["The trunk port", "The routing table"], "ok": "And a castle assumes everybody inside belongs there.", "why": "The book pairs the external firewall, internal firewall, IDS and DMZ with the drawbridge, inner gate, lookout tower and outer court.", "ref": "Part 3; Jøsang, Sect. 6.3, p. 134"}
 </script>
 ```
 
@@ -227,7 +227,7 @@ Nordvik could put its server, the office and the suppliers in separate zones, bu
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A router now joins the staff VLAN and the guest VLAN. What decides what may pass between them?","options":["A firewall rule somebody wrote, starting from default-deny","The 802.1Q label on each frame","The switch's table of card addresses","Nothing is needed - VLANs block unwanted traffic"],"correct":[0],"ok":"Right.","why":"Dividing a network creates a place for a rule; it does not create the rule. The moment a router joins two VLANs, everything is reachable in both directions until a rule says otherwise."}
+{"type": "quiz", "title": "Check yourself", "q": "A router now joins the staff VLAN and the guest VLAN. What decides what may pass between them?", "options": ["A firewall rule somebody wrote, starting from default-deny", "The 802.1Q label on each frame", "The switch's table of card addresses", "Nothing is needed - VLANs block unwanted traffic"], "correct": [0], "ok": "Right.", "why": "Dividing creates a place for a rule, not the rule; without one, everything is reachable again in both directions.", "ref": "Part 4; Jøsang, Sect. 6.4, p. 135"}
 </script>
 ```
 
@@ -260,7 +260,7 @@ Switch# show vlan brief
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: five commands","instr":"Tap the commands in the order the chapter gives them (tap a step, then a slot - or just tap steps in order).","steps":["vlan 10","name Ansatte","switchport mode access","switchport access vlan 10","show vlan brief"],"ok":"And reading the table back is how you check the other four."}
+{"type": "order", "title": "Try it: five commands", "instr": "Tap the commands in the order the chapter gives them (tap a step, then a slot - or just tap steps in order).", "steps": ["vlan 10", "name Ansatte", "switchport mode access", "switchport access vlan 10", "show vlan brief"], "ok": "And reading the table back is how you check the other four.", "why": "Create the VLAN, name it, put the port in access mode, place it in the VLAN, then read the table back to check the rest.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

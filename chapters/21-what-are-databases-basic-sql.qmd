@@ -66,7 +66,7 @@ What is the difference between a row and a column? Name the four columns of `hen
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"What does a primary key guarantee about a table?","options":["Its value differs in every single row","The rows stay sorted by that column","The column holds only whole numbers","The table can never be emptied"],"correct":[0],"ok":"Right.","why":"A second row with a key that already exists is refused, so another table can point at exactly one row and no other."}
+{"type": "quiz", "title": "Check yourself", "q": "What does a primary key guarantee about a table?", "options": ["Its value differs in every single row", "The rows stay sorted by that column", "The column holds only whole numbers", "The table can never be emptied"], "correct": [0], "ok": "Right.", "why": "A second row with a key that already exists is refused, so another table can point at exactly one row and no other.", "ref": "Part 1 of this chapter"}
 </script>
 ```
 
@@ -119,7 +119,7 @@ A table gives every row the same columns and refuses values a spreadsheet would 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the reading keywords","instr":"Drag each SQL keyword onto its job. One is a distractor and stays on the bench.","zones":[{"label":"Lists the columns you want","answer":"SELECT"},{"label":"Names the table","answer":"FROM"},{"label":"Keeps only the rows where a test is true","answer":"WHERE"},{"label":"Sorts on a column","answer":"ORDER BY"},{"label":"Cuts the result after a number of rows","answer":"LIMIT"}],"extra":["JOIN"],"ok":"Describe the rows you want; the database works out how to find them."}
+{"type": "match", "title": "Try it: the reading keywords", "instr": "Drag each SQL keyword onto its job. One is a distractor and stays on the bench.", "zones": [{"label": "Lists the columns you want", "answer": "SELECT"}, {"label": "Names the table", "answer": "FROM"}, {"label": "Keeps only the rows where a test is true", "answer": "WHERE"}, {"label": "Sorts on a column", "answer": "ORDER BY"}, {"label": "Cuts the result after a number of rows", "answer": "LIMIT"}], "extra": ["JOIN"], "ok": "Describe the rows you want; the database works out how to find them.", "why": "SELECT lists the columns, FROM names the table, WHERE filters, ORDER BY sorts and LIMIT cuts the result.", "ref": "Part 2 of this chapter"}
 </script>
 ```
 
@@ -163,7 +163,7 @@ What does `COUNT(*)` count when one column happens to be empty? What does `AS` d
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: build the query","instr":"Tap the pieces in the order they appear in the chapter's failed-logins query.","steps":["SELECT bruker, COUNT(*) AS forsok","FROM hendelser","WHERE resultat = 'mislykket'","GROUP BY bruker","ORDER BY forsok DESC"],"ok":"And WHERE runs before the grouping, so it decides which rows get counted."}
+{"type": "order", "title": "Try it: build the query", "instr": "Tap the pieces in the order they appear in the chapter's failed-logins query.", "steps": ["SELECT bruker, COUNT(*) AS forsok", "FROM hendelser", "WHERE resultat = 'mislykket'", "GROUP BY bruker", "ORDER BY forsok DESC"], "ok": "And WHERE runs before the grouping, so it decides which rows get counted.", "why": "The chapter's query selects and counts, names the table, filters, groups per user and sorts largest first.", "ref": "Part 3 of this chapter"}
 </script>
 ```
 
@@ -233,13 +233,13 @@ Which clause decides how many rows an `UPDATE` touches? What does a `DELETE` wit
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: reads or changes?","instr":"Sort each statement onto what it does to the table.","buckets":["Only reads","Changes the table"],"items":[["SELECT",0],["COUNT(*) inside a SELECT",0],["INSERT",1],["UPDATE",1],["DELETE",1],[".schema in the SQLite shell",0]],"ok":"Every statement is typed at the same prompt, which is why the distinction matters."}
+{"type": "buckets", "title": "Try it: reads or changes?", "instr": "Sort each statement onto what it does to the table.", "buckets": ["Only reads", "Changes the table"], "items": [["SELECT", 0], ["COUNT(*) inside a SELECT", 0], ["INSERT", 1], ["UPDATE", 1], ["DELETE", 1], [".schema in the SQLite shell", 0]], "ok": "Every statement is typed at the same prompt, which is why the distinction matters.", "why": "SELECT only reads; INSERT, UPDATE and DELETE do the changing, and .schema just prints the table definition.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A DELETE statement is run with no WHERE clause. What does the chapter say happens?","options":["Every row is removed, and nothing asks whether you meant it","The database refuses to run it","The table itself is dropped","Only the first matching row is removed"],"correct":[0],"ok":"Right.","why":"The table still exists, empty. The habit: run SELECT with the same WHERE first, read the count, then change."}
+{"type": "quiz", "title": "Check yourself", "q": "A DELETE statement is run with no WHERE clause. What does the chapter say happens?", "options": ["Every row is removed, and nothing asks whether you meant it", "The database refuses to run it", "The table itself is dropped", "Only the first matching row is removed"], "correct": [0], "ok": "Right.", "why": "The table still exists, empty. The habit: run SELECT with the same WHERE first, read the count, then change.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -272,7 +272,7 @@ Nordvik's events now live in `sikkerhet.db`, with a `brukere` table that says wh
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why had GitLab's pg_dump backups been failing for months without anyone knowing?","options":["An older tool version produced empty files, and the warning emails went to a folder nobody read","The disk holding them was full","An engineer had deleted the backup job","The database refused every connection"],"correct":[0],"ok":"Right.","why":"Four of five recovery paths had failed, and nobody knew, because nobody had restored from any of them. A backup counts only once it has been restored."}
+{"type": "quiz", "title": "Check yourself", "q": "Why had GitLab's pg_dump backups been failing for months without anyone knowing?", "options": ["An older tool version produced empty files, and the warning emails went to a folder nobody read", "The disk holding them was full", "An engineer had deleted the backup job", "The database refused every connection"], "correct": [0], "ok": "Right.", "why": "Four of five recovery paths had failed, and nobody knew, because nobody had restored from any of them. A backup counts only once it has been restored.", "ref": "Part 5; Jøsang, Sect. 2.2.2, p. 37"}
 </script>
 ```
 

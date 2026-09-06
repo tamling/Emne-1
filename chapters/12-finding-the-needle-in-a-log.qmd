@@ -60,10 +60,7 @@ The names say it. `head` is the head of the file, `tail` is the tail, and `less`
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: three ways to look","instr":"Sort each fact onto the tool it belongs to. None of the three opens the whole file.",
- "buckets":["head","tail","less"],
- "items":[["The first ten lines",0],["The last ten lines",1],["One screen at a time",2],["During an incident, start here",1],["A format you have never seen",0],["Space forward, slash searches, q leaves",2]],
- "ok":"Sorted. A log is written downwards, so the newest line is at the bottom."}
+{"type": "buckets", "title": "Try it: three ways to look", "instr": "Sort each fact onto the tool it belongs to. None of the three opens the whole file.", "buckets": ["head", "tail", "less"], "items": [["The first ten lines", 0], ["The last ten lines", 1], ["One screen at a time", 2], ["During an incident, start here", 1], ["A format you have never seen", 0], ["Space forward, slash searches, q leaves", 2]], "ok": "Sorted. A log is written downwards, so the newest line is at the bottom.", "why": "head shows the first lines, tail the last - where an incident starts - and less one screen at a time with space, b, slash and q.", "ref": "Part 1 of this chapter"}
 </script>
 ```
 
@@ -156,10 +153,7 @@ The caret and the dollar anchor a pattern, and the other three describe what sit
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: five characters","instr":"Drag each pattern character onto what it matches. One character is a distractor: it joins commands, it matches nothing.",
- "zones":[{"label":"The start of a line","answer":"^"},{"label":"The end of a line","answer":"$"},{"label":"Any one character","answer":"."},{"label":"Any number of the one before it","answer":"*"},{"label":"Any single digit","answer":"[0-9]"}],
- "extra":["|"],
- "ok":"Those five cover every example in this chapter. The vertical bar is the pipe from Part 4, not a pattern."}
+{"type": "match", "title": "Try it: five characters", "instr": "Drag each pattern character onto what it matches. One character is a distractor: it joins commands, it matches nothing.", "zones": [{"label": "The start of a line", "answer": "^"}, {"label": "The end of a line", "answer": "$"}, {"label": "Any one character", "answer": "."}, {"label": "Any number of the one before it", "answer": "*"}, {"label": "Any single digit", "answer": "[0-9]"}], "extra": ["|"], "ok": "Those five cover every example in this chapter. The vertical bar is the pipe from Part 4, not a pattern.", "why": "Caret and dollar anchor a pattern, dot is any one character, star any number of the one before it, and a range matches one digit.", "ref": "Part 2 of this chapter"}
 </script>
 ```
 
@@ -245,10 +239,7 @@ Shotts calls `find` the hard way and `locate` the easy way. `locate` answers the
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: grep or find?","instr":"The two tools never overlap. Sort each fact onto the one it describes.",
- "buckets":["grep","find"],
- "items":[["Reads what is inside files",0],["Never opens a file, reads facts about it",1],["A signature search over a log",0],["Start, a test, an optional action",1],["-c counts the matching lines",0],["-mtime -1: changed in the last day",1]],
- "ok":"Sorted. grep finds lines inside files; find finds the files themselves."}
+{"type": "buckets", "title": "Try it: grep or find?", "instr": "The two tools never overlap. Sort each fact onto the one it describes.", "buckets": ["grep", "find"], "items": [["Reads what is inside files", 0], ["Never opens a file, reads facts about it", 1], ["A signature search over a log", 0], ["Start, a test, an optional action", 1], ["-c counts the matching lines", 0], ["-mtime -1: changed in the last day", 1]], "ok": "Sorted. grep finds lines inside files; find finds the files themselves.", "why": "grep prints lines matching a pattern inside files; find reads the names and facts about files and never opens one.", "ref": "Part 3 of this chapter"}
 </script>
 ```
 
@@ -310,8 +301,7 @@ A command has two output streams. Results travel on stream one, error messages t
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Read aloud: what does 2>&1 at the end of a command mean?","options":["Send stream two to wherever stream one is going","Append to the file instead of replacing it","Throw the error messages away","Run the two commands at once","Catch the results and discard the errors"],"correct":[0],
- "ok":"Right.","why":"Results travel on stream one and errors on stream two; a plain arrow only catches stream one, and 2>&1 sends the errors where the results go."}
+{"type": "quiz", "title": "Check yourself", "q": "Read aloud: what does 2>&1 at the end of a command mean?", "options": ["Send stream two to wherever stream one is going", "Append to the file instead of replacing it", "Throw the error messages away", "Run the two commands at once", "Catch the results and discard the errors"], "correct": [0], "ok": "Right.", "why": "Results travel on stream one and errors on stream two; a plain arrow only catches stream one, and 2>&1 sends the errors where the results go.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -332,8 +322,7 @@ The flag `-c` gives the count and leaves the matching lines out. A count is the 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Somebody tried to log in as admin, an account this machine has never had. What is the book's name for that sign?","options":["A precursor","An indicator","A signature","A false alarm","An audit"],"correct":[0],
- "ok":"Right.","why":"A precursor is a sign an incident may occur soon; an indicator is a sign one may already have occurred, like the jndi: string during Log4Shell."}
+{"type": "quiz", "title": "Check yourself", "q": "Somebody tried to log in as admin, an account this machine has never had. What is the book's name for that sign?", "options": ["A precursor", "An indicator", "A signature", "A false alarm", "An audit"], "correct": [0], "ok": "Right.", "why": "A precursor is a sign an incident may occur soon; an indicator is a sign one may already have occurred, like the jndi: string during Log4Shell.", "ref": "Part 5; Jøsang, Sect. 14.5.2, p. 311"}
 </script>
 ```
 
@@ -361,9 +350,7 @@ Counting with `wc -l` after a pipe gives the same answer as `grep -c` did. The f
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: where did they come from","instr":"Tap the pipeline's stages in the order they run to count attempts per address, biggest first.",
- "steps":["grep -oE keeps only the matched addresses","sort brings identical lines together","uniq -c counts each group","sort -rn puts the biggest count first"],
- "ok":"That is the pipeline. uniq only collapses neighbours, which is why sort comes before it."}
+{"type": "order", "title": "Try it: where did they come from", "instr": "Tap the pipeline's stages in the order they run to count attempts per address, biggest first.", "steps": ["grep -oE keeps only the matched addresses", "sort brings identical lines together", "uniq -c counts each group", "sort -rn puts the biggest count first"], "ok": "That is the pipeline. uniq only collapses neighbours, which is why sort comes before it.", "why": "-o keeps only the matched address, sort brings identical lines together, uniq -c counts each group, and sort -rn puts the biggest first.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

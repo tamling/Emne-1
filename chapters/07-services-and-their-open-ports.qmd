@@ -83,7 +83,7 @@ Nordvik's one server runs several services on one address. Each open port is one
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: TCP or UDP?","instr":"Sort each fact into the transport protocol it describes.","buckets":["TCP","UDP"],"items":[["Sets up a conversation somebody answers",0],["Sends it and does not look back",1],["Lost pieces sent again, put back in order",0],["A lost lookup is simply asked again",1],["Web pages on 80 and 443",0],["Name lookups on 53",1]],"ok":"TCP pays time to be certain; UDP pays nothing and accepts loss."}
+{"type": "buckets", "title": "Try it: TCP or UDP?", "instr": "Sort each fact into the transport protocol it describes.", "buckets": ["TCP", "UDP"], "items": [["Sets up a conversation somebody answers", 0], ["Sends it and does not look back", 1], ["Lost pieces sent again, put back in order", 0], ["A lost lookup is simply asked again", 1], ["Web pages on 80 and 443", 0], ["Name lookups on 53", 1]], "ok": "TCP pays time to be certain; UDP pays nothing and accepts loss.", "why": "TCP sets up a checked, ordered conversation; UDP sends without guarantees, which suits small lookups that can simply be asked again.", "ref": "Part 1; Jøsang, Sect. 6.1.2, p. 121"}
 </script>
 ```
 
@@ -135,7 +135,7 @@ Encryption on the port does not make the service safe. Heartbleed was a flaw in 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Which two things does the padlock prove? Pick both.","options":["Nobody on the path can read what travels","The certificate matches the exact name typed","The owner of the site is honest","The program behind the port has no flaws"],"correct":[0,1],"ok":"Right - and no more than those two.","why":"The padlock is a claim about the path and the name, not about honesty. Criminals hold valid certificates too, and Heartbleed leaked memory from a service doing its encryption correctly."}
+{"type": "quiz", "title": "Check yourself", "q": "Which two things does the padlock prove? Pick both.", "options": ["Nobody on the path can read what travels", "The certificate matches the exact name typed", "The owner of the site is honest", "The program behind the port has no flaws"], "correct": [0, 1], "ok": "Right - and no more than those two.", "why": "The padlock is a claim about the path and the name, not about honesty; criminals hold valid certificates too.", "ref": "Part 2; Jøsang, Sect. 6.2.1, Fig. 6.7, p. 128"}
 </script>
 ```
 
@@ -186,7 +186,7 @@ The book's history of the problem: "In the early days of the Internet, almost al
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the protected replacement","instr":"Drag each protected protocol onto the job and old protocol it replaces. Two are distractors.","zones":[{"label":"Moves files - FTP on 21","answer":"SFTP on 22"},{"label":"Command line elsewhere - telnet on 23","answer":"SSH on 22"},{"label":"Fetches a web page - HTTP on 80","answer":"HTTPS on 443"},{"label":"Mail between servers - SMTP on 25","answer":"Mail submission on 587"}],"extra":["FTPS on 21","DNS on 53"],"ok":"The old member of each pair carries your password readably."}
+{"type": "match", "title": "Try it: the protected replacement", "instr": "Drag each protected protocol onto the job and old protocol it replaces. Two are distractors.", "zones": [{"label": "Moves files - FTP on 21", "answer": "SFTP on 22"}, {"label": "Command line elsewhere - telnet on 23", "answer": "SSH on 22"}, {"label": "Fetches a web page - HTTP on 80", "answer": "HTTPS on 443"}, {"label": "Mail between servers - SMTP on 25", "answer": "Mail submission on 587"}], "extra": ["FTPS on 21", "DNS on 53"], "ok": "The old member of each pair carries your password readably.", "why": "Each old protocol sends credentials readably; its protected partner does the same job inside TLS or Secure Shell.", "ref": "Part 3; Jøsang, Sect. 3.2, p. 45"}
 </script>
 ```
 
@@ -210,7 +210,7 @@ Only the third question ever removes work. The first two describe; the third dec
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: three questions about a service","instr":"Tap the chapter's three questions in the order you ask them.","steps":["Is it running?","Who can reach it?","Does it need to be there, and who says so?"],"ok":"The first two describe; only the third removes work."}
+{"type": "order", "title": "Try it: three questions about a service", "instr": "Tap the chapter's three questions in the order you ask them.", "steps": ["Is it running?", "Who can reach it?", "Does it need to be there, and who says so?"], "ok": "The first two describe; only the third removes work.", "why": "Running and reachable only describe a service; whether it needs to be there is the owner's decision, and only that removes work.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -262,7 +262,7 @@ The services nobody at Nordvik chose, a test switched on years ago, a database a
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"What did every machine WannaCry reached have in common?","options":["A service reachable on a port plus a patch nobody had applied","A weak administrator password","An FTP server sending passwords readably","No antivirus software installed","A forgotten test service on port 8080"],"correct":[0],"ok":"Right.","why":"Windows file sharing over SMB was reachable on port 445, and Microsoft had published the patch on 14 March 2017 - two months before the attack."}
+{"type": "quiz", "title": "Check yourself", "q": "What did every machine WannaCry reached have in common?", "options": ["A service reachable on a port plus a patch nobody had applied", "A weak administrator password", "An FTP server sending passwords readably", "No antivirus software installed", "A forgotten test service on port 8080"], "correct": [0], "ok": "Right.", "why": "SMB was reachable on port 445 and the patch published on 14 March 2017 had not been applied; the exploit leaked a month before the attack.", "ref": "Part 4; Jøsang, Sect. 3.3, p. 46"}
 </script>
 ```
 
@@ -285,7 +285,7 @@ The local address column already answers part of the second question. `0.0.0.0` 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"ss -tlnp shows a service on 127.0.0.1:3306. Who can reach it?","options":["Only the machine itself","Anybody the firewall allows in","Everybody in the building","Nobody - it is not listening"],"correct":[0],"ok":"Right.","why":"127.0.0.1 means the service accepts connections only from the machine itself: listening, but reachable from nowhere else."}
+{"type": "quiz", "title": "Check yourself", "q": "ss -tlnp shows a service on 127.0.0.1:3306. Who can reach it?", "options": ["Only the machine itself", "Anybody the firewall allows in", "Everybody in the building", "Nobody - it is not listening"], "correct": [0], "ok": "Right.", "why": "127.0.0.1 means the service accepts connections only from the machine itself: listening, but reachable from nowhere else.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

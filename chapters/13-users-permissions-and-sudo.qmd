@@ -84,10 +84,7 @@ On Nordvik's server the file service, the mail service and the suppliers' login 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: three files, one identity","instr":"Drag each file onto what it holds. Two names are distractors and stay on the bench.",
- "zones":[{"label":"Accounts, seven fields, readable by all","answer":"/etc/passwd"},{"label":"Password hashes, only root may read","answer":"/etc/shadow"},{"label":"Groups and their members","answer":"/etc/group"}],
- "extra":["/etc/sudoers","/var/log"],
- "ok":"Splitting passwd into two files was the whole fix, and it is still how every Linux machine does it."}
+{"type": "match", "title": "Try it: three files, one identity", "instr": "Drag each file onto what it holds. Two names are distractors and stay on the bench.", "zones": [{"label": "Accounts, seven fields, readable by all", "answer": "/etc/passwd"}, {"label": "Password hashes, only root may read", "answer": "/etc/shadow"}, {"label": "Groups and their members", "answer": "/etc/group"}], "extra": ["/etc/sudoers", "/var/log"], "ok": "Splitting passwd into two files was the whole fix, and it is still how every Linux machine does it.", "why": "/etc/passwd stays readable so numbers become names, the hashes moved to root-only /etc/shadow, and groups live in /etc/group.", "ref": "Part 1; Jøsang, Sect. 2.1.2, p. 28"}
 </script>
 ```
 
@@ -137,8 +134,7 @@ Ownership is a separate question from permission, and it has its own two command
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A file's mode is -rw-r----- and its group is adm. What may a member of adm do with it?","options":["Read it only","Read it and change it","Run it as a program","Nothing at all","Change its mode"],"correct":[0],
- "ok":"Right.","why":"Characters 5 to 7 answer for the file's group, and r-- is read only. Writing belongs to the owner's rw-, and changing the mode is the owner's discretion."}
+{"type": "quiz", "title": "Check yourself", "q": "A file's mode is -rw-r----- and its group is adm. What may a member of adm do with it?", "options": ["Read it only", "Read it and change it", "Run it as a program", "Nothing at all", "Change its mode"], "correct": [0], "ok": "Right.", "why": "Characters 5 to 7 answer for the file's group, and r-- is read only. Writing belongs to the owner's rw-, and changing the mode is the owner's discretion.", "ref": "Part 2; Jøsang, Sect. 9.3.1, p. 207"}
 </script>
 ```
 
@@ -182,10 +178,7 @@ A rule in `/etc/sudoers` is four parts, read from left to right like a sentence.
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: read the rule","instr":"The rule is: anneli ALL=(root) /usr/bin/systemctl restart nginx. Drag each piece onto the question it answers. One chip is a distractor.",
- "zones":[{"label":"Which people","answer":"anneli"},{"label":"On which machines","answer":"ALL"},{"label":"Who they may become","answer":"(root)"},{"label":"Which commands they may run","answer":"/usr/bin/systemctl restart nginx"}],
- "extra":["visudo"],
- "ok":"Four parts, read like a sentence. Least privilege means making each of them as small as the job allows."}
+{"type": "match", "title": "Try it: read the rule", "instr": "The rule is: anneli ALL=(root) /usr/bin/systemctl restart nginx. Drag each piece onto the question it answers. One chip is a distractor.", "zones": [{"label": "Which people", "answer": "anneli"}, {"label": "On which machines", "answer": "ALL"}, {"label": "Who they may become", "answer": "(root)"}, {"label": "Which commands they may run", "answer": "/usr/bin/systemctl restart nginx"}], "extra": ["visudo"], "ok": "Four parts, read like a sentence. Least privilege means making each of them as small as the job allows.", "why": "A rule reads left to right: which people, on which machines, who they may become, which commands - least privilege makes each part small.", "ref": "Part 3; Jøsang, Sect. 1.11, p. 21"}
 </script>
 ```
 
@@ -218,10 +211,7 @@ Two lines: one use, one refusal, both with a name, a time, a directory and the e
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: sudo or a root shell?","instr":"Sort each fact onto the way of becoming root that it describes.",
- "buckets":["sudo","A root shell"],
- "items":[["Asks for your own password",0],["Checked against a written rule",0],["Every use and refusal logged by name",0],["Runs one command as root",0],["No record of who ran what",1],["Accountability lost before convenience",1]],
- "ok":"Sorted. The log is most of the reason sudo exists."}
+{"type": "buckets", "title": "Try it: sudo or a root shell?", "instr": "Sort each fact onto the way of becoming root that it describes.", "buckets": ["sudo", "A root shell"], "items": [["Asks for your own password", 0], ["Checked against a written rule", 0], ["Every use and refusal logged by name", 0], ["Runs one command as root", 0], ["No record of who ran what", 1], ["Accountability lost before convenience", 1]], "ok": "Sorted. The log is most of the reason sudo exists.", "why": "sudo asks your own password, checks a written rule and logs every use and refusal by name; a whole root shell records none of that.", "ref": "Part 3; Jøsang, Sect. 1.10.2, p. 20"}
 </script>
 ```
 
@@ -263,8 +253,7 @@ The letter `s` sits where the owner's `x` would normally be. A program marked th
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"In -rwsr-xr-x on /usr/bin/passwd, what does the s where the owner's x should be mean?","options":["The program runs as its owner, not as whoever started it","The sticky bit: only the owner may delete it","The setgid bit: new files inherit the group","It is a shell script","Only root may run it"],"correct":[0],
- "ok":"Right.","why":"That is the SUID bit. passwd belongs to root, so it runs as root just long enough to write one line of /etc/shadow - and it is why a flaw in SUID-root sudo already runs as root."}
+{"type": "quiz", "title": "Check yourself", "q": "In -rwsr-xr-x on /usr/bin/passwd, what does the s where the owner's x should be mean?", "options": ["The program runs as its owner, not as whoever started it", "The sticky bit: only the owner may delete it", "The setgid bit: new files inherit the group", "It is a shell script", "Only root may run it"], "correct": [0], "ok": "Right.", "why": "That is the SUID bit: the program runs as root just long enough to write one line of /etc/shadow - and a flaw in SUID-root sudo already runs as root.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -338,9 +327,7 @@ What is wrong, and what do you change? Most people propose `chmod 777`, because 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: three people, one folder","instr":"Three people share a folder and cannot open each other's files. Tap the steps of the real fix, in the worked example's order - not chmod 777.",
- "steps":["Create a group","Put the three people in it","Make it the folder's group with chgrp","Give group write with chmod 2775"],
- "ok":"That is DAC done the way it was designed: owner, group, others - and the middle one is the one to use."}
+{"type": "order", "title": "Try it: three people, one folder", "instr": "Three people share a folder and cannot open each other's files. Tap the steps of the real fix, in the worked example's order - not chmod 777.", "steps": ["Create a group", "Put the three people in it", "Make it the folder's group with chgrp", "Give group write with chmod 2775"], "ok": "That is DAC done the way it was designed: owner, group, others - and the middle one is the one to use.", "why": "A shared group with setgid 2775 gives the three of them write and inheritance, without opening the folder to every other account.", "ref": "Part 5; Jøsang, Sect. 9.3.1, p. 207"}
 </script>
 ```
 

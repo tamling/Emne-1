@@ -70,7 +70,7 @@ If you probed Nordvik's server without Nordvik's written permission, you would b
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "Under straffeloven § 204, what alone is the offence?", "options": ["Getting access you had no right to", "Causing damage to data or systems", "Stealing or copying information", "Acting with a harmful motive"], "correct": [0], "ok": "Right.", "why": "Damage, theft and motive change the sentence a court gives, not whether a crime happened. The only question is whether you were authorised."}
+{"type": "quiz", "title": "Check yourself", "q": "Under straffeloven § 204, what alone is the offence?", "options": ["Getting access you had no right to", "Causing damage to data or systems", "Stealing or copying information", "Acting with a harmful motive"], "correct": [0], "ok": "Right.", "why": "Damage, theft and motive change the sentence a court gives, not whether a crime happened. The only question is whether you were authorised.", "ref": "Part 1; Jøsang, Sect. 1.11, p. 23"}
 </script>
 ```
 
@@ -105,7 +105,7 @@ Scope is the list of what may be touched, and when. Everything else is out, incl
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: in or out of scope?", "instr": "A signed test document exists. Sort each item.", "buckets": ["In scope", "Out of scope"], "items": [["Systems named in the document", 0], ["The agreed dates and hours", 0], ["Methods the document names", 0], ["The next machine on the same rack", 1], ["Anything after the end date", 1], ["Staff who were not told", 1], ["Reading personal data to confirm a find", 1]], "ok": "Sorted. Everything the document does not name is out, however interesting."}
+{"type": "buckets", "title": "Try it: in or out of scope?", "instr": "A signed test document exists. Sort each item.", "buckets": ["In scope", "Out of scope"], "items": [["Systems named in the document", 0], ["The agreed dates and hours", 0], ["Methods the document names", 0], ["The next machine on the same rack", 1], ["Anything after the end date", 1], ["Staff who were not told", 1], ["Reading personal data to confirm a find", 1]], "ok": "Sorted. Everything the document does not name is out, however interesting.", "why": "Scope is the written list of what may be touched and when; everything the document does not name is out, including the next machine on the rack.", "ref": "Part 2 of this chapter"}
 </script>
 ```
 
@@ -155,7 +155,7 @@ NIS2 came into force in the EU in 2022, with implementation into national law du
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: regulation or directive?", "instr": "Sort each fact onto the kind of EU act it describes.", "buckets": ["Regulation", "Directive"], "items": [["Applied without modification", 0], ["Only translated; a referral law", 0], ["GDPR", 0], ["Defines a goal each state must reach", 1], ["Each state writes its own law", 1], ["NIS2", 1]], "ok": "Sorted. That is why digitalsikkerhetsloven applies in Norway, and NIS2 as written does not."}
+{"type": "buckets", "title": "Try it: regulation or directive?", "instr": "Sort each fact onto the kind of EU act it describes.", "buckets": ["Regulation", "Directive"], "items": [["Applied without modification", 0], ["Only translated; a referral law", 0], ["GDPR", 0], ["Defines a goal each state must reach", 1], ["Each state writes its own law", 1], ["NIS2", 1]], "ok": "Sorted. That is why digitalsikkerhetsloven applies in Norway, and NIS2 as written does not.", "why": "A regulation is applied without modification and only translated; a directive sets a goal that each state reaches with a law of its own.", "ref": "Part 3; Jøsang, Sect. 17.4.1, p. 364"}
 </script>
 ```
 
@@ -177,7 +177,7 @@ You will hold the controller or the processor role in every job you take, becaus
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "match", "title": "Try it: who is who under GDPR", "instr": "Drag each Norwegian term onto the role it names. One term is a fifth role and stays on the bench.", "zones": [{"label": "The living person the data is about", "answer": "den registrerte"}, {"label": "Decides why and how data is processed", "answer": "behandlingsansvarlig"}, {"label": "Processes on the controller's behalf", "answer": "databehandler"}, {"label": "Audits, advises and fines", "answer": "Datatilsynet"}], "extra": ["personvernombud"], "ok": "Right. The personvernombud is appointed inside larger or riskier organisations and advises both controller and processor."}
+{"type": "match", "title": "Try it: who is who under GDPR", "instr": "Drag each Norwegian term onto the role it names. One term is a fifth role and stays on the bench.", "zones": [{"label": "The living person the data is about", "answer": "den registrerte"}, {"label": "Decides why and how data is processed", "answer": "behandlingsansvarlig"}, {"label": "Processes on the controller's behalf", "answer": "databehandler"}, {"label": "Audits, advises and fines", "answer": "Datatilsynet"}], "extra": ["personvernombud"], "ok": "Right. The personvernombud is appointed inside larger or riskier organisations and advises both controller and processor.", "why": "Den registrerte is the person, behandlingsansvarlig decides, databehandler processes on its behalf, and Datatilsynet audits, advises and fines.", "ref": "Part 3; Jøsang, Sect. 10.6, Fig. 10.3, p. 225"}
 </script>
 ```
 
@@ -232,7 +232,7 @@ Some of this will happen to you in your first year. A shared folder open to ever
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "order", "title": "Try it: you found something by accident", "instr": "Tap the four steps of the procedure in order.", "steps": ["Stop", "Write down what you saw, when and how", "Tell one named person who can act", "Do not touch it again"], "ok": "That is the whole procedure. Curiosity argues for one more click, and one more click is the offence."}
+{"type": "order", "title": "Try it: you found something by accident", "instr": "Tap the four steps of the procedure in order.", "steps": ["Stop", "Write down what you saw, when and how", "Tell one named person who can act", "Do not touch it again"], "ok": "That is the whole procedure. Curiosity argues for one more click, and one more click is the offence.", "why": "Stop before curiosity clicks again, record what you saw and when, tell one named person who can act, and leave it alone until that person answers.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -289,7 +289,7 @@ What does the student do next? Decide before reading on.
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "A service marked 'grade system' answers on the guest network. Where exactly is the line to an offence?", "options": ["Trying the login", "Finding the service at all", "Writing down the address and time", "Reporting it to the IT department"], "correct": [0], "ok": "Right.", "why": "Finding a service is not an offence. Typing a password into a system you have no right to reach is access without right, whether or not it works."}
+{"type": "quiz", "title": "Check yourself", "q": "A service marked 'grade system' answers on the guest network. Where exactly is the line to an offence?", "options": ["Trying the login", "Finding the service at all", "Writing down the address and time", "Reporting it to the IT department"], "correct": [0], "ok": "Right.", "why": "Finding a service is not an offence. Typing a password into a system you have no right to reach is access without right, whether or not it works.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

@@ -62,7 +62,7 @@ What does a server send back first when a browser asks for a page? Which part of
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: how the page loads","instr":"Tap the steps in the order they happen when a visitor opens the report page.","steps":["Browser asks for index.html over HTTP","Server answers headers, then the text","A line in the head names stil.css","Browser sends a second request for it","The page is assembled in the browser"],"ok":"One visit, several requests - assembled, not delivered."}
+{"type":"order","title":"Try it: how the page loads","instr":"Tap the steps in the order they happen when a visitor opens the report page.","steps":["Browser asks for index.html over HTTP","Server answers headers, then the text","A line in the head names stil.css","Browser sends a second request for it","The page is assembled in the browser"],"ok":"One visit, several requests - assembled, not delivered.","why":"The server sends one text file; a line in its head names stil.css, so the browser fetches it and assembles the page.","ref":"Part 1 of this chapter"}
 </script>
 ```
 
@@ -121,7 +121,7 @@ A web page is text fetched over HTTP that names the other files it needs, and HT
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the skeleton","instr":"Drag each element name onto what it holds. Two chips stay on the bench.","zones":[{"label":"Facts about the page, not its content","answer":"head"},{"label":"Everything the visitor reads","answer":"body"},{"label":"Read this file as modern HTML","answer":"DOCTYPE"},{"label":"A header cell in a table row","answer":"th"}],"extra":["td","p"],"ok":"That is the skeleton every page has, and the order never changes."}
+{"type":"match","title":"Try it: the skeleton","instr":"Drag each element name onto what it holds. Two chips stay on the bench.","zones":[{"label":"Facts about the page, not its content","answer":"head"},{"label":"Everything the visitor reads","answer":"body"},{"label":"Read this file as modern HTML","answer":"DOCTYPE"},{"label":"A header cell in a table row","answer":"th"}],"extra":["td","p"],"ok":"That is the skeleton every page has, and the order never changes.","why":"The head carries facts about the page, the body what the visitor reads, and DOCTYPE says read this as modern HTML.","ref":"Part 2 of this chapter"}
 </script>
 ```
 
@@ -135,7 +135,7 @@ HTML says what a piece of text is, and CSS says how it looks. A table stays a ta
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: HTML or CSS?","instr":"One says what the text is, one says how it looks. Sort each item.","buckets":["HTML","CSS"],"items":[["Says what a piece of text is",0],["Says how it looks",1],["A tag pair around content",0],["Selectors, properties and values",1],["The class attribute names a group",0],["The rule that turns a row red",1]],"ok":"Kept apart, so one person can write and another design."}
+{"type":"buckets","title":"Try it: HTML or CSS?","instr":"One says what the text is, one says how it looks. Sort each item.","buckets":["HTML","CSS"],"items":[["Says what a piece of text is",0],["Says how it looks",1],["A tag pair around content",0],["Selectors, properties and values",1],["The class attribute names a group",0],["The rule that turns a row red",1]],"ok":"Kept apart, so one person can write and another design.","why":"HTML labels what a piece of text is; CSS rules with selectors and properties decide how it looks.","ref":"Part 3 of this chapter"}
 </script>
 ```
 
@@ -179,7 +179,7 @@ What does a selector do inside a CSS rule? Which character starts a class select
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"The red backup row should become orange instead. Which rule in the stylesheet changes?","options":[".varsel","th","body",".ingress","h1"],"correct":[0],"ok":"Right.","why":"A class selector starts with a dot and matches the class attribute; .varsel is the rule on the backup cell, and one line changes it everywhere."}
+{"type":"quiz","title":"Check yourself","q":"The red backup row should become orange instead. Which rule in the stylesheet changes?","options":[".varsel","th","body",".ingress","h1"],"correct":[0],"ok":"Right.","why":"A class selector starts with a dot and matches the class attribute; .varsel is the rule on the backup cell, and one line changes it everywhere.","ref":"Part 3 of this chapter"}
 </script>
 ```
 
@@ -211,7 +211,7 @@ Which header tells the browser how to treat an arriving file? What privileges do
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"One JavaScript file loaded by a payment page is edited to copy card data as it is typed. What does the visitor notice?","options":["Nothing - the page works and the padlock looks the same","The padlock disappears from the address bar","The browser warns that a loaded file has changed","The payment fails, which reveals the attack"],"correct":[0],"ok":"Right.","why":"HTTPS protects data in transit, not from code running inside the page. The padlock is identical on a clean page and an edited one."}
+{"type":"quiz","title":"Check yourself","q":"One JavaScript file loaded by a payment page is edited to copy card data as it is typed. What does the visitor notice?","options":["Nothing - the page works and the padlock looks the same","The padlock disappears from the address bar","The browser warns that a loaded file has changed","The payment fails, which reveals the attack"],"correct":[0],"ok":"Right.","why":"HTTPS protects data in transit, not from code running inside the page. The padlock is identical on a clean page and an edited one.","ref":"Part 4; Jøsang, Sect. 1.9.1, p. 14"}
 </script>
 ```
 
@@ -242,7 +242,7 @@ Nordvik's report page loads one stylesheet from its own server and nothing else.
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: the British Airways chain","instr":"Tap the events of the 2018 case in the order they happened.","steps":["A supplier login without MFA is used","Attacker inside the network from 22 June","One payment-page script file is edited","Card data is copied to a look-alike domain","The ICO fines the airline 20 million pounds"],"ok":"The page and its padlock looked unchanged the whole way."}
+{"type":"order","title":"Try it: the British Airways chain","instr":"Tap the events of the 2018 case in the order they happened.","steps":["A supplier login without MFA is used","Attacker inside the network from 22 June","One payment-page script file is edited","Card data is copied to a look-alike domain","The ICO fines the airline 20 million pounds"],"ok":"The page and its padlock looked unchanged the whole way.","why":"A supplier account without MFA gave access; one edited script then copied card data while the page looked unchanged.","ref":"Part 5 of this chapter"}
 </script>
 ```
 

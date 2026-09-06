@@ -47,7 +47,7 @@ Almost every morning routine reduces to these four. Each has a command that answ
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: the four morning questions","instr":"Tap the questions in the order the chapter asks them - each answer narrows the next.","steps":["Is the service running?","How full is the disk?","What is listening?","What do the logs say?"],"ok":"Service, disk, ports, logs - every morning."}
+{"type":"order","title":"Try it: the four morning questions","instr":"Tap the questions in the order the chapter asks them - each answer narrows the next.","steps":["Is the service running?","How full is the disk?","What is listening?","What do the logs say?"],"ok":"Service, disk, ports, logs - every morning.","why":"A stopped service explains most complaints, and each answer narrows the next: disk, then ports, then logs.","ref":"Part 1 of this chapter"}
 </script>
 ```
 
@@ -67,7 +67,7 @@ Name the four questions. Why does reading a status screen not count as a check? 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: check or no check?","instr":"A check is a question with a repeatable answer. Sort each item.","buckets":["A check","Not a check"],"items":[["A person glancing at a screen",1],["systemctl is-active ssh",0],["A paragraph from systemctl status",1],["An answer short enough for an if to test",0],["A screenshot of the status",1],["Same command, same kind of value",0]],"ok":"A check has to say what it found, in a form something else can test."}
+{"type":"buckets","title":"Try it: check or no check?","instr":"A check is a question with a repeatable answer. Sort each item.","buckets":["A check","Not a check"],"items":[["A person glancing at a screen",1],["systemctl is-active ssh",0],["A paragraph from systemctl status",1],["An answer short enough for an if to test",0],["A screenshot of the status",1],["Same command, same kind of value",0]],"ok":"A check has to say what it found, in a form something else can test.","why":"A check is one question with a repeatable answer a script can test; glancing at a screen is not repeatable.","ref":"Part 1; Jøsang, Sect. 1.5, p. 8"}
 </script>
 ```
 
@@ -127,7 +127,7 @@ A glance is not an answer; a check is a question with a repeatable one, and its 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A service shows active and disabled. What is true?","options":["It is running now and will not start after the next reboot","It is stopped now and will start at the next boot","It is running now and a reboot changes nothing","The two words contradict each other, so one is an error"],"correct":[0],"ok":"Right.","why":"is-active describes this moment; is-enabled describes the next boot. A server can be working today and gone after the next patch reboot."}
+{"type":"quiz","title":"Check yourself","q":"A service shows active and disabled. What is true?","options":["It is running now and will not start after the next reboot","It is stopped now and will start at the next boot","It is running now and a reboot changes nothing","The two words contradict each other, so one is an error"],"correct":[0],"ok":"Right.","why":"is-active describes this moment; is-enabled describes the next boot. A server can be working today and gone after the next patch reboot.","ref":"Part 2 of this chapter"}
 </script>
 ```
 
@@ -184,7 +184,7 @@ What do the three letters in `ss -ltn` select? Which `df` column would you quote
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A colleague asks how long the disk will last. Which df column do you quote?","options":["Avail - the space left, in real units","Use% - the percentage everyone reads","Size - how big the filesystem is","Mounted on - where the filesystem sits"],"correct":[0],"ok":"Right.","why":"The percentage hides the size: 92 percent of forty gigabytes leaves three, and 92 percent of four terabytes leaves three hundred and twenty."}
+{"type":"quiz","title":"Check yourself","q":"A colleague asks how long the disk will last. Which df column do you quote?","options":["Avail - the space left, in real units","Use% - the percentage everyone reads","Size - how big the filesystem is","Mounted on - where the filesystem sits"],"correct":[0],"ok":"Right.","why":"The percentage hides the size: 92 percent of forty gigabytes leaves three, and 92 percent of four terabytes leaves three hundred and twenty.","ref":"Part 3 of this chapter"}
 </script>
 ```
 
@@ -198,7 +198,7 @@ systemd keeps its own record of what services printed, the journal from L14. `jo
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: narrow the journal","instr":"The journal is far too long to read from the top. Drag each flag onto the dimension it narrows. Two flags are distractors.","zones":[{"label":"One unit, such as ssh","answer":"-u"},{"label":"Messages at or above a priority","answer":"-p"},{"label":"A start time, such as -1h","answer":"-S"}],"extra":["-q","-h"],"ok":"Unit, priority and time - and the flags combine."}
+{"type":"match","title":"Try it: narrow the journal","instr":"The journal is far too long to read from the top. Drag each flag onto the dimension it narrows. Two flags are distractors.","zones":[{"label":"One unit, such as ssh","answer":"-u"},{"label":"Messages at or above a priority","answer":"-p"},{"label":"A start time, such as -1h","answer":"-S"}],"extra":["-q","-h"],"ok":"Unit, priority and time - and the flags combine.","why":"-u narrows to one unit, -p to a priority and -S to a start time; the flags combine.","ref":"Part 4 of this chapter"}
 </script>
 ```
 
@@ -287,7 +287,7 @@ Nordvik has one server, and the health check still earns its place: the morning 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"What check would have exposed Knight Capital's eighth server before the market opened?","options":["One question asked of all eight servers: which version of the code is installed","More automated warning emails to more staff","A person reading the status screen on each server","A faster deployment over fewer days"],"correct":[0],"ok":"Right.","why":"Eight lines, one different. Ninety-seven messages did reach staff by email, and nobody was reading; a check that runs the same way on every machine names the one that answers differently."}
+{"type":"quiz","title":"Check yourself","q":"What check would have exposed Knight Capital's eighth server before the market opened?","options":["One question asked of all eight servers: which version of the code is installed","More automated warning emails to more staff","A person reading the status screen on each server","A faster deployment over fewer days"],"correct":[0],"ok":"Right.","why":"Eight lines, one different. The 97 warning emails went unread; a check run the same way on every machine names the one that answers differently.","ref":"Part 5; Jøsang, Sect. 1.9.3, p. 16"}
 </script>
 ```
 

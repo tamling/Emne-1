@@ -53,8 +53,7 @@ Kali is an ordinary Debian-family distribution. It arrives with several hundred 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"What is Kali, according to this chapter?","options":["An ordinary Debian-family distribution with security tools preinstalled","A more powerful Linux than Ubuntu","A member of the Red Hat family","A different operating system from Debian","A kernel of its own"],"correct":[0],
- "ok":"Right.","why":"Kali is Debian family, and a pre-installed tool is not a different tool: every tool in it installs on Ubuntu with one command."}
+{"type": "quiz", "title": "Check yourself", "q": "What is Kali, according to this chapter?", "options": ["An ordinary Debian-family distribution with security tools preinstalled", "A more powerful Linux than Ubuntu", "A member of the Red Hat family", "A different operating system from Debian", "A kernel of its own"], "correct": [0], "ok": "Right.", "why": "Kali is Debian family, and a pre-installed tool is not a different tool: every tool in it installs on Ubuntu with one command.", "ref": "Part 1 of this chapter"}
 </script>
 ```
 
@@ -145,10 +144,7 @@ Print newline, word, and byte counts for each FILE ...
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: does it change the machine?","instr":"Sort each command by what it does. Remember: none of the changing ones asks you to confirm, and none has an undo.",
- "buckets":["Only reads","Changes something"],
- "items":[["pwd",0],["ls -l",0],["rm gammel.txt",1],["mv notat.txt rapport.txt",1],["less /etc/hostname",0],["cp notat.txt /tmp",1]],
- "ok":"Sorted. The changing three never ask and never undo."}
+{"type": "buckets", "title": "Try it: does it change the machine?", "instr": "Sort each command by what it does. Remember: none of the changing ones asks you to confirm, and none has an undo.", "buckets": ["Only reads", "Changes something"], "items": [["pwd", 0], ["ls -l", 0], ["rm gammel.txt", 1], ["mv notat.txt rapport.txt", 1], ["less /etc/hostname", 0], ["cp notat.txt /tmp", 1]], "ok": "Sorted. The changing three never ask and never undo.", "why": "cp, mv and rm change the machine and none of them asks or has an undo; pwd, ls and less only report what is there.", "ref": "Part 2 of this chapter"}
 </script>
 ```
 
@@ -208,10 +204,7 @@ Notice the prompt. The tilde became `/var/log`, because the prompt always shows 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: read the map","instr":"Drag each directory onto what is kept there. Two directories are distractors and stay on the bench.",
- "zones":[{"label":"Settings for everything","answer":"/etc"},{"label":"Files that grow: logs, mail, queues","answer":"/var"},{"label":"One folder per person","answer":"/home"},{"label":"Scratch space, wiped at boot","answer":"/tmp"}],
- "extra":["/bin","/usr"],
- "ok":"That is the map: settings, evidence, people, scratch."}
+{"type": "match", "title": "Try it: read the map", "instr": "Drag each directory onto what is kept there. Two directories are distractors and stay on the bench.", "zones": [{"label": "Settings for everything", "answer": "/etc"}, {"label": "Files that grow: logs, mail, queues", "answer": "/var"}, {"label": "One folder per person", "answer": "/home"}, {"label": "Scratch space, wiped at boot", "answer": "/tmp"}], "extra": ["/bin", "/usr"], "ok": "That is the map: settings, evidence, people, scratch.", "why": "Settings live in /etc, growing files like logs in /var, one folder per person in /home, and scratch wiped at boot in /tmp.", "ref": "Part 3; Jøsang, Sect. 3.4, p. 49"}
 </script>
 ```
 
@@ -244,8 +237,7 @@ Only four of these six change the machine. Searching and showing are free, and y
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A vulnerability has a fix waiting in the repositories. Which command actually removes it from this machine?","options":["sudo apt update","sudo apt upgrade","apt search","apt show","apt-cache policy"],"correct":[1],
- "ok":"Right.","why":"update only fetches a fresh catalogue and installs nothing; upgrade installs newer versions, which is where the book's vulnerability lifecycle ends."}
+{"type": "quiz", "title": "Check yourself", "q": "A vulnerability has a fix waiting in the repositories. Which command actually removes it from this machine?", "options": ["sudo apt update", "sudo apt upgrade", "apt search", "apt show", "apt-cache policy"], "correct": [1], "ok": "Right.", "why": "update only fetches a fresh catalogue and installs nothing; upgrade installs newer versions, which is where the book's vulnerability lifecycle ends.", "ref": "Part 4; Jøsang, Sect. 3.3, p. 46"}
 </script>
 ```
 
@@ -334,9 +326,7 @@ In what order do you look, and what do you type first? The ticket is deliberatel
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: the full disk","instr":"A server is full and you have never logged in to it. Tap the steps in the order the worked example gives them.",
- "steps":["Run pwd and ls to see where you landed","du -sh /var /home /tmp: three numbers","tail the giant log in /var/log","Fix the service's setting in /etc"],
- "ok":"That is the order: know where you are, ask the tree, read the newest lines, fix the setting rather than deleting the log."}
+{"type": "order", "title": "Try it: the full disk", "instr": "A server is full and you have never logged in to it. Tap the steps in the order the worked example gives them.", "steps": ["Run pwd and ls to see where you landed", "du -sh /var /home /tmp: three numbers", "tail the giant log in /var/log", "Fix the service's setting in /etc"], "ok": "That is the order: know where you are, ask the tree, read the newest lines, fix the setting rather than deleting the log.", "why": "Know where you stand first; du gives three numbers in one line, the space is usually one log in /var/log, and the fix is the setting in /etc.", "ref": "Part 5; Jøsang, Sect. 14.5.2, p. 311"}
 </script>
 ```
 

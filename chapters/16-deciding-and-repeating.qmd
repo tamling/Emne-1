@@ -106,7 +106,7 @@ A check on Nordvik's count, `if antall > 10`, is the whole difference between a 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"The same four lines of loop code are indented in two different ways. What does the chapter say about the result?","options":["They are two different programs","They do the same thing, but one is tidier","Python refuses one of them with a syntax error","Only the comments change their meaning"],"correct":[0],"ok":"Right.","why":"Indentation is the structure, not decoration: it decides which lines belong to the if, so the print runs once, or once per matching line."}
+{"type": "quiz", "title": "Check yourself", "q": "The same four lines of loop code are indented in two different ways. What does the chapter say about the result?", "options": ["They are two different programs", "They do the same thing, but one is tidier", "Python refuses one of them with a syntax error", "Only the comments change their meaning"], "correct": [0], "ok": "Right.", "why": "Indentation is the structure, not decoration: it decides which lines belong to the if, so the print runs once, or once per matching line.", "ref": "Part 1; Python for Everyone, Sect. 3.1"}
 </script>
 ```
 
@@ -195,7 +195,7 @@ A `while` loop takes a condition instead of a sequence and repeats while it stay
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the loop words","instr":"Drag each word onto the job the chapter gives it. Two are distractors and stay on the bench.","zones":[{"label":"Once per item in a sequence","answer":"for"},{"label":"While a condition stays true","answer":"while"},{"label":"Skip the rest of this pass","answer":"continue"},{"label":"Leave the loop entirely","answer":"break"}],"extra":["range","elif"],"ok":"That is the vocabulary of repetition."}
+{"type": "match", "title": "Try it: the loop words", "instr": "Drag each word onto the job the chapter gives it. Two are distractors and stay on the bench.", "zones": [{"label": "Once per item in a sequence", "answer": "for"}, {"label": "While a condition stays true", "answer": "while"}, {"label": "Skip the rest of this pass", "answer": "continue"}, {"label": "Leave the loop entirely", "answer": "break"}], "extra": ["range", "elif"], "ok": "That is the vocabulary of repetition.", "why": "A for loop runs once per item and while repeats while a condition stays true; continue skips one pass and break leaves the loop.", "ref": "Part 2; Python for Everyone, Sect. 4.1, 4.6"}
 </script>
 ```
 
@@ -294,13 +294,13 @@ Real data always brings the odd line, a blank, a header, a truncated row, so che
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: deny-list or allow-list?","instr":"Sort each fact onto the kind of list it describes.","buckets":["Deny-list","Allow-list"],"items":[["Lists the things you refuse",0],["Lists the things you accept",1],["Anything not listed goes through",0],["Anything not listed is refused",1],["Fails silently when you forget one",0],["Fails loudly: something ordinary refused",1]],"ok":"Sorted. Both approaches fail, and only one of them tells you."}
+{"type": "buckets", "title": "Try it: deny-list or allow-list?", "instr": "Sort each fact onto the kind of list it describes.", "buckets": ["Deny-list", "Allow-list"], "items": [["Lists the things you refuse", 0], ["Lists the things you accept", 1], ["Anything not listed goes through", 0], ["Anything not listed is refused", 1], ["Fails silently when you forget one", 0], ["Fails loudly: something ordinary refused", 1]], "ok": "Sorted. Both approaches fail, and only one of them tells you.", "why": "A deny-list lets unlisted things through silently; an allow-list refuses them loudly, which is the failure you want.", "ref": "Part 3; Jøsang, Sect. 6.4, p. 135"}
 </script>
 ```
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A log line has twelve fields and looks perfectly ordinary. What does passing the shape check establish?","options":["Only that the script can read it","That the line is safe","That the line records no attack","That every address in it exists"],"correct":[0],"ok":"Right.","why":"A shape check removes one vulnerability, the script's own crash on bad input; it says nothing about the threat the line records."}
+{"type": "quiz", "title": "Check yourself", "q": "A log line has twelve fields and looks perfectly ordinary. What does passing the shape check establish?", "options": ["Only that the script can read it", "That the line is safe", "That the line records no attack", "That every address in it exists"], "correct": [0], "ok": "Right.", "why": "A shape check removes one vulnerability, the script's own crash on bad input; it says nothing about the threat the line records.", "ref": "Part 3; Jøsang, Sect. 1.4, pp. 5-6"}
 </script>
 ```
 
@@ -355,7 +355,7 @@ The moment you know what normal looks like is while you are staring at the file.
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: the four boxes","instr":"Tap the steps of every log-reading script in the order the chapter gives them (tap a step, then a slot - or just tap steps in order).","steps":["Open the file","Loop over the lines","Check and count","Report"],"ok":"That is the shape - and the print belongs in the last box, after the loop."}
+{"type": "order", "title": "Try it: the four boxes", "instr": "Tap the steps of every log-reading script in the order the chapter gives them (tap a step, then a slot - or just tap steps in order).", "steps": ["Open the file", "Loop over the lines", "Check and count", "Report"], "ok": "That is the shape - and the print belongs in the last box, after the loop.", "why": "Every log script is open, loop, check and count, report; the report goes after the loop.", "ref": "Part 4; Python for Everyone, Sect. 7.3, HT 1"}
 </script>
 ```
 
@@ -400,7 +400,7 @@ Run the finished script on your own `/var/log/auth.log`. Then deliberately break
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"The Knight Capital condition was written correctly and evaluated correctly. What went wrong?","options":["It read a flag that meant something different on one server","A syntax error stopped the deployment","The loop around it never ran","The indentation was off by four spaces"],"correct":[0],"ok":"Right.","why":"A condition is not a statement about the world: it reads a value somebody else sets, so the question is always true according to what, and where."}
+{"type": "quiz", "title": "Check yourself", "q": "The Knight Capital condition was written correctly and evaluated correctly. What went wrong?", "options": ["It read a flag that meant something different on one server", "A syntax error stopped the deployment", "The loop around it never ran", "The indentation was off by four spaces"], "correct": [0], "ok": "Right.", "why": "A condition is not a statement about the world: it reads a value somebody else sets, so the question is always true according to what, and where.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

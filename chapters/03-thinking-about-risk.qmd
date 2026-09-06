@@ -65,7 +65,7 @@ No lock code on the phone. One password everywhere. Nothing backed up anywhere. 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: threat or vulnerability?", "instr": "Sort each item into the column it belongs to.", "buckets": ["A threat", "A vulnerability"], "items": [["Theft", 0], ["Fire", 0], ["Phishing", 0], ["Ransomware", 0], ["No lock code", 1], ["One password everywhere", 1], ["Untested backup", 1], ["Unpatched server", 1]], "ok": "Sorted. Threats come from outside and mostly stay; vulnerabilities are yours, and removing them is what a control does."}
+{"type": "buckets", "title": "Try it: threat or vulnerability?", "instr": "Sort each item into the column it belongs to.", "buckets": ["A threat", "A vulnerability"], "items": [["Theft", 0], ["Fire", 0], ["Phishing", 0], ["Ransomware", 0], ["No lock code", 1], ["One password everywhere", 1], ["Untested backup", 1], ["Unpatched server", 1]], "ok": "Sorted. Threats come from outside and mostly stay; vulnerabilities are yours, and removing them is what a control does.", "why": "A threat comes from outside and mostly stays; a vulnerability is a property of your own things, and you can remove it.", "ref": "Part 1; Jøsang, Sect. 1.4, pp. 5-6"}
 </script>
 ```
 
@@ -134,7 +134,7 @@ In June 2017 the NotPetya malware stopped the shipping company Maersk across its
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "NotPetya stopped Maersk in 2017. Nothing was stolen and nothing was changed. Which property failed?", "options": ["Availability", "Integrity", "Confidentiality", "Authenticity"], "correct": [0], "ok": "Right.", "why": "The company simply lost the use of its systems - about 45,000 PCs and 4,000 servers were reinstalled - and that alone was enough to stop it operating."}
+{"type": "quiz", "title": "Check yourself", "q": "NotPetya stopped Maersk in 2017. Nothing was stolen and nothing was changed. Which property failed?", "options": ["Availability", "Integrity", "Confidentiality", "Authenticity"], "correct": [0], "ok": "Right.", "why": "The company simply lost the use of its systems - about 45,000 PCs and 4,000 servers were reinstalled - and that alone was enough to stop it operating.", "ref": "Part 2; Jøsang, Sect. 1.9.4, p. 17"}
 </script>
 ```
 
@@ -211,7 +211,7 @@ Frequency is not severity. Ransomware encrypting the case system is *possible*, 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "A laptop stolen from a car happens more often than ransomware on the server, yet the encrypted server ranks higher. Why?", "options": ["Weeks without systems costs more than one laptop", "Servers meet more threats than laptops do", "Laptop theft is not a realistic threat", "The grid computes a number that proves it"], "correct": [0], "ok": "Right.", "why": "Frequency is not severity. With an encrypted disk the stolen laptop is minor, while the encrypted server would be major, and the grid computes nothing."}
+{"type": "quiz", "title": "Check yourself", "q": "A laptop stolen from a car happens more often than ransomware on the server, yet the encrypted server ranks higher. Why?", "options": ["Weeks without systems costs more than one laptop", "Servers meet more threats than laptops do", "Laptop theft is not a realistic threat", "The grid computes a number that proves it"], "correct": [0], "ok": "Right.", "why": "Frequency is not severity. With an encrypted disk the stolen laptop is minor, while the encrypted server would be major, and the grid computes nothing.", "ref": "Part 3 of this chapter"}
 </script>
 ```
 
@@ -246,7 +246,7 @@ An accepted risk that nobody wrote down is something else entirely. The book's t
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "match", "title": "Try it: the four treatments", "instr": "Drag each treatment onto its meaning. One term is not one of the book's four and stays on the bench.", "zones": [{"label": "Add a control that lowers the risk", "answer": "Reduce"}, {"label": "Insurance, or a supplier carries part", "answer": "Transfer"}, {"label": "Decide the fix costs more than the risk", "answer": "Accept"}, {"label": "Stop the activity altogether", "answer": "Avoid"}], "extra": ["Ignore"], "ok": "Right. And ignoring a risk is not a fifth option: doing nothing is accepting it, without the signature."}
+{"type": "match", "title": "Try it: the four treatments", "instr": "Drag each treatment onto its meaning. One term is not one of the book's four and stays on the bench.", "zones": [{"label": "Add a control that lowers the risk", "answer": "Reduce"}, {"label": "Insurance, or a supplier carries part", "answer": "Transfer"}, {"label": "Decide the fix costs more than the risk", "answer": "Accept"}, {"label": "Stop the activity altogether", "answer": "Avoid"}], "extra": ["Ignore"], "ok": "Right. And ignoring a risk is not a fifth option: doing nothing is accepting it, without the signature.", "why": "Reduce adds a control, transfer moves part of the risk to an insurer or supplier, accept is a justified written decision, avoid stops the activity.", "ref": "Part 4; Jøsang, Sect. 19.2.3, pp. 412-415"}
 </script>
 ```
 
@@ -263,7 +263,7 @@ The four kinds exist so that nobody solves a people problem with a product. Invo
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: four kinds of control", "instr": "Sort each control into the kind it belongs to.", "buckets": ["Technical", "Administrative", "Physical", "Environmental"], "items": [["Multi-factor login", 0], ["Patching", 0], ["A call-back rule for changed numbers", 1], ["A written password policy", 1], ["Doors and locks", 2], ["The cupboard the server stands in", 2], ["A UPS for when the power fails", 3], ["Cooling for the server room", 3]], "ok": "Sorted. The four kinds exist so that nobody solves a people problem with a product."}
+{"type": "buckets", "title": "Try it: four kinds of control", "instr": "Sort each control into the kind it belongs to.", "buckets": ["Technical", "Administrative", "Physical", "Environmental"], "items": [["Multi-factor login", 0], ["Patching", 0], ["A call-back rule for changed numbers", 1], ["A written password policy", 1], ["Doors and locks", 2], ["The cupboard the server stands in", 2], ["A UPS for when the power fails", 3], ["Cooling for the server room", 3]], "ok": "Sorted. The four kinds exist so that nobody solves a people problem with a product.", "why": "Technical controls are built into systems, administrative ones are written and followed, physical is doors and locks, environmental is power and water.", "ref": "Part 4; Jøsang, Sect. 1.5, Fig. 1.7, p. 10"}
 </script>
 ```
 
@@ -333,7 +333,7 @@ Then take the next cell down. For the account takeover, the safeguard is multi-f
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "order", "title": "Try it: the whole method", "instr": "Tap the four steps of the method from Part 5 in order.", "steps": ["Start from the top of the grid", "Find a matching IG1 safeguard", "Choose the treatment", "Write down what remains and who accepted it"], "ok": "That is the method, and it works on a phone, a school or a municipality unchanged."}
+{"type": "order", "title": "Try it: the whole method", "instr": "Tap the four steps of the method from Part 5 in order.", "steps": ["Start from the top of the grid", "Find a matching IG1 safeguard", "Choose the treatment", "Write down what remains and who accepted it"], "ok": "That is the method, and it works on a phone, a school or a municipality unchanged.", "why": "Top of the grid first, an IG1 safeguard to match it, a treatment, then a written record of what remains and who accepted it.", "ref": "Part 5; Jøsang, Sect. 18.4, p. 391"}
 </script>
 ```
 

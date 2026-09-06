@@ -49,7 +49,7 @@ Everything outside is reached through one way out, which is the router, and beyo
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: LAN or WAN?", "instr": "Sort each fact onto the kind of network it describes.", "buckets": ["LAN", "WAN"], "items": [["Connects nodes within a limited area", 0], ["Works with the internet closed", 0], ["The MAC address is enough to find hosts", 0], ["A network over long distances", 1], ["Reached through the one way out", 1], ["Equipment somebody else owns", 1]], "ok": "Sorted. Inside the boundary you control the machines and the rules; outside it you are a guest."}
+{"type": "buckets", "title": "Try it: LAN or WAN?", "instr": "Sort each fact onto the kind of network it describes.", "buckets": ["LAN", "WAN"], "items": [["Connects nodes within a limited area", 0], ["Works with the internet closed", 0], ["The MAC address is enough to find hosts", 0], ["A network over long distances", 1], ["Reached through the one way out", 1], ["Equipment somebody else owns", 1]], "ok": "Sorted. Inside the boundary you control the machines and the rules; outside it you are a guest.", "why": "A LAN connects nodes within a limited area and needs no IP routing; the WAN beyond the router is long-distance equipment somebody else owns.", "ref": "Part 1; Jøsang, Sect. 6.1.2, p. 126"}
 </script>
 ```
 
@@ -98,7 +98,7 @@ Two separate reasons sit behind this, and a student who learns only one loses ha
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "Why does a message travel in pieces rather than as one stream? Choose the two reasons the chapter gives.", "options": ["Fair sharing of the shared carrier", "Cheap repair: re-send one piece only", "Packets travel faster than a stream", "Encryption only works on small pieces"], "correct": [0, 1], "ok": "Right.", "why": "A student who learns only one reason loses half the answer: fair sharing of the carrier, and cheap repair of damage."}
+{"type": "quiz", "title": "Check yourself", "q": "Why does a message travel in pieces rather than as one stream? Choose the two reasons the chapter gives.", "options": ["Fair sharing of the shared carrier", "Cheap repair: re-send one piece only", "Packets travel faster than a stream", "Encryption only works on small pieces"], "correct": [0, 1], "ok": "Right.", "why": "A student who learns only one reason loses half the answer: fair sharing of the carrier, and cheap repair of damage.", "ref": "Part 2; Jøsang, Sect. 6.1, p. 118"}
 </script>
 ```
 
@@ -131,7 +131,7 @@ You will hear people say "layer 7" or "layer 4". Those numbers come from the old
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "order", "title": "Try it: down the stack", "instr": "Tap the steps in the order a packet is wrapped on its way out, per the book's walk-through.", "steps": ["Browser hands data to the application layer", "TCP adds the transport header", "IP adds the internet header", "The link layer adds the last header"], "ok": "Right. And the first router on the way unwraps only up to the IP layer before deciding where to forward."}
+{"type": "order", "title": "Try it: down the stack", "instr": "Tap the steps in the order a packet is wrapped on its way out, per the book's walk-through.", "steps": ["Browser hands data to the application layer", "TCP adds the transport header", "IP adds the internet header", "The link layer adds the last header"], "ok": "Right. And the first router on the way unwraps only up to the IP layer before deciding where to forward.", "why": "Each layer adds its own header on the way down, and only the matching layer at the far end reads each wrapper.", "ref": "Part 2; Jøsang, Sect. 6.1.2, p. 122"}
 </script>
 ```
 
@@ -167,7 +167,7 @@ The book: "At the link layer, all addressing takes place with MAC addresses, the
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "buckets", "title": "Try it: which address?", "instr": "Sort each fact onto the address it describes.", "buckets": ["MAC address", "IP address"], "items": [["Fixed to the card by the manufacturer", 0], ["Valid on this cable only", 0], ["Read by the switch", 0], ["Never changes", 0], ["Handed out by the network it joins", 1], ["Valid across the whole internet", 1], ["Read by the router", 1], ["Changes with every new network", 1]], "ok": "Sorted. Which device is this, and where on the network is it: two questions, two addresses."}
+{"type": "buckets", "title": "Try it: which address?", "instr": "Sort each fact onto the address it describes.", "buckets": ["MAC address", "IP address"], "items": [["Fixed to the card by the manufacturer", 0], ["Valid on this cable only", 0], ["Read by the switch", 0], ["Never changes", 0], ["Handed out by the network it joins", 1], ["Valid across the whole internet", 1], ["Read by the router", 1], ["Changes with every new network", 1]], "ok": "Sorted. Which device is this, and where on the network is it: two questions, two addresses.", "why": "The MAC address is fixed to the card and read by the switch; the IP address is handed out by the network and read by the router.", "ref": "Part 3; Jøsang, Sect. 6.1.2, p. 125"}
 </script>
 ```
 
@@ -223,7 +223,7 @@ Two further points from the same page. "The standard basic rule for firewalls is
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "quiz", "title": "Check yourself", "q": "What is the standard basic rule for firewalls?", "options": ["Default-deny: reject unless a rule allows it", "Default-allow: pass unless a rule blocks it", "Inspect the message inside every packet", "Block traffic between machines on one switch"], "correct": [0], "ok": "Right.", "why": "Any type of traffic is rejected unless otherwise specified. And every rule that allows something records a person's decision to allow it."}
+{"type": "quiz", "title": "Check yourself", "q": "What is the standard basic rule for firewalls?", "options": ["Default-deny: reject unless a rule allows it", "Default-allow: pass unless a rule blocks it", "Inspect the message inside every packet", "Block traffic between machines on one switch"], "correct": [0], "ok": "Right.", "why": "Any type of traffic is rejected unless otherwise specified. And every rule that allows something records a person's decision to allow it.", "ref": "Part 4; Jøsang, Sect. 6.4, p. 135"}
 </script>
 ```
 
@@ -249,7 +249,7 @@ Nordvik's one firewall on the boundary is where a written rule decides whether a
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type": "match", "title": "Try it: three devices, three questions", "instr": "Drag each device onto the question it asks about every packet. Two terms are not middle devices and stay on the bench.", "zones": [{"label": "Which port does this go out of?", "answer": "Switch"}, {"label": "Which network is this handed to next?", "answer": "Router"}, {"label": "Is this allowed at all?", "answer": "Firewall"}], "extra": ["Host", "Wireshark"], "ok": "Right. And only the firewall's answer comes from rules a person wrote down."}
+{"type": "match", "title": "Try it: three devices, three questions", "instr": "Drag each device onto the question it asks about every packet. Two terms are not middle devices and stay on the bench.", "zones": [{"label": "Which port does this go out of?", "answer": "Switch"}, {"label": "Which network is this handed to next?", "answer": "Router"}, {"label": "Is this allowed at all?", "answer": "Firewall"}], "extra": ["Host", "Wireshark"], "ok": "Right. And only the firewall's answer comes from rules a person wrote down.", "why": "The switch picks the port from the card address, the router picks the next network from the IP address, and only the firewall asks about permission.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 

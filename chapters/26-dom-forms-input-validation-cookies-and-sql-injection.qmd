@@ -56,7 +56,7 @@ What does the browser build out of the HTML text? Where does the DOM live, on th
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A script in the browser runs removeAttribute and the field's length limit disappears. What changed on the server?","options":["Nothing - the DOM lives in the browser and the server's file did not change","The HTML file on the server was rewritten","The server was told to drop the limit for this visitor","The next visitor also gets a field without the limit"],"correct":[0],"ok":"Right.","why":"The DOM is a live tree on the visitor's machine. Changing a node changes what is drawn straight away, and the file on the server does not change at all."}
+{"type":"quiz","title":"Check yourself","q":"A script in the browser runs removeAttribute and the field's length limit disappears. What changed on the server?","options":["Nothing - the DOM lives in the browser and the server's file did not change","The HTML file on the server was rewritten","The server was told to drop the limit for this visitor","The next visitor also gets a field without the limit"],"correct":[0],"ok":"Right.","why":"The DOM is a live tree on the visitor's machine. Changing a node changes what is drawn straight away, and the file on the server does not change at all.","ref":"Part 1 of this chapter"}
 </script>
 ```
 
@@ -112,7 +112,7 @@ The browser turns the page into a tree that any script it loads can change, so n
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: GET or POST?","instr":"Sort each fact into the method it describes.","buckets":["GET","POST"],"items":[["Parameters after a question mark",0],["Visible in the bar, history and logs",0],["Parameters travel in the request body",1],["Suits a password or a change of state",1],["Meant to ask, not to change",0],["Out of the address bar",1]],"ok":"Sorted. Neither hides the value from the network - that is what HTTPS is for."}
+{"type":"buckets","title":"Try it: GET or POST?","instr":"Sort each fact into the method it describes.","buckets":["GET","POST"],"items":[["Parameters after a question mark",0],["Visible in the bar, history and logs",0],["Parameters travel in the request body",1],["Suits a password or a change of state",1],["Meant to ask, not to change",0],["Out of the address bar",1]],"ok":"Sorted. Neither hides the value from the network - that is what HTTPS is for.","why":"GET writes parameters into the address after a question mark; POST carries them in the body of the request.","ref":"Part 2; Jøsang, Sect. 6.1.2, p. 121"}
 </script>
 ```
 
@@ -139,7 +139,7 @@ The server answers a login with a `Set-Cookie` header in the response. The name 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: the session, step by step","instr":"Tap the steps in the order they happen, from login to a recognised request.","steps":["The login is answered with Set-Cookie","The client saves the session value","A later request carries the cookie back","The server knows who is asking"],"ok":"That is how a server that forgets every request keeps knowing you."}
+{"type":"order","title":"Try it: the session, step by step","instr":"Tap the steps in the order they happen, from login to a recognised request.","steps":["The login is answered with Set-Cookie","The client saves the session value","A later request carries the cookie back","The server knows who is asking"],"ok":"That is how a server that forgets every request keeps knowing you.","why":"The server answers a login with Set-Cookie, and the value sent back on every later request says who is asking.","ref":"Part 3 of this chapter"}
 </script>
 ```
 
@@ -164,7 +164,7 @@ What problem does a cookie solve for a server that forgets every request? What d
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Which statement describes a Flask session cookie, as the chapter puts it?","options":["Signed against change and open to reading","Encrypted so that only the server can read it","Hidden by HttpOnly from anyone who holds the value","Stored on the server and never sent to the client"],"correct":[0],"ok":"Right.","why":"The data part is base64 - an encoding, not encryption - so anyone can decode it and read the username; the signature only lets the server detect a change."}
+{"type":"quiz","title":"Check yourself","q":"Which statement describes a Flask session cookie, as the chapter puts it?","options":["Signed against change and open to reading","Encrypted so that only the server can read it","Hidden by HttpOnly from anyone who holds the value","Stored on the server and never sent to the client"],"correct":[0],"ok":"Right.","why":"The data part is base64 - an encoding, not encryption - so anyone can decode it and read the username; the signature only lets the server detect a change.","ref":"Part 3 of this chapter"}
 </script>
 ```
 
@@ -227,7 +227,7 @@ What turned four rows into 21 in the demonstration? Where does the value travel 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: pieces of the injection demo","instr":"Drag each piece onto what it does in Part 4. Two chips stay on the bench.","zones":[{"label":"Reads the parameter from the address","answer":"request.args.get"},{"label":"Pastes the value into the query text","answer":"f-string"},{"label":"Marks a slot; the value arrives after","answer":"?"},{"label":"Must name every dangerous string","answer":"blocklist"}],"extra":["HttpOnly","maxlength"],"ok":"The fix is not a word list. A placeholder."}
+{"type":"match","title":"Try it: pieces of the injection demo","instr":"Drag each piece onto what it does in Part 4. Two chips stay on the bench.","zones":[{"label":"Reads the parameter from the address","answer":"request.args.get"},{"label":"Pastes the value into the query text","answer":"f-string"},{"label":"Marks a slot; the value arrives after","answer":"?"},{"label":"Must name every dangerous string","answer":"blocklist"}],"extra":["HttpOnly","maxlength"],"ok":"The fix is not a word list. A placeholder.","why":"An f-string pastes the value into the query text; a placeholder keeps it outside, and a blocklist cannot name every attack.","ref":"Part 4; Jøsang, Sect. 11.7.1"}
 </script>
 ```
 
@@ -279,7 +279,7 @@ Nordvik's one server holds the same shape as every case in this chapter: a form,
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: follow the value","instr":"Tap the stations in the order a value travels from a visitor to the database.","steps":["A visitor types into the form field","The field becomes a request parameter","The request reaches the server","The server checks the value again","The value is bound to a placeholder"],"ok":"Checked on the machine you control, then beside the SQL - never inside it."}
+{"type":"order","title":"Try it: follow the value","instr":"Tap the stations in the order a value travels from a visitor to the database.","steps":["A visitor types into the form field","The field becomes a request parameter","The request reaches the server","The server checks the value again","The value is bound to a placeholder"],"ok":"Checked on the machine you control, then beside the SQL - never inside it.","why":"Any program can send the request, so the server checks the value and binds it to a placeholder, never into the SQL text.","ref":"Parts 2 and 4 of this chapter"}
 </script>
 ```
 

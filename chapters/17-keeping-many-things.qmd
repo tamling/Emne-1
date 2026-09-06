@@ -86,7 +86,7 @@ A list keeps many values under one name, in order and with duplicates kept, beca
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"What does sorted(brukere) do to the list brukere?","options":["Hands back a new list in order, leaving the original alone","Rearranges brukere in place","Removes the duplicates and sorts the rest","Sorts the list and returns nothing"],"correct":[0],"ok":"Right.","why":"sorted() gives a new ordered copy; brukere.sort() is the one that rearranges in place."}
+{"type": "quiz", "title": "Check yourself", "q": "What does sorted(brukere) do to the list brukere?", "options": ["Hands back a new list in order, leaving the original alone", "Rearranges brukere in place", "Removes the duplicates and sorts the rest", "Sorts the list and returns nothing"], "correct": [0], "ok": "Right.", "why": "sorted() gives a new ordered copy; brukere.sort() is the one that rearranges in place.", "ref": "Part 1; Python for Everyone, Sect. 6.2"}
 </script>
 ```
 
@@ -177,7 +177,7 @@ A dictionary answers what a list cannot: one value per name, so you can count pe
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: list or dictionary?","instr":"Which structure fits each question or property? Sort them.","buckets":["List","Dictionary"],"items":[["What came third",0],["How many for this account",1],["Values kept in order",0],["A value reached by name",1],["The whole record for one line",1],["Duplicates kept as separate facts",0]],"ok":"Choose the structure from the question you are asking."}
+{"type": "buckets", "title": "Try it: list or dictionary?", "instr": "Which structure fits each question or property? Sort them.", "buckets": ["List", "Dictionary"], "items": [["What came third", 0], ["How many for this account", 1], ["Values kept in order", 0], ["A value reached by name", 1], ["The whole record for one line", 1], ["Duplicates kept as separate facts", 0]], "ok": "Choose the structure from the question you are asking.", "why": "A list keeps order and duplicates; a dictionary reaches one value per name, so per-account questions fit it.", "ref": "Part 2; Python for Everyone, Sect. 8.2"}
 </script>
 ```
 
@@ -272,13 +272,13 @@ A **set** keeps one of each. Adding something already in it is not an error and 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: pick the right container","instr":"Drag each tool onto the job the chapter gives it. One term is a distractor and stays on the bench.","zones":[{"label":"A number per key","answer":"Counter"},{"label":"A list or set per key","answer":"defaultdict"},{"label":"One of each, no order","answer":"Set"},{"label":"A list that cannot be changed","answer":"Tuple"}],"extra":["sorted"],"ok":"Counter counts, defaultdict groups, a set keeps only the distinct ones."}
+{"type": "match", "title": "Try it: pick the right container", "instr": "Drag each tool onto the job the chapter gives it. One term is a distractor and stays on the bench.", "zones": [{"label": "A number per key", "answer": "Counter"}, {"label": "A list or set per key", "answer": "defaultdict"}, {"label": "One of each, no order", "answer": "Set"}, {"label": "A list that cannot be changed", "answer": "Tuple"}], "extra": ["sorted"], "ok": "Counter counts, defaultdict groups, a set keeps only the distinct ones.", "why": "Counter keeps a number per key, defaultdict whatever you ask for per key, a set one of each, and a tuple cannot change.", "ref": "Part 3 of this chapter"}
 </script>
 ```
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"One counting script reported ('127.0.0.1', 3) where another reported the accounts. What went wrong in the first?","options":["It counted a field by position and landed on the address","Counter cannot hold account names","The log held no account names at all","The invalid user lines were skipped"],"correct":[0],"ok":"Right.","why":"The two extra words invalid user move every field after them, so name the field you want rather than counting to it."}
+{"type": "quiz", "title": "Check yourself", "q": "One counting script reported ('127.0.0.1', 3) where another reported the accounts. What went wrong in the first?", "options": ["It counted a field by position and landed on the address", "Counter cannot hold account names", "The log held no account names at all", "The invalid user lines were skipped"], "correct": [0], "ok": "Right.", "why": "The two extra words invalid user move every field after them, so name the field you want rather than counting to it.", "ref": "Part 3; Python for Everyone, Sect. 6.3"}
 </script>
 ```
 
@@ -325,7 +325,7 @@ A hand-written address check takes an afternoon and is wrong at the edges. The m
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why does ip_address(\"999.999.999.999\") fail where a pattern of four numbers with dots would not?","options":["The module knows no such address can exist","The string is too long for a pattern to read","Numbers above 255 crash every pattern","The module accepts only private addresses"],"correct":[0],"ok":"Right.","why":"The difference is between something shaped like an address and something that is one; the module raises ValueError."}
+{"type": "quiz", "title": "Check yourself", "q": "Why does ip_address(\"999.999.999.999\") fail where a pattern of four numbers with dots would not?", "options": ["The module knows no such address can exist", "The string is too long for a pattern to read", "Numbers above 255 crash every pattern", "The module accepts only private addresses"], "correct": [0], "ok": "Right.", "why": "The difference is between something shaped like an address and something that is one; the module raises ValueError.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -390,7 +390,7 @@ Run the script on your own `/var/log/auth.log`. Then add a fourth question: whic
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: one pass over the log","instr":"Tap the steps in the order the finished script does them for each counted line.","steps":["Split the line into fields","Skip lines of another shape","Take account and address by label","Count and group per account","Report with most_common"],"ok":"One pass, three structures, and a last line that says what was skipped."}
+{"type": "order", "title": "Try it: one pass over the log", "instr": "Tap the steps in the order the finished script does them for each counted line.", "steps": ["Split the line into fields", "Skip lines of another shape", "Take account and address by label", "Count and group per account", "Report with most_common"], "ok": "One pass, three structures, and a last line that says what was skipped.", "why": "Skip first, then take the fields by label, count with Counter and group with defaultdict, and report after the loop.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

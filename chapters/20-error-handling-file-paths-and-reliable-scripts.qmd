@@ -67,7 +67,7 @@ Which end of a traceback do you read first, and why? What does `FileNotFoundErro
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: name the exception","instr":"Drag each exception onto what it tells you. Two are distractors and stay on the bench.","zones":[{"label":"The path you gave does not exist from here","answer":"FileNotFoundError"},{"label":"Right type, wrong content","answer":"ValueError"}],"extra":["KeyError","IndentationError"],"ok":"Both stop the script at once, and both name exactly what was handed to them."}
+{"type": "match", "title": "Try it: name the exception", "instr": "Drag each exception onto what it tells you. Two are distractors and stay on the bench.", "zones": [{"label": "The path you gave does not exist from here", "answer": "FileNotFoundError"}, {"label": "Right type, wrong content", "answer": "ValueError"}], "extra": ["KeyError", "IndentationError"], "ok": "Both stop the script at once, and both name exactly what was handed to them.", "why": "FileNotFoundError names a path that does not exist from here; ValueError means right type, wrong content, like int on tjue.", "ref": "Part 1; Python for Everyone, Sect. 7.6"}
 </script>
 ```
 
@@ -132,7 +132,7 @@ Read a traceback from the bottom, where the exception type sits, and catch only 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why does the chapter say you must never write a bare except: with no name?","options":["It catches everything, even your own typos, and the script runs on with wrong data","It is slower than naming the exception","Python refuses to run a bare except","It only works inside a function"],"correct":[0],"ok":"Right.","why":"It even swallows Ctrl-C. Name the exception you can actually do something about, and let the rest reach the traceback."}
+{"type": "quiz", "title": "Check yourself", "q": "Why does the chapter say you must never write a bare except: with no name?", "options": ["It catches everything, even your own typos, and the script runs on with wrong data", "It is slower than naming the exception", "Python refuses to run a bare except", "It only works inside a function"], "correct": [0], "ok": "Right.", "why": "It even swallows Ctrl-C. Name the exception you can actually do something about, and let the rest reach the traceback.", "ref": "Part 2; Python for Everyone, Sect. 7.5"}
 </script>
 ```
 
@@ -183,7 +183,7 @@ What is the working directory, and what decides its value? What does `resolve()`
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: absolute or relative?","instr":"Sort each statement onto the kind of path it describes.","buckets":["Absolute path","Relative path"],"items":[["Begins at the root with a slash",0],["Begins where the program is standing",1],["The same file from any folder",0],["A different file from every folder",1],["Tied to the layout of one machine",0],["Short, and portable between machines",1]],"ok":"A relative path means nothing until you know the working directory."}
+{"type": "buckets", "title": "Try it: absolute or relative?", "instr": "Sort each statement onto the kind of path it describes.", "buckets": ["Absolute path", "Relative path"], "items": [["Begins at the root with a slash", 0], ["Begins where the program is standing", 1], ["The same file from any folder", 0], ["A different file from every folder", 1], ["Tied to the layout of one machine", 0], ["Short, and portable between machines", 1]], "ok": "A relative path means nothing until you know the working directory.", "why": "An absolute path begins at the root and means the same file everywhere; a relative one is completed from the working directory.", "ref": "Part 3; Python for Everyone, Toolbox 7.2"}
 </script>
 ```
 
@@ -261,13 +261,13 @@ Which stream should an error message go to, and why? What does `$?` hold after a
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: which stream?","instr":"Sort each line onto the stream the chapter sends it to.","buckets":["stdout","stderr"],"items":[["Results another program can read",0],["Problems, visible even when redirected",1],["Leste 69 linjer",0],["Fant ikke filen: auth.lg",1],["The usage line for a wrong call",1]],"ok":"Results on stdout, problems on stderr - and the exit code is for the scheduler."}
+{"type": "buckets", "title": "Try it: which stream?", "instr": "Sort each line onto the stream the chapter sends it to.", "buckets": ["stdout", "stderr"], "items": [["Results another program can read", 0], ["Problems, visible even when redirected", 1], ["Leste 69 linjer", 0], ["Fant ikke filen: auth.lg", 1], ["The usage line for a wrong call", 1]], "ok": "Results on stdout, problems on stderr - and the exit code is for the scheduler.", "why": "Results go to stdout where another program can read them; problems go to stderr, which stays visible when output is redirected.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"You run python3 lesfil_trygg.py with no filename at all. What does echo $? show afterwards?","options":["2","0","1","69"],"correct":[0],"ok":"Right.","why":"Wrong usage exits with code 2, a missing or unreadable file with 1, and a successful run with 0 - three runs, three codes."}
+{"type": "quiz", "title": "Check yourself", "q": "You run python3 lesfil_trygg.py with no filename at all. What does echo $? show afterwards?", "options": ["2", "0", "1", "69"], "correct": [0], "ok": "Right.", "why": "Wrong usage exits with code 2, a missing or unreadable file with 1, and a successful run with 0; the scheduler reads the code, not the words.", "ref": "Part 4 of this chapter"}
 </script>
 ```
 
@@ -298,7 +298,7 @@ Nordvik's morning script now stops with a message and a code when the log is mis
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: 19 July 2024","instr":"Tap the events of the CrowdStrike case in the order the chapter gives them.","steps":["Template type defines 21 fields, code supplies 20","New content requires the 21st field","The sensor reads memory that is not its own","8.5 million machines stop with a blue screen"],"ok":"The mismatch sat harmless for months - the check that would have caught it is one line: count what arrived."}
+{"type": "order", "title": "Try it: 19 July 2024", "instr": "Tap the events of the CrowdStrike case in the order the chapter gives them.", "steps": ["Template type defines 21 fields, code supplies 20", "New content requires the 21st field", "The sensor reads memory that is not its own", "8.5 million machines stop with a blue screen"], "ok": "The mismatch sat harmless for months - the check that would have caught it is one line: count what arrived.", "why": "No check compared the 20 values that arrived with the 21 fields expected, so the sensor read past the end of what it was given.", "ref": "Part 5; Jøsang, Sect. 3.5, p. 50"}
 </script>
 ```
 

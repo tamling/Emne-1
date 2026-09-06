@@ -97,13 +97,13 @@ Write the first line of a function called `tell_linjer` that takes a path. What 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"match","title":"Try it: the words around a function","instr":"Drag each term onto its description. One term is a distractor and stays on the bench.","zones":[{"label":"The name written in the definition","answer":"Parameter"},{"label":"The value handed over at the call","answer":"Argument"},{"label":"Hands the answer back to the caller","answer":"return"},{"label":"Describes the purpose, in triple quotes","answer":"Docstring"}],"extra":["print"],"ok":"And printing is not returning: print shows a value, return hands it back."}
+{"type": "match", "title": "Try it: the words around a function", "instr": "Drag each term onto its description. One term is a distractor and stays on the bench.", "zones": [{"label": "The name written in the definition", "answer": "Parameter"}, {"label": "The value handed over at the call", "answer": "Argument"}, {"label": "Hands the answer back to the caller", "answer": "return"}, {"label": "Describes the purpose, in triple quotes", "answer": "Docstring"}], "extra": ["print"], "ok": "And printing is not returning: print shows a value, return hands it back.", "why": "The parameter is the name in the definition and the argument the value at the call; return hands the answer back.", "ref": "Part 1; Python for Everyone, Sect. 5.2-5.3"}
 </script>
 ```
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"A function prints its number on screen instead of returning it. What can the caller do with the result?","options":["Nothing: there is no value to store, compare or write to a file","Store it with an equals sign","Read it back from the screen","Compare it against another count"],"correct":[0],"ok":"Right.","why":"The number exists on screen and nowhere else; a function that returns lets the caller decide whether to print, store or add it up."}
+{"type": "quiz", "title": "Check yourself", "q": "A function prints its number on screen instead of returning it. What can the caller do with the result?", "options": ["Nothing: there is no value to store, compare or write to a file", "Store it with an equals sign", "Read it back from the screen", "Compare it against another count"], "correct": [0], "ok": "Right.", "why": "The number exists on screen and nowhere else; a function that returns lets the caller decide whether to print, store or add it up.", "ref": "Part 1; Python for Everyone, Sect. 5.3-5.4, CE"}
 </script>
 ```
 
@@ -167,7 +167,7 @@ The same two functions, called with the path of Nordvik's log, produce Nordvik's
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"buckets","title":"Try it: readlines or line by line?","instr":"Sort each fact onto the way of reading it describes.","buckets":["readlines()","for linje in f"],"items":[["All lines into memory at once",0],["One line at a time",1],["Handles a 4 GB log",1],["A list where each item is one line",0]],"ok":"A 69-line log fits either way, and a 4 GB log does not."}
+{"type": "buckets", "title": "Try it: readlines or line by line?", "instr": "Sort each fact onto the way of reading it describes.", "buckets": ["readlines()", "for linje in f"], "items": [["All lines into memory at once", 0], ["One line at a time", 1], ["Handles a 4 GB log", 1], ["A list where each item is one line", 0]], "ok": "A 69-line log fits either way, and a 4 GB log does not.", "why": "Looping over the file object reads one line at a time; readlines() loads everything into memory at once.", "ref": "Part 2; Python for Everyone, Sect. 7.2"}
 </script>
 ```
 
@@ -234,7 +234,7 @@ What does `split()` do to a line of text? Why is reading a field by label safer 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"The filter \"any line containing Failed password\" matched ten lines, and only nine were logins. What was the tenth?","options":["A sudo line recording a grep command with those words","A truncated login line with no username","An Accepted password line","A blank line at the end of the log"],"correct":[0],"ok":"Right.","why":"Only sshd writes authentication results, so a better filter requires sshd in the line and the full phrase Failed password for."}
+{"type": "quiz", "title": "Check yourself", "q": "The filter \"any line containing Failed password\" matched ten lines, and only nine were logins. What was the tenth?", "options": ["A sudo line recording a grep command with those words", "A truncated login line with no username", "An Accepted password line", "A blank line at the end of the log"], "correct": [0], "ok": "Right.", "why": "Only sshd writes authentication results, so a better filter requires sshd in the line and the full phrase Failed password for.", "ref": "Part 3 of this chapter"}
 </script>
 ```
 
@@ -282,7 +282,7 @@ Which Python type pairs a username with a count? What does the counting function
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"order","title":"Try it: from log to counts","instr":"Tap the steps in the order the chapter's functions do the work.","steps":["Read the file into a list of lines","Filter: keep the sshd refusal lines","Find the username after its label","Add one to that user's count","Return the finished dictionary"],"ok":"That is the chain, and returning rather than printing is what lets L19 write it to a file."}
+{"type": "order", "title": "Try it: from log to counts", "instr": "Tap the steps in the order the chapter's functions do the work.", "steps": ["Read the file into a list of lines", "Filter: keep the sshd refusal lines", "Find the username after its label", "Add one to that user's count", "Return the finished dictionary"], "ok": "That is the chain, and returning rather than printing is what lets L19 write it to a file.", "why": "Each function does one thing: read, filter, find the user, count, and the caller gets the dictionary back.", "ref": "Parts 1-4 of this chapter"}
 </script>
 ```
 
@@ -312,7 +312,7 @@ A script that reports zero refusals for Nordvik tomorrow morning is either good 
 
 ```{=html}
 <script type="application/json" class="qex">
-{"type":"quiz","title":"Check yourself","q":"Why did Equifax's monitoring device produce nothing readable for about ten months?","options":["Its certificate had expired, so it could not decrypt the traffic","The device had been switched off","Nobody had bought monitoring equipment","The attackers deleted its output"],"correct":[0],"ok":"Right.","why":"The equipment existed and ran; renewing one certificate turned silence back into evidence. Silence is not the same as nothing happened."}
+{"type": "quiz", "title": "Check yourself", "q": "Why did Equifax's monitoring device produce nothing readable for about ten months?", "options": ["Its certificate had expired, so it could not decrypt the traffic", "The device had been switched off", "Nobody had bought monitoring equipment", "The attackers deleted its output"], "correct": [0], "ok": "Right.", "why": "The equipment existed and ran; renewing one certificate turned silence back into evidence. Silence is not the same as nothing happened.", "ref": "Part 5 of this chapter"}
 </script>
 ```
 

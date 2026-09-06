@@ -65,6 +65,12 @@ Which end of a traceback do you read first, and why? What does `FileNotFoundErro
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: name the exception","instr":"Drag each exception onto what it tells you. Two are distractors and stay on the bench.","zones":[{"label":"The path you gave does not exist from here","answer":"FileNotFoundError"},{"label":"Right type, wrong content","answer":"ValueError"}],"extra":["KeyError","IndentationError"],"ok":"Both stop the script at once, and both name exactly what was handed to them."}
+</script>
+```
+
 [→ try marks the lines that can fail for reasons outside your control. Part 2 is the shape.]{.bridge}
 
 ## try and except
@@ -124,6 +130,12 @@ Read a traceback from the bottom, where the exception type sits, and catch only 
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Why does the chapter say you must never write a bare except: with no name?","options":["It catches everything, even your own typos, and the script runs on with wrong data","It is slower than naming the exception","Python refuses to run a bare except","It only works inside a function"],"correct":[0],"ok":"Right.","why":"It even swallows Ctrl-C. Name the exception you can actually do something about, and let the rest reach the traceback."}
+</script>
+```
+
 [→ The missing file is usually not missing. Part 3 is where the script was standing when it looked.]{.bridge}
 
 ## Paths and the working directory
@@ -168,6 +180,12 @@ The script found `auth.log` because the shell stood right next to it. Run from t
 What is the working directory, and what decides its value? What does `resolve()` do to a relative path? Why does joining with `pathlib` beat adding two strings? Name one reason a working script fails after it is scheduled.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: absolute or relative?","instr":"Sort each statement onto the kind of path it describes.","buckets":["Absolute path","Relative path"],"items":[["Begins at the root with a slash",0],["Begins where the program is standing",1],["The same file from any folder",0],["A different file from every folder",1],["Tied to the layout of one machine",0],["Short, and portable between machines",1]],"ok":"A relative path means nothing until you know the working directory."}
+</script>
+```
 
 [→ The script takes a filename from the person who runs it. Part 4 checks it, and tells the shell how it went.]{.bridge}
 
@@ -241,6 +259,18 @@ Which stream should an error message go to, and why? What does `$?` hold after a
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: which stream?","instr":"Sort each line onto the stream the chapter sends it to.","buckets":["stdout","stderr"],"items":[["Results another program can read",0],["Problems, visible even when redirected",1],["Leste 69 linjer",0],["Fant ikke filen: auth.lg",1],["The usage line for a wrong call",1]],"ok":"Results on stdout, problems on stderr - and the exit code is for the scheduler."}
+</script>
+```
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"You run python3 lesfil_trygg.py with no filename at all. What does echo $? show afterwards?","options":["2","0","1","69"],"correct":[0],"ok":"Right.","why":"Wrong usage exits with code 2, a missing or unreadable file with 1, and a successful run with 0 - three runs, three codes."}
+</script>
+```
+
 [→ Count what arrived before you use it. Part 5 is what happens at scale when nobody does.]{.bridge}
 
 ## CrowdStrike, 19 July 2024
@@ -265,6 +295,12 @@ Count what arrived before you use it, whether fields or arguments, because a che
 Nordvik's morning script now stops with a message and a code when the log is missing. The person who reads the message knows which file and which folder. The scheduler that reads the code knows the report did not happen, which L24 turns into an alert.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: 19 July 2024","instr":"Tap the events of the CrowdStrike case in the order the chapter gives them.","steps":["Template type defines 21 fields, code supplies 20","New content requires the 21st field","The sensor reads memory that is not its own","8.5 million machines stop with a blue screen"],"ok":"The mismatch sat harmless for months - the check that would have caught it is one line: count what arrived."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

@@ -1,6 +1,6 @@
 # About this course reader {.unnumbered}
 
-This site is the written version of the whole of **Emne 1 — Cybersecurity,
+This site is the written version of the whole of **Emne 1 - Cybersecurity,
 networks, Linux and scripting** at Gokstad Akademiet: one chapter for each of
 the twenty-six lectures, in full sentences, with the book references beside
 every claim. It says the same things as the slides and the afternoon
@@ -36,7 +36,7 @@ Each chapter ends with common misconceptions, a five-point summary, a
 self-check, and the sources used.
 
 **Light and dark.** Every page has a light/dark toggle in the top right
-corner — pick whichever is easier on your eyes; the choice is remembered
+corner - pick whichever is easier on your eyes; the choice is remembered
 across pages.
 
 **Books.** Jøsang, *Cybersecurity: Technology and Governance* (Springer,
@@ -48,21 +48,8 @@ are used.
 
 | Module | Chapters | Covers |
 |:-----------------------|:---------|:---------------------------------------------------------|
-| 1 — Foundations | 1–4 | The field, digital systems, risk, and the law |
-| 2 — Networking | 5–10 | Networks, addresses, ports, segmentation, routing, wireless |
-| 3 — Linux / SecOps | 11–14 | The terminal, logs, users and permissions, services and hardening |
-| 4 — Scripting | 15–26 | Python, files, databases, Bash, and the web |
+| 1 - Foundations | 1–4 | The field, digital systems, risk, and the law |
+| 2 - Networking | 5–10 | Networks, addresses, ports, segmentation, routing, wireless |
+| 3 - Linux / SecOps | 11–14 | The terminal, logs, users and permissions, services and hardening |
+| 4 - Scripting | 15–26 | Python, files, databases, Bash, and the web |
 
-## Version history {.unnumbered}
-
-| Version | Date | Change |
-|:--------|:-----------------|:--------------------------------------------------------------|
-| 0.1 | 5 September 2026 | First edition: 26 chapters, one per lecture, assembled from the standalone readers. |
-
-Versioning: first draft 0.1; each small correction adds 0.1; each major
-revision moves to the next whole number.
-
----
-
-Timo Amling — Gokstad Akademiet, Emne 1, Autumn 2026. Lectures are in
-English; the afternoon sessions are in Norwegian.

@@ -79,6 +79,12 @@ Name the two steps between connecting and reading a row. What does `fetchall()` 
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: server database or SQLite?","instr":"Sort each fact into the kind of database it describes.","buckets":["A server database","SQLite"],"items":[["Runs all the time and listens on a port",0],["The whole database is one file on disk",1],["Clients connect with username and password",0],["The program opens the file directly",1],["Must be installed, started and patched",0],["File permissions decide who reads and writes",1]],"ok":"Sorted. Same SQL, same rules on the data - just no server."}
+</script>
+```
+
 [→ A placeholder keeps the value outside the query. Part 2 shows what happens when it is inside.]{.bridge}
 
 ## The placeholder
@@ -88,6 +94,12 @@ Name the two steps between connecting and reading a row. What does `fetchall()` 
 The SQL text never changes, whatever the user types. A placeholder is a question mark written where a value belongs. Python hands the value to the database as a separate parameter, and the database treats that value as data and nothing else.
 
 This is the book's three-step pattern exactly. *Prepare*: "the application builds a template for the SQL command ... Certain parameters are still unspecified (marked '?')". *Compile*: "the DBMS compiles the command template without executing the command. The structure of the command is thus fixed and cannot be manipulated by injection." *Execute*: "the application binds values for the parameters in the template and allows DBMS to execute the SQL command" [Jøsang, Sect. 11.7.1, p. 263]{.src}.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: prepare, compile, execute","instr":"Tap the book's three steps in the order they happen (tap a step, then a slot - or just tap steps in order).","steps":["Prepare: a template with ? for values","Compile: the structure is fixed","Execute: bind the values and run"],"ok":"That is why injection cannot change the command."}
+</script>
+```
 
 ### The placeholder in code
 
@@ -161,6 +173,12 @@ Every value from outside the program goes into a query as a placeholder, without
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"The injected query returned ten rows, and only nine rows record a failed login. Where did the tenth come from?","options":["AND runs before OR, so one admin row that was not a failure also matched","OR runs before AND, so every row in the table matched","fetchall() counted one row twice","The placeholder added a row for the injected user"],"correct":[0],"ok":"Right.","why":"The condition reads as: admin rows, or any row that failed. Nine failures plus one admin row that was not a failure gives ten."}
+</script>
+```
+
 [→ Reading leaves the file as it was. Part 3 writes, and nothing is permanent until it is committed.]{.bridge}
 
 ## Writing from a program
@@ -208,6 +226,12 @@ What does `commit()` do that `execute()` does not? When would you reach for `exe
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: kept or thrown away?","instr":"A transaction is all or nothing. Sort each situation by what happens to the changes.","buckets":["Kept","Thrown away"],"items":[["commit() has run",0],["The with block ends cleanly",0],["An exception before commit()",1],["rollback() was called",1]],"ok":"Either every statement takes effect, or none does."}
+</script>
+```
+
 [→ Four habits make a writing script one you can defend. Part 4 is the four.]{.bridge}
 
 ## Working safely
@@ -247,6 +271,12 @@ What is the cheapest way to learn what a `DELETE` will touch? Which file did the
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: the four habits","instr":"Drag each habit onto its description. Two chips are distractors and stay on the bench.","zones":[{"label":"A surprise here has cost nothing","answer":"Test on a copy"},{"label":"Same WHERE, run as SELECT COUNT first","answer":"Count before you change"},{"label":"Connect with mode=ro when only reading","answer":"Least access"},{"label":"Copied elsewhere, opened, counted","answer":"Tested backup"}],"extra":["Blocklist","commit()"],"ok":"Those are the four habits of a script you can defend."}
+</script>
+```
+
 [→ A program that deletes never asks a second time. Part 5 is the case.]{.bridge}
 
 ## The Police National Computer, January 2021
@@ -271,6 +301,12 @@ A `DELETE` issued by a program runs on every row it matches and never asks a sec
 Nordvik's report script opens `sikkerhet.db` read-only and passes every username as a placeholder. The one script that writes prints the count of what it is about to change and runs first on `kopi.db`. Both take an afternoon to set up, and both are what the auditor will ask about.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"What one number, checked weekly, would have caught the Police National Computer defect on its first run?","options":["The count of rows about to be deleted, compared with the week before","The number of servers the process ran on","The size of the database file","The number of users logged in that week"],"correct":[0],"ok":"Right.","why":"The count would have been ten times too large on the first run. Instead the process ran for seven weekly cycles before anybody looked at what it had matched."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

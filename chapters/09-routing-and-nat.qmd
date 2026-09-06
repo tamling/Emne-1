@@ -76,6 +76,12 @@ When a Nordvik laptop reaches a supplier's site, no single router knows the whol
 
 [→ The decision comes from a table. Part 2 reads it, and one rule decides which line wins.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: switch or router?","instr":"Sort each line of the side-by-side table into the device it describes.","buckets":["A switch","A router"],"items":[["Works inside one network",0],["Joins different networks together",1],["Reads the address on the card",0],["Uses a table of known networks",1],["Learns by watching traffic",0],["Reduces the hop counter by one",1]],"ok":"Two different jobs, even when they share one box on the wall."}
+</script>
+```
+
 ## The routing table
 
 ### Reading a routing table
@@ -114,6 +120,12 @@ A static route is a line an administrator typed. It stays exactly as typed until
 
 [→ You can read the table. Part 3 follows one packet the whole way, hop by hop.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A packet for 10.2.5.7 matches 10.0.0.0/8, 10.2.5.0/24 and 0.0.0.0/0 in the same table. Which line does the router use?","options":["10.2.5.0/24 - the narrowest matching line wins","10.0.0.0/8 - the first match in the table","0.0.0.0/0 - the default route always applies","All three - the packet goes out of three ports"],"correct":[0],"ok":"Right.","why":"A longer prefix is a more specific claim, and the most specific claim is believed. The default route matches everything, so it loses to every other line and gets used last."}
+</script>
+```
+
 ## The journey hop by hop
 
 ### Hop by hop, and what changes
@@ -138,6 +150,12 @@ The counter is also how `traceroute` works. It sends a packet with TTL one, and 
 
 [→ The journey works. Part 4 is the arithmetic many people mistake for a security control.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: what changes on the journey?","instr":"A packet crosses several routers. Sort each field of it.","buckets":["Same from end to end","Changes at every hop"],"items":[["The source IP address",0],["The destination IP address",0],["The source card (MAC) address",1],["The destination card (MAC) address",1],["The TTL counter",1]],"ok":"The IP layer runs end to end; the link layer is rebuilt at every router."}
+</script>
+```
+
 ## Network Address Translation
 
 ### There were not enough addresses
@@ -154,6 +172,12 @@ The book gives the arithmetic: 32 bits is about 4.3 billion addresses, "probably
 ### Rewriting on the way out
 
 The router rewrites the address as the packet leaves the building. This is Network Address Translation, NAT. The router writes down the original inside address and port, and the replacement it chose for them: its own public address and a port it picked. When an answer comes back to that public address and port, the router looks the pair up and swaps them back. The book's description of the port makes clear what NAT is juggling: the port "represent\[s\] specific network applications or process in a specific host node" [Jøsang, Sect. 6.1.2, p. 126]{.src}. NAT borrows that field to tell four hundred machines apart behind one address.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: NAT, one packet out and back","instr":"Tap the steps in the order NAT performs them.","steps":["Packet leaves with inside address and port","Router notes the original pair","Router swaps in public address and port","Answer returns to the public pair","Router looks the pair up and swaps back"],"ok":"Arithmetic and a table - no guard anywhere in it."}
+</script>
+```
 
 ### What the far end sees
 
@@ -191,6 +215,12 @@ Nordvik's whole office shares one public address, so a supplier's log shows one 
 
 [→ Decision, table, journey, NAT. Part 5 reads all of it off the machine in front of you.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A packet from the internet arrives at a NAT router unasked. What stops it?","options":["It matches no entry in the NAT table, so it is dropped","A rule somebody wrote refuses it","The router inspects it and finds it hostile","Nothing - unasked packets always pass through"],"correct":[0],"ok":"Right.","why":"That protection is bookkeeping, not a decision: the router simply does not know where to send it. It ends the moment somebody forwards a port."}
+</script>
+```
+
 ## Reading routes and traces
 
 ### This machine's routing table
@@ -217,6 +247,12 @@ $ traceroute -n nrk.no
 ```
 
 Every hop that answered is listed, in the order the packet met them, and the opening line is your own gateway. The times grow as the distance grows. Line four was told not to reply. Nobody anywhere planned this path, and no machine on it holds a copy. Run it twice and the hops may differ.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A traceroute shows asterisks at hop four and an answer at hop five. What does hop four's silence usually mean?","options":["That router was told not to reply - a policy, not a fault","Hop four is broken","The packet was dropped at hop four","The packet left Norway at hop four"],"correct":[0],"ok":"Right.","why":"Hops after it still answer, so the packet passed through; a row of asterisks usually means that router was told not to reply."}
+</script>
+```
 
 ### Worked example: two offices
 

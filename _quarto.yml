@@ -3,17 +3,21 @@ project:
   output-dir: _site
 
 book:
-  title: "Emne 1 — Course Reader"
+  title: "Emne 1 - Course Reader"
   subtitle: "Cybersecurity, networks, Linux and scripting"
+  sidebar:
+    # start with all module groups collapsed - the full chapter tree is
+    # long and forces a scrollbar on first load
+    collapse-level: 1
   chapters:
     - index.qmd
-    - part: "Module 1 — Cybersecurity Foundations"
+    - part: "Module 1 - Cybersecurity Foundations"
       chapters:
         - chapters/01-working-in-cybersecurity.qmd
         - chapters/02-how-digital-systems-work.qmd
         - chapters/03-thinking-about-risk.qmd
         - chapters/04-what-you-may-and-may-not-do.qmd
-    - part: "Module 2 — Networking"
+    - part: "Module 2 - Networking"
       chapters:
         - chapters/05-what-a-network-is.qmd
         - chapters/06-addresses-subnets-and-names.qmd
@@ -21,13 +25,13 @@ book:
         - chapters/08-dividing-the-network.qmd
         - chapters/09-routing-and-nat.qmd
         - chapters/10-wireless-why-radio-changes-the-rules.qmd
-    - part: "Module 3 — Linux and SecOps"
+    - part: "Module 3 - Linux and SecOps"
       chapters:
         - chapters/11-finding-your-way-around-linux.qmd
         - chapters/12-finding-the-needle-in-a-log.qmd
         - chapters/13-users-permissions-and-sudo.qmd
         - chapters/14-services-logs-and-hardening-ssh.qmd
-    - part: "Module 4 — Scripting and Automation"
+    - part: "Module 4 - Scripting and Automation"
       chapters:
         - chapters/15-writing-it-down.qmd
         - chapters/16-deciding-and-repeating.qmd
@@ -44,10 +48,17 @@ book:
 
 format:
   html:
+    # widen the content column (default 800px is narrow for the tables
+    # and exercises)
+    grid:
+      body-width: 1000px
     # Every page gets the light/dark toggle (top right); the dark theme is
-    # a first-class build, not a filter — see theme-dark.scss.
+    # a first-class build, not a filter - see theme-dark.scss.
     theme:
       light: [cosmo, theme-light.scss]
       dark: [darkly, theme-dark.scss]
     toc: true
     number-sections: true
+    # Interactive exercise framework (match / buckets / order / quiz):
+    # chapters declare exercises as JSON blocks, this include renders them.
+    include-after-body: includes/exercises.html

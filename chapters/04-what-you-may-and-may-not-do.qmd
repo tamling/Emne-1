@@ -68,6 +68,12 @@ If you probed Nordvik's server without Nordvik's written permission, you would b
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "Under straffeloven § 204, what alone is the offence?", "options": ["Getting access you had no right to", "Causing damage to data or systems", "Stealing or copying information", "Acting with a harmful motive"], "correct": [0], "ok": "Right.", "why": "Damage, theft and motive change the sentence a court gives, not whether a crime happened. The only question is whether you were authorised."}
+</script>
+```
+
 [→ Part 1 drew the line. Part 2 is the document that lets you cross it lawfully.]{.bridge}
 
 ## Authorization and scope
@@ -96,6 +102,12 @@ Scope is the list of what may be touched, and when. Everything else is out, incl
   The methods allowed                        Methods the document does not name
   The people who may be contacted            Staff who were not told
   What to do with personal data if reached   Reading it "to confirm the finding"
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: in or out of scope?", "instr": "A signed test document exists. Sort each item.", "buckets": ["In scope", "Out of scope"], "items": [["Systems named in the document", 0], ["The agreed dates and hours", 0], ["Methods the document names", 0], ["The next machine on the same rack", 1], ["Anything after the end date", 1], ["Staff who were not told", 1], ["Reading personal data to confirm a find", 1]], "ok": "Sorted. Everything the document does not name is out, however interesting."}
+</script>
+```
 
 ### Stopping conditions and refusals
 
@@ -141,6 +153,12 @@ The two kinds of act differ in what Norway has to do next. A **regulation** "is 
 
 NIS2 came into force in the EU in 2022, with implementation into national law due by 24 October 2024. Its elements include harmonised security requirements and reporting obligations, and national strategies covering supply chain security, vulnerability management and cyber hygiene [Jøsang, Sect. 17.4.2, p. 364]{.src}. In Norway the corresponding law is digitalsikkerhetsloven. NIS2 does not apply here as written; the Norwegian law does.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: regulation or directive?", "instr": "Sort each fact onto the kind of EU act it describes.", "buckets": ["Regulation", "Directive"], "items": [["Applied without modification", 0], ["Only translated; a referral law", 0], ["GDPR", 0], ["Defines a goal each state must reach", 1], ["Each state writes its own law", 1], ["NIS2", 1]], "ok": "Sorted. That is why digitalsikkerhetsloven applies in Norway, and NIS2 as written does not."}
+</script>
+```
+
 ### Who is who under GDPR
 
 Personal data is anything at all that says something about a person. The book quotes GDPR's own definition, "any information relating to an identified or identifiable natural person", and the Irish Data Protection Commission's plain version: "any information about a living person, where that person either is identified or could be identified" [Jøsang, Sect. 10.6.1, p. 226]{.src}. GDPR reaches Norway through personopplysningsloven; the book notes that the EEA incorporated it a few months after the EU, on 20 July 2018 [Jøsang, Sect. 10.5, p. 225]{.src}.
@@ -156,6 +174,12 @@ Four roles carry the whole regulation, and a fifth is appointed inside some orga
   Data Protection Officer     personvernombud        Appointed inside larger or riskier organisations; advises both controller and processor.
 
 You will hold the controller or the processor role in every job you take, because your employer holds one of them.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "match", "title": "Try it: who is who under GDPR", "instr": "Drag each Norwegian term onto the role it names. One term is a fifth role and stays on the bench.", "zones": [{"label": "The living person the data is about", "answer": "den registrerte"}, {"label": "Decides why and how data is processed", "answer": "behandlingsansvarlig"}, {"label": "Processes on the controller's behalf", "answer": "databehandler"}, {"label": "Audits, advises and fines", "answer": "Datatilsynet"}], "extra": ["personvernombud"], "ok": "Right. The personvernombud is appointed inside larger or riskier organisations and advises both controller and processor."}
+</script>
+```
 
 ### The duties, and what a breach costs
 
@@ -205,6 +229,12 @@ Some of this will happen to you in your first year. A shared folder open to ever
 3.  **Tell one named person** who can act.
 
 4.  **Do not touch it again** until that person says what happens next.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "order", "title": "Try it: you found something by accident", "instr": "Tap the four steps of the procedure in order.", "steps": ["Stop", "Write down what you saw, when and how", "Tell one named person who can act", "Do not touch it again"], "ok": "That is the whole procedure. Curiosity argues for one more click, and one more click is the offence."}
+</script>
+```
 
 ### How to report it
 
@@ -256,6 +286,12 @@ What does the student do next? Decide before reading on.
 **Reasoning.** Almost everybody wants to try the login, because confirming the finding would make the report better. That confirmation is the offence: the port answered, but nobody authorised the student, and typing a password into a system you have no right to reach is access without right whether or not it works. Finding a service is not an offence. Trying the door is.
 
 **Result.** The student writes down the address, the time, the network they were on and what the page said; sends that to one named person at the school's IT department; and does not open the page again. That report is worth more than a confirmed login, because it can be read out in front of anybody.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "A service marked 'grade system' answers on the guest network. Where exactly is the line to an offence?", "options": ["Trying the login", "Finding the service at all", "Writing down the address and time", "Reporting it to the IT department"], "correct": [0], "ok": "Right.", "why": "Finding a service is not an offence. Typing a password into a system you have no right to reach is access without right, whether or not it works."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

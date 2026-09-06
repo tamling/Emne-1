@@ -74,6 +74,12 @@ Nordvik's Wi-Fi reaches the car park and the flats next door. A hidden name and 
 
 [→ The boundary is rebuilt out of encryption. Part 2 is the history of where the key comes from.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Why does hiding the network name not hide the network?","options":["Every device that saved it asks for it by name wherever it goes","Hidden networks cannot use encryption","The name is still printed on the router","Hiding only works on the 5 GHz band"],"correct":[0],"ok":"Right.","why":"The announcement moves from the ceiling into every pocket that saved it - a readable identifier in the open, which is also why MAC filtering does not protect."}
+</script>
+```
+
 ## Wireless encryption generations
 
 ### Four generations, and the question behind them
@@ -83,6 +89,12 @@ Part 1 ended with everyone in range receiving every frame. That is not a flaw i
 ::: center
 ![](figures/ch10-fig2.svg){fig-align="center"}
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: four generations","instr":"Put the Wi-Fi security generations in the order they arrived.","steps":["WEP","WPA","WPA2","WPA3"],"ok":"1999 to 2018 - and only the last is sound."}
+</script>
+```
 
 ### TJX: in through the wireless edge
 
@@ -113,6 +125,12 @@ All three encrypt what you send. They differ in what somebody gains from a recor
 
 [→ The traffic is protected. Part 3 decides who gets in, and where the guests belong.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: WPA2 or WPA3?","instr":"Sort each fact into the generation it describes.","buckets":["WPA2","WPA3"],"items":[["Arrived 2004; still the ordinary case",0],["Offline guessing works on a recording",0],["The shared password reads others' traffic",0],["Uses SAE for mutual authentication",1],["Arrived 2018; the current generation",1],["Each session gets its own keys",1]],"ok":"Joining feels the same; what the key protects does not."}
+</script>
+```
+
 ## Access and the guest network
 
 ### Personal and Enterprise mode
@@ -141,6 +159,12 @@ A guest wireless network should reach the internet and nothing else in the build
 The zone grid from L08 does not change because the medium changed. Guest wireless lands in the guest row: internet, yes; server zone, no; staff zone, no; admin zone, no. Staff wireless lands in the staff row. A wireless network is one more entrance to the zones you already designed, and it lands in one of them. The book's segmentation rule from L08 applies unchanged: segments "separated by internal firewalls" [Jøsang, Sect. 6.6, p. 138]{.src}, and the access point's uplink belongs in exactly one of them.
 
 [→ Encryption survived four generations. Part 4 is the attack that survives all of them.]{.bridge}
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"An employee leaves an organisation running WPA2-Personal. What has to happen for their access to end?","options":["The shared password changes for everybody","One account is disabled, and nobody else notices","Their device forgets the key by itself","The access points must be replaced"],"correct":[0],"ok":"Right.","why":"Personal mode means one password for everybody, so revoking one person means changing it for all - which is why nobody ever changes it. Revocation is the whole argument for Enterprise mode."}
+</script>
+```
 
 ## Attacks that remain
 
@@ -181,6 +205,12 @@ A laptop in Nordvik's car park could announce the office network's name with a s
 :::
 
 [→ Medium, generations, access, the fake name. Part 5 reads the air in this room.]{.bridge}
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Why does a longer password not defend against an evil twin?","options":["The fake network never needed to know the password","Long passwords slow down the handshake","SAE ignores the password entirely","Evil twins can only imitate open networks"],"correct":[0],"ok":"Right.","why":"An open twin, or one that lets the handshake fail and offers a captive portal, gets the device anyway. What defends is the device checking the network's identity."}
+</script>
+```
 
 ## Observing nearby networks
 
@@ -243,6 +273,12 @@ Four of these come from L05 to L09, and the last one is today.
 4.  Dividing a network creates the place where a rule can sit; the rule is a decision somebody wrote down; NAT is not that rule.
 
 5.  On radio the boundary is encryption, not walls: WPA3 fixes WPA2's two weaknesses, Enterprise mode makes revocation possible, and a familiar name proves nothing.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: name it","instr":"Drag each term onto its description. Two terms are distractors and stay on the bench.","zones":[{"label":"A spoofed network announcing a genuine name","answer":"Evil twin"},{"label":"2017 key-reinstallation attack on WPA2","answer":"KRACK"},{"label":"Encryption on open networks, no password","answer":"OWE"},{"label":"WPA3's mutual authentication protocol","answer":"SAE"}],"extra":["PSK","Beacon"],"ok":"That is the vocabulary of the wireless chapter."}
+</script>
+```
 
 ## Self-check {#self-check .unnumbered}
 

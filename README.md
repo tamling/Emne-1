@@ -1,7 +1,7 @@
-# Emne 1 — course reader (Quarto)
+# Emne 1 - course reader (Quarto)
 
 Quarto book project for the Emne 1 course reader (Cybersecurity, networks,
-Linux and scripting — Gokstad Akademiet), set up like the
+Linux and scripting - Gokstad Akademiet), set up like the
 [SKY2100](https://github.com/tamling/SKY2100) course script.
 
 ```
@@ -50,7 +50,7 @@ toggle never stalls on a blocked font request.
 ## Interactive exercises
 
 Chapters can embed self-contained HTML/JS widgets in a ```` ```{=html} ````
-block — Quarto passes them straight through to the page. The first one is
+block - Quarto passes them straight through to the page. The first one is
 the **CIA-triad drag-and-drop** in chapter 1 (`chapters/01-…qmd`, look for
 `cia-triad-ex`): six terms, three drop zones on a triangle, auto-check when
 all corners are filled, with a hint when authenticity is misplaced. It

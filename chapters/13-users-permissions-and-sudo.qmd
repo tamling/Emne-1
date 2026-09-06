@@ -82,6 +82,15 @@ On Nordvik's server the file service, the mail service and the suppliers' login 
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: three files, one identity","instr":"Drag each file onto what it holds. Two names are distractors and stay on the bench.",
+ "zones":[{"label":"Accounts, seven fields, readable by all","answer":"/etc/passwd"},{"label":"Password hashes, only root may read","answer":"/etc/shadow"},{"label":"Groups and their members","answer":"/etc/group"}],
+ "extra":["/etc/sudoers","/var/log"],
+ "ok":"Splitting passwd into two files was the whole fix, and it is still how every Linux machine does it."}
+</script>
+```
+
 [→ You know who you are. Part 2 is ten characters, and they answer nine questions.]{.bridge}
 
 ## Read, write and execute
@@ -126,6 +135,13 @@ Ownership is a separate question from permission, and it has its own two command
   `sudo chgrp adm notat.txt`          change group        The file's group becomes adm, so members of adm get the group rights
   `sudo chown anneli:adm notat.txt`   change file owner   Both at once, with the owner before the colon and the group after it
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A file's mode is -rw-r----- and its group is adm. What may a member of adm do with it?","options":["Read it only","Read it and change it","Run it as a program","Nothing at all","Change its mode"],"correct":[0],
+ "ok":"Right.","why":"Characters 5 to 7 answer for the file's group, and r-- is read only. Writing belongs to the owner's rw-, and changing the mode is the owner's discretion."}
+</script>
+```
+
 [→ The bits refuse you. Part 3 is the tool that borrows root, and the record it leaves.]{.bridge}
 
 ## Running commands as root
@@ -164,6 +180,15 @@ anneli   ALL=(root)   /usr/bin/systemctl restart nginx
 
 A rule in `/etc/sudoers` is four parts, read from left to right like a sentence. Which people, on which machines, who they may become, and which commands they may run. **Least privilege** means making each of those four parts as small as the job allows. The rule above lets one person restart one service, and nothing else. `ALL=(ALL) ALL` lets a person do anything, which is the rule most machines ship with. The book's word for what the rule is doing is authorisation, "the act of specifying access rights for users, roles, and processes" [Jøsang, Sect. 1.11, p. 21]{.src}; `sudo` checking it at run time is access control. Keeping the two apart is the book's insistence, and the sudoers file shows why: the rule was written by somebody with authority, before the request.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: read the rule","instr":"The rule is: anneli ALL=(root) /usr/bin/systemctl restart nginx. Drag each piece onto the question it answers. One chip is a distractor.",
+ "zones":[{"label":"Which people","answer":"anneli"},{"label":"On which machines","answer":"ALL"},{"label":"Who they may become","answer":"(root)"},{"label":"Which commands they may run","answer":"/usr/bin/systemctl restart nginx"}],
+ "extra":["visudo"],
+ "ok":"Four parts, read like a sentence. Least privilege means making each of them as small as the job allows."}
+</script>
+```
+
 ### Baron Samedit, a flaw in sudo itself
 
 `sudo` is a boundary, and a boundary is only as good as the code that enforces it. On 26 January 2021 the sudo project published CVE-2021-3156, found by the Qualys Research Team: a heap buffer overflow in the way `sudo` unescaped command-line arguments, present since 2011. Any local account could become root without a rule and without a password. The book describes the class of bug: "Vulnerabilities in operating systems and software can be exploited by attackers to take control of a system", and a buffer overflow is the classic case [Jøsang, Sect. 3.5, p. 50]{.src}. The fix was a version number, 1.9.5p2, and the way to apply it was L11's `apt upgrade`.
@@ -190,6 +215,15 @@ Two lines: one use, one refusal, both with a name, a time, a directory and the e
 `sudo` runs one command as root, asking your own password and checking a written rule, and if no rule covers you it refuses and writes that down. Most of the reason it exists is the record: every use and every refusal is logged with your name. Least privilege means each part of a rule is as small as the job allows.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: sudo or a root shell?","instr":"Sort each fact onto the way of becoming root that it describes.",
+ "buckets":["sudo","A root shell"],
+ "items":[["Asks for your own password",0],["Checked against a written rule",0],["Every use and refusal logged by name",0],["Runs one command as root",0],["No record of who ran what",1],["Accountability lost before convenience",1]],
+ "ok":"Sorted. The log is most of the reason sudo exists."}
+</script>
+```
 
 [→ Three directories from L11 return. Part 4 says why each is set exactly the way it is.]{.bridge}
 
@@ -226,6 +260,13 @@ student@kali:~$ ls -l /usr/bin/passwd /usr/bin/sudo
 ```
 
 The letter `s` sits where the owner's `x` would normally be. A program marked that way runs as its owner, not as whoever started it. This is the **SUID bit**. Both of these belong to root, which is how you change your own password without being root: `passwd` runs as root long enough to write one line of `/etc/shadow`. It is also why Baron Samedit mattered: `sudo` is SUID root, so a flaw in it is a flaw that already runs as root. `find / -perm -4000 -type f 2>/dev/null` lists every such program on a machine, and that list is the first thing an attacker with an ordinary account looks at.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"In -rwsr-xr-x on /usr/bin/passwd, what does the s where the owner's x should be mean?","options":["The program runs as its owner, not as whoever started it","The sticky bit: only the owner may delete it","The setgid bit: new files inherit the group","It is a shell script","Only root may run it"],"correct":[0],
+ "ok":"Right.","why":"That is the SUID bit. passwd belongs to root, so it runs as root just long enough to write one line of /etc/shadow - and it is why a flaw in SUID-root sudo already runs as root."}
+</script>
+```
 
 [→ Identity, mode, sudo, reasons. Part 5 breaks a file on purpose and reads the refusal.]{.bridge}
 
@@ -295,6 +336,14 @@ What is wrong, and what do you change? Most people propose `chmod 777`, because 
 
 **Result.** The real answer is a group. Create one, put the three of them in it, make it the folder's group with `chgrp`, and give the group write with `chmod 2775` on the directory. The 2 is the setgid bit: new files inside inherit the folder's group, so the next file is shared without anybody remembering. Give that group execute on the directory too, or they list the folder and open nothing. Three people, one group, one directory mode, and nobody else on the machine gained anything. That is the book's DAC done the way it was designed: "the owner can specify access rights for themselves, for a group of subjects, and for all subjects" [Jøsang, Sect. 9.3.1, p. 207]{.src}, and the middle one is the one to use.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: three people, one folder","instr":"Three people share a folder and cannot open each other's files. Tap the steps of the real fix, in the worked example's order - not chmod 777.",
+ "steps":["Create a group","Put the three people in it","Make it the folder's group with chgrp","Give group write with chmod 2775"],
+ "ok":"That is DAC done the way it was designed: owner, group, others - and the middle one is the one to use."}
+</script>
+```
+
 ## Common misconceptions {#common-misconceptions .unnumbered}
 
   **Belief**                                        **Correction**
@@ -318,7 +367,7 @@ What is wrong, and what do you change? Most people propose `chmod 777`, because 
 
 ## Self-check {#self-check .unnumbered}
 
-1.  A file shows `-rw-r—–` with owner root and group adm. Who may read it, and who may change it? (Part 2)
+1.  A file shows `-rw-r-–` with owner root and group adm. Who may read it, and who may change it? (Part 2)
 
 2.  Why does `chmod 777` close a ticket while making the machine worse? Name what it removes. (Part 5)
 

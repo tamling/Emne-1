@@ -54,6 +54,12 @@ What does the browser build out of the HTML text? Where does the DOM live, on th
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A script in the browser runs removeAttribute and the field's length limit disappears. What changed on the server?","options":["Nothing - the DOM lives in the browser and the server's file did not change","The HTML file on the server was rewritten","The server was told to drop the limit for this visitor","The next visitor also gets a field without the limit"],"correct":[0],"ok":"Right.","why":"The DOM is a live tree on the visitor's machine. Changing a node changes what is drawn straight away, and the file on the server does not change at all."}
+</script>
+```
+
 [→ A form is a request waiting to be sent. Part 2 is where the value goes, and who may trust it.]{.bridge}
 
 ## Forms and validation
@@ -104,6 +110,12 @@ The browser turns the page into a tree that any script it loads can change, so n
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: GET or POST?","instr":"Sort each fact into the method it describes.","buckets":["GET","POST"],"items":[["Parameters after a question mark",0],["Visible in the bar, history and logs",0],["Parameters travel in the request body",1],["Suits a password or a change of state",1],["Meant to ask, not to change",0],["Out of the address bar",1]],"ok":"Sorted. Neither hides the value from the network - that is what HTTPS is for."}
+</script>
+```
+
 [→ HTTP forgets you between requests. Part 3 is how the server knows who is asking.]{.bridge}
 
 ## Cookies and sessions
@@ -125,6 +137,12 @@ Innlogget som student
 
 The server answers a login with a `Set-Cookie` header in the response. The name here is `session` and the value is what the browser sends back on every later request. `HttpOnly` tells the browser to hide the cookie from scripts in the page, which limits the XSS damage of Part 4's cousin. `curl -c` saves the cookie the login hands out, and `curl -b` sends it back; the server now knows the user.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: the session, step by step","instr":"Tap the steps in the order they happen, from login to a recognised request.","steps":["The login is answered with Set-Cookie","The client saves the session value","A later request carries the cookie back","The server knows who is asking"],"ok":"That is how a server that forgets every request keeps knowing you."}
+</script>
+```
+
 ### Without a cookie the server refuses
 
 ```{.code-out}
@@ -143,6 +161,12 @@ The cookie value comes in three parts separated by full stops. The first part is
 What problem does a cookie solve for a server that forgets every request? What does `HttpOnly` stop, and what does it leave untouched? What does the signature on a Flask session cookie prevent, and what does it not? Why is `student` readable inside the cookie?
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Which statement describes a Flask session cookie, as the chapter puts it?","options":["Signed against change and open to reading","Encrypted so that only the server can read it","Hidden by HttpOnly from anyone who holds the value","Stored on the server and never sent to the client"],"correct":[0],"ok":"Right.","why":"The data part is base64 - an encoding, not encryption - so anyone can decode it and read the username; the signature only lets the server detect a change."}
+</script>
+```
 
 [→ The field lands inside the sentence. Part 4 is the injection, and the one-character fix.]{.bridge}
 
@@ -201,6 +225,12 @@ What turned four rows into 21 in the demonstration? Where does the value travel 
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: pieces of the injection demo","instr":"Drag each piece onto what it does in Part 4. Two chips stay on the bench.","zones":[{"label":"Reads the parameter from the address","answer":"request.args.get"},{"label":"Pastes the value into the query text","answer":"f-string"},{"label":"Marks a slot; the value arrives after","answer":"?"},{"label":"Must name every dangerous string","answer":"blocklist"}],"extra":["HttpOnly","maxlength"],"ok":"The fix is not a word list. A placeholder."}
+</script>
+```
+
 [→ One unchecked field. Part 5 is what it cost a company that shipped one.]{.bridge}
 
 ## TalkTalk, October 2015
@@ -246,6 +276,12 @@ Nordvik's one server holds the same shape as every case in this chapter: a form,
 4.  HTTP forgets you between requests; a session cookie says who is asking, signed against change and open to reading.
 
 5.  A value from outside goes into a query as a placeholder, beside the SQL and never inside it; that one control, taught in L22 and again here, is the fix for the attack that took TalkTalk.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: follow the value","instr":"Tap the stations in the order a value travels from a visitor to the database.","steps":["A visitor types into the form field","The field becomes a request parameter","The request reaches the server","The server checks the value again","The value is bound to a placeholder"],"ok":"Checked on the machine you control, then beside the SQL - never inside it."}
+</script>
+```
 
 ## Self-check {#self-check .unnumbered}
 

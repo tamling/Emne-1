@@ -81,6 +81,12 @@ Nordvik's one server runs several services on one address. Each open port is one
 
 [→ You have the number. Part 2 shows three services you used today, each one a program on a port.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: TCP or UDP?","instr":"Sort each fact into the transport protocol it describes.","buckets":["TCP","UDP"],"items":[["Sets up a conversation somebody answers",0],["Sends it and does not look back",1],["Lost pieces sent again, put back in order",0],["A lost lookup is simply asked again",1],["Web pages on 80 and 443",0],["Name lookups on 53",1]],"ok":"TCP pays time to be certain; UDP pays nothing and accepts loss."}
+</script>
+```
+
 ## DNS, HTTP and HTTPS
 
 ### Name lookups, as a service
@@ -127,6 +133,12 @@ Encryption on the port does not make the service safe. Heartbleed was a flaw in 
 
 [→ Same job, two protocols. Part 3 asks which of each pair carries your password readably.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Which two things does the padlock prove? Pick both.","options":["Nobody on the path can read what travels","The certificate matches the exact name typed","The owner of the site is honest","The program behind the port has no flaws"],"correct":[0,1],"ok":"Right - and no more than those two.","why":"The padlock is a claim about the path and the name, not about honesty. Criminals hold valid certificates too, and Heartbleed leaked memory from a service doing its encryption correctly."}
+</script>
+```
+
 ## Protocol pairs and credentials
 
 ### SSH, and the question it asks first
@@ -172,6 +184,12 @@ The book's history of the problem: "In the early days of the Internet, almost al
 
 [→ Listening, reachable, exposed, vulnerable. Part 4 keeps four words apart.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: the protected replacement","instr":"Drag each protected protocol onto the job and old protocol it replaces. Two are distractors.","zones":[{"label":"Moves files - FTP on 21","answer":"SFTP on 22"},{"label":"Command line elsewhere - telnet on 23","answer":"SSH on 22"},{"label":"Fetches a web page - HTTP on 80","answer":"HTTPS on 443"},{"label":"Mail between servers - SMTP on 25","answer":"Mail submission on 587"}],"extra":["FTPS on 21","DNS on 53"],"ok":"The old member of each pair carries your password readably."}
+</script>
+```
+
 ## Exposed services
 
 ### Listening is not reachable
@@ -189,6 +207,12 @@ Ask three questions about every service you find, in this order.
 3.  **Does it need to be there, and who says so?**
 
 Only the third question ever removes work. The first two describe; the third decides.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: three questions about a service","instr":"Tap the chapter's three questions in the order you ask them.","steps":["Is it running?","Who can reach it?","Does it need to be there, and who says so?"],"ok":"The first two describe; only the third removes work."}
+</script>
+```
 
 ### The services nobody meant to run
 
@@ -236,6 +260,12 @@ The services nobody at Nordvik chose, a test switched on years ago, a database a
 
 [→ Ports, services, pairs, exposure. Part 5 is one command, and you name every line of it.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"What did every machine WannaCry reached have in common?","options":["A service reachable on a port plus a patch nobody had applied","A weak administrator password","An FTP server sending passwords readably","No antivirus software installed","A forgotten test service on port 8080"],"correct":[0],"ok":"Right.","why":"Windows file sharing over SMB was reachable on port 445, and Microsoft had published the patch on 14 March 2017 - two months before the attack."}
+</script>
+```
+
 ## Listing one machine's services
 
 ### Asking the machine
@@ -252,6 +282,12 @@ LISTEN  0.0.0.0:8080         users:(("python3",pid=1420,fd=4))
 ```
 
 The local address column already answers part of the second question. `0.0.0.0` means the service accepts connections on every address the machine has. `127.0.0.1` means it accepts connections only from the machine itself: listening, but reachable from nowhere else.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"ss -tlnp shows a service on 127.0.0.1:3306. Who can reach it?","options":["Only the machine itself","Anybody the firewall allows in","Everybody in the building","Nobody - it is not listening"],"correct":[0],"ok":"Right.","why":"127.0.0.1 means the service accepts connections only from the machine itself: listening, but reachable from nowhere else."}
+</script>
+```
 
 ### The three questions, applied
 

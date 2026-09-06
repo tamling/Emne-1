@@ -63,6 +63,12 @@ No lock code on the phone. One password everywhere. Nothing backed up anywhere. 
   You mostly cannot remove it             You can remove it, and that is what a control does
   Theft, fire, phishing, ransomware       No lock code, reused password, untested backup, unpatched server
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: threat or vulnerability?", "instr": "Sort each item into the column it belongs to.", "buckets": ["A threat", "A vulnerability"], "items": [["Theft", 0], ["Fire", 0], ["Phishing", 0], ["Ransomware", 0], ["No lock code", 1], ["One password everywhere", 1], ["Untested backup", 1], ["Unpatched server", 1]], "ok": "Sorted. Threats come from outside and mostly stay; vulnerabilities are yours, and removing them is what a control does."}
+</script>
+```
+
 ### From threat to harm
 
 A threat becomes an event the moment it meets a vulnerability, and the event causes the harm. The book's Figure 1.3 shows the general chain: a threat actor executes a threat scenario, each step exploits a vulnerability, the assets are reached, an incident occurs, and the incident has an impact [Jøsang, Sect. 1.4, Fig. 1.3, p. 7]{.src}. On a phone:
@@ -125,6 +131,12 @@ Availability is the property of being accessible and usable on demand by an auth
 :::
 
 In June 2017 the NotPetya malware stopped the shipping company Maersk across its business. To get running again it reinstalled about 45,000 PCs and 4,000 servers. Nothing was stolen and nothing was changed; the company simply lost the use of its systems, and that alone was enough to stop it operating. Availability is the leg beginners underestimate, for exactly that reason. The book's threats to availability are denial of service, obstruction of authorised access, and delay of time-critical functions; its controls include redundancy, backups and incident response [Jøsang, Sect. 1.9.4, p. 17]{.src}.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "NotPetya stopped Maersk in 2017. Nothing was stolen and nothing was changed. Which property failed?", "options": ["Availability", "Integrity", "Confidentiality", "Authenticity"], "correct": [0], "ok": "Right.", "why": "The company simply lost the use of its systems - about 45,000 PCs and 4,000 servers were reinstalled - and that alone was enough to stop it operating."}
+</script>
+```
 
 ### Is it still correct?
 
@@ -197,6 +209,12 @@ The book is also honest about the limits: qualitative levels "have no absolute s
 
 Frequency is not severity. Ransomware encrypting the case system is *possible*, and the consequence would be *major*. A laptop stolen from a car is *likely* in any year, and *minor* if the disk is encrypted. Say the reasoning out loud. The stolen laptop happens far more often, and the encrypted server still ranks higher, because weeks without systems costs more than one replaced laptop. Confusing how often with how bad is the commonest mistake in the room.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "A laptop stolen from a car happens more often than ransomware on the server, yet the encrypted server ranks higher. Why?", "options": ["Weeks without systems costs more than one laptop", "Servers meet more threats than laptops do", "Laptop theft is not a realistic threat", "The grid computes a number that proves it"], "correct": [0], "ok": "Right.", "why": "Frequency is not severity. With an encrypted disk the stolen laptop is minor, while the encrypted server would be major, and the grid computes nothing."}
+</script>
+```
+
 ### Who decides
 
 The IT department does not decide this. They know how the systems work, and that is a different question from what matters most. The decision belongs to whoever carries the consequence, which means management, the governance level you met in L01. Three rules follow:
@@ -226,6 +244,12 @@ The book names "four relevant treatments" for a priority risk: reduce, share or 
 
 An accepted risk that nobody wrote down is something else entirely. The book's term for how much of this an organisation is willing to carry is **risk appetite** [Jøsang, Sect. 19.2.3, p. 415]{.src}.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "match", "title": "Try it: the four treatments", "instr": "Drag each treatment onto its meaning. One term is not one of the book's four and stays on the bench.", "zones": [{"label": "Add a control that lowers the risk", "answer": "Reduce"}, {"label": "Insurance, or a supplier carries part", "answer": "Transfer"}, {"label": "Decide the fix costs more than the risk", "answer": "Accept"}, {"label": "Stop the activity altogether", "answer": "Avoid"}], "extra": ["Ignore"], "ok": "Right. And ignoring a risk is not a fifth option: doing nothing is accepting it, without the signature."}
+</script>
+```
+
 ### Controls come in four kinds
 
 Most real problems need a control from more than one column. The book sorts controls two ways: by function (preventive, detective, corrective, plus governance) [Jøsang, Sect. 1.5, pp. 8--9]{.src}, and by domain, following ISO/IEC 27002: organizational, people, physical and technological [Jøsang, Sect. 1.5, Fig. 1.7, p. 10]{.src}. The four columns used in this course are the domain view with one addition.
@@ -236,6 +260,12 @@ Most real problems need a control from more than one column. The book sorts cont
   Book: technological                                                                 Book: organizational and people                                                                    Book: physical                                    Book: physical
 
 The four kinds exist so that nobody solves a people problem with a product. Invoice redirection is an administrative problem, and no firewall rule fixes it. A flooded cupboard is environmental, and no password helps.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: four kinds of control", "instr": "Sort each control into the kind it belongs to.", "buckets": ["Technical", "Administrative", "Physical", "Environmental"], "items": [["Multi-factor login", 0], ["Patching", 0], ["A call-back rule for changed numbers", 1], ["A written password policy", 1], ["Doors and locks", 2], ["The cupboard the server stands in", 2], ["A UPS for when the power fails", 3], ["Cooling for the server room", 3]], "ok": "Sorted. The four kinds exist so that nobody solves a people problem with a product."}
+</script>
+```
 
 ### One layer is never enough
 
@@ -300,6 +330,12 @@ Four steps run the whole method, and they work on a phone, a school, a municipal
 4.  Write down what remains, who accepted it, and when it will be looked at again.
 
 Then take the next cell down. For the account takeover, the safeguard is multi-factor login, which is the control the book names for strengthening authentication [Jøsang, Sect. 1.10.1, p. 18]{.src}. For the suppliers, it is a list of who may reach the server, reviewed on a date. None of these is expensive. All of them are things Nordvik could tell you were finished.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "order", "title": "Try it: the whole method", "instr": "Tap the four steps of the method from Part 5 in order.", "steps": ["Start from the top of the grid", "Find a matching IG1 safeguard", "Choose the treatment", "Write down what remains and who accepted it"], "ok": "That is the method, and it works on a phone, a school or a municipality unchanged."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

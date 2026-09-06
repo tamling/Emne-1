@@ -45,6 +45,12 @@ This is the book's **detective control**, "to detect and register attempted or a
 
 Almost every morning routine reduces to these four. Each has a command that answers it in a line or two, and the questions are the same on a laptop and on a large server. The order matters, because each answer narrows the next.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: the four morning questions","instr":"Tap the questions in the order the chapter asks them - each answer narrows the next.","steps":["Is the service running?","How full is the disk?","What is listening?","What do the logs say?"],"ok":"Service, disk, ports, logs - every morning."}
+</script>
+```
+
 ### What makes an answer repeatable
 
 A repeatable answer comes out of a command, not out of a screenshot. It must be short enough for an `if` statement to test. The same question asked tomorrow must return the same kind of value. An answer whose shape changes from day to day cannot be compared, and comparing is what a check is for.
@@ -58,6 +64,12 @@ A paragraph of status text tells a person a lot and a script nothing. A check th
 Name the four questions. Why does reading a status screen not count as a check? What has to be true before a script can test an answer with an `if`? Which question comes first, and why?
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: check or no check?","instr":"A check is a question with a repeatable answer. Sort each item.","buckets":["A check","Not a check"],"items":[["A person glancing at a screen",1],["systemctl is-active ssh",0],["A paragraph from systemctl status",1],["An answer short enough for an if to test",0],["A screenshot of the status",1],["Same command, same kind of value",0]],"ok":"A check has to say what it found, in a form something else can test."}
+</script>
+```
 
 [→ A service is a program the system starts for you. Part 2 asks systemd two narrow questions.]{.bridge}
 
@@ -113,6 +125,12 @@ A glance is not an answer; a check is a question with a repeatable one, and its 
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A service shows active and disabled. What is true?","options":["It is running now and will not start after the next reboot","It is stopped now and will start at the next boot","It is running now and a reboot changes nothing","The two words contradict each other, so one is an error"],"correct":[0],"ok":"Right.","why":"is-active describes this moment; is-enabled describes the next boot. A server can be working today and gone after the next patch reboot."}
+</script>
+```
+
 [→ A full disk stops a service without stopping the machine. Part 3 is disk and ports.]{.bridge}
 
 ## Disk and ports
@@ -164,6 +182,12 @@ What do the three letters in `ss -ltn` select? Which `df` column would you quote
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A colleague asks how long the disk will last. Which df column do you quote?","options":["Avail - the space left, in real units","Use% - the percentage everyone reads","Size - how big the filesystem is","Mounted on - where the filesystem sits"],"correct":[0],"ok":"Right.","why":"The percentage hides the size: 92 percent of forty gigabytes leaves three, and 92 percent of four terabytes leaves three hundred and twenty."}
+</script>
+```
+
 [→ The logs are the record of what the first three questions did overnight. Part 4 narrows the journal, then puts all four in one script.]{.bridge}
 
 ## Logs, and one script
@@ -171,6 +195,12 @@ What do the three letters in `ss -ltn` select? Which `df` column would you quote
 ### What do the logs say
 
 systemd keeps its own record of what services printed, the journal from L14. `journalctl -u` limits the output to one unit, such as `ssh`. `-p` limits it to messages at or above a priority, such as `err`. `-S` limits it to a start time, such as `-1h`. The journal on a running machine is far too long to read from the top; each flag narrows a different dimension, and the flags combine. Unit, priority and time together usually leave a screen you can explain. Start wide and narrow, as L12 built patterns one idea at a time.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: narrow the journal","instr":"The journal is far too long to read from the top. Drag each flag onto the dimension it narrows. Two flags are distractors.","zones":[{"label":"One unit, such as ssh","answer":"-u"},{"label":"Messages at or above a priority","answer":"-p"},{"label":"A start time, such as -1h","answer":"-S"}],"extra":["-q","-h"],"ok":"Unit, priority and time - and the flags combine."}
+</script>
+```
 
 ### grep still reads a plain file
 
@@ -254,6 +284,12 @@ A check that runs the same way on every machine names the one that answers diffe
 Nordvik has one server, and the health check still earns its place: the morning the disk passes ninety percent, or SSH stops after a patch reboot because it was active but not enabled, the script says so at seven o'clock, with a code the scheduler can act on, before the first person arrives to glance at a screen.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"What check would have exposed Knight Capital's eighth server before the market opened?","options":["One question asked of all eight servers: which version of the code is installed","More automated warning emails to more staff","A person reading the status screen on each server","A faster deployment over fewer days"],"correct":[0],"ok":"Right.","why":"Eight lines, one different. Ninety-seven messages did reach staff by email, and nobody was reading; a check that runs the same way on every machine names the one that answers differently."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

@@ -136,7 +136,8 @@ Impersonation is where most incidents begin, because it is easier than breaking 
 .cia-widget .cia-msg { text-align: center; font-size: .92rem; min-height: 1.4rem; margin-top: .7rem; font-weight: 600; }
 .cia-widget .cia-msg.ok { color: #2e7d32; }
 .cia-widget .cia-msg.no { color: #bf3d37; }
-.cia-widget .cia-reset { display: block; margin: .5rem auto 0; font-size: .8rem; padding: .25rem .9rem; border: 1px solid #8d99ae; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
+.cia-widget .cia-btns { text-align: center; margin-top: .5rem; }
+.cia-widget .cia-reset { display: inline-block; margin: 0 .25rem; font-size: .8rem; padding: .25rem .9rem; border: 1px solid #8d99ae; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
 body.quarto-dark .cia-widget { background: #23262b; border-color: #4a5568; }
 body.quarto-dark .cia-widget h4 { color: #cfe0ff; }
 body.quarto-dark .cia-widget .cia-instr { color: #b5bcc4; }
@@ -164,7 +165,10 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
   </div>
   <div class="cia-tray" id="cia-tray"></div>
   <div class="cia-msg" id="cia-msg" role="status"></div>
-  <button class="cia-reset" id="cia-reset" type="button">Reset</button>
+  <div class="cia-btns">
+    <button class="cia-reset" id="cia-sol" type="button">Show solution</button>
+    <button class="cia-reset" id="cia-reset" type="button">Reset</button>
+  </div>
 </div>
 <script>
 (function () {
@@ -298,7 +302,27 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
     if (target) place(d.chip, target);
   });
 
-  document.getElementById('cia-reset').addEventListener('click', reset);
+  var solBtn = document.getElementById('cia-sol'), solArmed = false;
+  document.getElementById('cia-reset').addEventListener('click', function () {
+    solArmed = false; solBtn.textContent = 'Show solution'; reset();
+  });
+  solBtn.addEventListener('click', function () {
+    if (!solArmed) {
+      solArmed = true;
+      solBtn.textContent = 'Really show it';
+      setMsg('Clicking straight to the answer is no fun — try it first. (Click again if you really want it.)', 'no');
+      return;
+    }
+    solArmed = false; solBtn.textContent = 'Show solution';
+    reset();
+    solved = true;
+    zones.forEach(function (z) {
+      var chip = Array.prototype.slice.call(tray.querySelectorAll('.cia-chip'))
+        .find(function (c) { return c.dataset.goal === z.dataset.answer; });
+      if (chip) { z.appendChild(chip); z.classList.add('cia-filled', 'cia-right'); }
+    });
+    setMsg('Solution shown — the triad is confidentiality, integrity and availability. Hit Reset to try it properly.', 'ok');
+  });
   reset();
 })();
 </script>

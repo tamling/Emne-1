@@ -89,14 +89,33 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
   }
   function msgBar(w) { var m = el('div', 'qex-msg'); m.setAttribute('role', 'status'); w.appendChild(m); return m; }
   function setMsg(m, text, cls) { m.textContent = text; m.className = 'qex-msg' + (cls ? ' ' + cls : ''); }
-  function btns(w, onReset, checkLabel, onCheck) {
+  function btns(w, onReset, msg, onSolve, checkLabel, onCheck) {
     var bar = el('div', 'qex-btns');
     if (onCheck) {
       var c = el('button', 'qex-btn qex-primary', checkLabel || 'Check');
       c.type = 'button'; c.addEventListener('click', onCheck); bar.appendChild(c);
     }
     var r = el('button', 'qex-btn', 'Reset');
-    r.type = 'button'; r.addEventListener('click', onReset); bar.appendChild(r);
+    r.type = 'button';
+    var armed = false;
+    var s = el('button', 'qex-btn', 'Show solution');
+    s.type = 'button';
+    r.addEventListener('click', function () { armed = false; s.textContent = 'Show solution'; onReset(); });
+    s.addEventListener('click', function () {
+      if (!armed) {
+        armed = true;
+        s.textContent = 'Really show it';
+        setMsg(msg, 'Clicking straight to the answer is no fun — try it first. (Click again if you really want it.)', 'no');
+        return;
+      }
+      armed = false;
+      s.textContent = 'Show solution';
+      var extra = onSolve() || '';
+      if (extra && !/[.!?]$/.test(extra)) extra += '.';
+      setMsg(msg, 'Solution shown.' + (extra ? ' ' + extra : '') + ' Hit Reset to try it properly.', 'ok');
+    });
+    bar.appendChild(s);
+    bar.appendChild(r);
     w.appendChild(bar);
     return bar;
   }
@@ -209,6 +228,15 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         });
       }, 900);
     }
+    function solve() {
+      reset();
+      solved = true;
+      var chips = Array.prototype.slice.call(tray.querySelectorAll('.qex-chip'));
+      zoneEls().forEach(function (z) {
+        var chip = chips.find(function (c) { return c.dataset.v === z.dataset.answer; });
+        if (chip) { z.appendChild(chip); z.classList.add('qex-filled', 'qex-right'); }
+      });
+    }
     placer(w, tray, zoneEls,
       function () { return !solved; },
       function (chip, zone) {
@@ -220,7 +248,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         if (z) z.classList.remove('qex-filled', 'qex-wrong', 'qex-right');
         tray.appendChild(chip); setMsg(msg, '', '');
       });
-    btns(w, reset);
+    btns(w, reset, msg, solve);
     reset();
   }
 
@@ -266,11 +294,20 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         zoneEls().forEach(function (z) { z.classList.remove('qex-wrong'); });
       }, 900);
     }
+    function solve() {
+      reset();
+      solved = true;
+      var zs = zoneEls();
+      Array.prototype.slice.call(tray.querySelectorAll('.qex-chip')).forEach(function (c) {
+        zs[Number(c.dataset.b)].appendChild(c);
+      });
+      zs.forEach(function (z) { z.classList.add('qex-right'); });
+    }
     placer(w, tray, zoneEls,
       function () { return !solved; },
       function (chip, zone) { zone.appendChild(chip); check(); },
       function (chip) { tray.appendChild(chip); setMsg(msg, '', ''); });
-    btns(w, reset);
+    btns(w, reset, msg, solve);
     reset();
   }
 
@@ -324,6 +361,15 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         });
       }, 900);
     }
+    function solve() {
+      reset();
+      solved = true;
+      var chips = Array.prototype.slice.call(tray.querySelectorAll('.qex-chip'));
+      slotEls().forEach(function (s, i) {
+        var chip = chips.find(function (c) { return Number(c.dataset.i) === i; });
+        if (chip) { s.appendChild(chip); s.classList.add('qex-filled', 'qex-right'); }
+      });
+    }
     placer(w, tray, slotEls,
       function () { return !solved; },
       function (chip, slot) {
@@ -336,7 +382,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         if (s) s.classList.remove('qex-filled', 'qex-wrong', 'qex-right');
         tray.appendChild(chip); setMsg(msg, '', '');
       });
-    btns(w, reset);
+    btns(w, reset, msg, solve);
     reset();
   }
 
@@ -388,7 +434,15 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
     opts.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' && e.target.classList.contains('qex-opt')) e.target.click();
     });
-    btns(w, reset, 'Check', check);
+    function solve() {
+      reset();
+      solved = true;
+      Array.prototype.slice.call(opts.children).forEach(function (o) {
+        if (cfg.correct.indexOf(Number(o.dataset.i)) >= 0) o.classList.add('qex-sel', 'qex-right');
+      });
+      return cfg.why || '';
+    }
+    btns(w, reset, msg, solve, 'Check', check);
     reset();
   }
 

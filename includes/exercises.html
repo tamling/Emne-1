@@ -119,6 +119,14 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
     w.appendChild(bar);
     return bar;
   }
+  // "why" (short explanation) + "ref" (pointer, rendered as "See ...") for
+  // the show-solution reveal; success messages append the ref too.
+  function explain(cfg) {
+    var s = cfg.why || '';
+    if (cfg.ref) s += (s ? ' ' : '') + 'See ' + cfg.ref + '.';
+    return s;
+  }
+  function refTail(cfg) { return cfg.ref ? ' (See ' + cfg.ref + '.)' : ''; }
   function makeChip(text) {
     var c = el('span', 'qex-chip', text);
     c.dataset.v = text;
@@ -217,7 +225,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
       });
       if (!wrong.length) {
         solved = true;
-        setMsg(msg, '✓ ' + (cfg.ok || 'Correct.'), 'ok');
+        setMsg(msg, '✓ ' + (cfg.ok || 'Correct.') + refTail(cfg), 'ok');
         return;
       }
       setMsg(msg, 'Not quite - the red ones went back. Try again.', 'no');
@@ -236,6 +244,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         var chip = chips.find(function (c) { return c.dataset.v === z.dataset.answer; });
         if (chip) { z.appendChild(chip); z.classList.add('qex-filled', 'qex-right'); }
       });
+      return explain(cfg);
     }
     placer(w, tray, zoneEls,
       function () { return !solved; },
@@ -284,7 +293,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
       if (!wrong.length) {
         solved = true;
         zoneEls().forEach(function (z) { z.classList.add('qex-right'); });
-        setMsg(msg, '✓ ' + (cfg.ok || 'Correct.'), 'ok');
+        setMsg(msg, '✓ ' + (cfg.ok || 'Correct.') + refTail(cfg), 'ok');
         return;
       }
       wrong.forEach(function (c) { c.closest('.qex-zone').classList.add('qex-wrong'); });
@@ -302,6 +311,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         zs[Number(c.dataset.b)].appendChild(c);
       });
       zs.forEach(function (z) { z.classList.add('qex-right'); });
+      return explain(cfg);
     }
     placer(w, tray, zoneEls,
       function () { return !solved; },
@@ -350,7 +360,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
       });
       if (!wrong.length) {
         solved = true;
-        setMsg(msg, '✓ ' + (cfg.ok || 'Correct order.'), 'ok');
+        setMsg(msg, '✓ ' + (cfg.ok || 'Correct order.') + refTail(cfg), 'ok');
         return;
       }
       setMsg(msg, 'Not quite - the red steps went back. Try again.', 'no');
@@ -369,6 +379,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         var chip = chips.find(function (c) { return Number(c.dataset.i) === i; });
         if (chip) { s.appendChild(chip); s.classList.add('qex-filled', 'qex-right'); }
       });
+      return explain(cfg);
     }
     placer(w, tray, slotEls,
       function () { return !solved; },
@@ -420,7 +431,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         if (right) { if (want.indexOf(i) >= 0) o.classList.add('qex-right'); }
         else if (o.classList.contains('qex-sel')) o.classList.add(want.indexOf(i) >= 0 ? 'qex-right' : 'qex-wrong');
       });
-      if (right) { solved = true; setMsg(msg, '✓ ' + (cfg.ok || 'Correct.') + (cfg.why ? ' ' + cfg.why : ''), 'ok'); }
+      if (right) { solved = true; setMsg(msg, '✓ ' + (cfg.ok || 'Correct.') + (cfg.why ? ' ' + cfg.why : '') + refTail(cfg), 'ok'); }
       else setMsg(msg, 'Not quite - try again.', 'no');
     }
     opts.addEventListener('click', function (e) {
@@ -440,7 +451,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
       Array.prototype.slice.call(opts.children).forEach(function (o) {
         if (cfg.correct.indexOf(Number(o.dataset.i)) >= 0) o.classList.add('qex-sel', 'qex-right');
       });
-      return cfg.why || '';
+      return explain(cfg);
     }
     btns(w, reset, msg, solve, 'Check', check);
     reset();

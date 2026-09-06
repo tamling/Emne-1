@@ -232,7 +232,7 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
     });
     if (wrong.length === 0) {
       solved = true;
-      setMsg('✓ Correct - confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners.', 'ok');
+      setMsg('✓ Correct - confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners. (See Part 1 and Jøsang, Sect. 1.3, p. 4.)', 'ok');
       return;
     }
     var usedAuth = wrong.some(function (c) { return c.dataset.goal === 'Authenticity'; });
@@ -321,7 +321,7 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
         .find(function (c) { return c.dataset.goal === z.dataset.answer; });
       if (chip) { z.appendChild(chip); z.classList.add('cia-filled', 'cia-right'); }
     });
-    setMsg('Solution shown - the triad is confidentiality, integrity and availability. Hit Reset to try it properly.', 'ok');
+    setMsg('Solution shown - the triad is confidentiality, integrity and availability; authenticity is the supporting fourth goal. See Part 1 and Jøsang, Sect. 1.3, p. 4. Hit Reset to try it properly.', 'ok');
   });
   reset();
 })();

@@ -232,13 +232,13 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
     });
     if (wrong.length === 0) {
       solved = true;
-      setMsg('✓ Correct — confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners.', 'ok');
+      setMsg('✓ Correct - confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners.', 'ok');
       return;
     }
     var usedAuth = wrong.some(function (c) { return c.dataset.goal === 'Authenticity'; });
     setMsg(usedAuth
-      ? 'Not quite — authenticity is the fourth goal, but it is not a corner of the triad. The red ones went back.'
-      : 'Not quite — the red ones went back to the bench. Try again.', 'no');
+      ? 'Not quite - authenticity is the fourth goal, but it is not a corner of the triad. The red ones went back.'
+      : 'Not quite - the red ones went back to the bench. Try again.', 'no');
     setTimeout(function () {
       wrong.forEach(takeBack);
       zones.forEach(function (z) { z.classList.remove('cia-wrong'); });
@@ -310,7 +310,7 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
     if (!solArmed) {
       solArmed = true;
       solBtn.textContent = 'Really show it';
-      setMsg('Clicking straight to the answer is no fun — try it first. (Click again if you really want it.)', 'no');
+      setMsg('Clicking straight to the answer is no fun - try it first. (Click again if you really want it.)', 'no');
       return;
     }
     solArmed = false; solBtn.textContent = 'Show solution';
@@ -321,7 +321,7 @@ body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
         .find(function (c) { return c.dataset.goal === z.dataset.answer; });
       if (chip) { z.appendChild(chip); z.classList.add('cia-filled', 'cia-right'); }
     });
-    setMsg('Solution shown — the triad is confidentiality, integrity and availability. Hit Reset to try it properly.', 'ok');
+    setMsg('Solution shown - the triad is confidentiality, integrity and availability. Hit Reset to try it properly.', 'ok');
   });
   reset();
 })();
@@ -352,6 +352,12 @@ Every incident has two halves. Something technical was possible, and something a
 At Nordvik, a trusted supplier's attachment or a convincing message would open the door as easily as any software flaw, and the person who clicked would have done nothing careless. That is the ordinary shape of the human half.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "An organisation buys a firewall. According to the book's four dimensions, what decides whether the purchase is worth anything?", "options": ["People, Partner and Process around the Product", "The price paid for the firewall", "How new the firewall model is", "Whether the staff would ever click a link"], "correct": [0], "ok": "Right.", "why": "A Product without staff who can operate it, a vendor who supports it and a routine for using it has little value."}
+</script>
+```
 
 [→ Part 1 sorted what goes wrong. Part 2 is about the people whose job it is to deal with it.]{.bridge}
 
@@ -388,6 +394,12 @@ It is January. The organisation had no security incidents last year. The finance
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "match", "title": "Try it: name the kind of control", "instr": "Drag each kind of control onto its description. Two terms are not kinds of control and stay on the bench.", "zones": [{"label": "Stops incidents; likelihood-reducing", "answer": "Preventive"}, {"label": "Raises alarms; shortens time to action", "answer": "Detective"}, {"label": "Restores operation; impact-reducing", "answer": "Corrective"}, {"label": "Organises the other three; often an ISMS", "answer": "Governance"}], "extra": ["Accountability", "Triage"], "ok": "Right. Authentication and access control prevent, intrusion detection detects, backups and contingency plans correct, and governance organises the three."}
+</script>
+```
+
 ### The work is a loop
 
 Prevention alone was the thinking until around the year 2000, when the security community slowly realised that perfect security is unattainable and that organisations will experience incidents no matter how strong their defences are [Jøsang, Sect. 1.5, p. 9]{.src}. So the work does not run in a line. It goes round.
@@ -399,6 +411,12 @@ Prevention alone was the thinking until around the year 2000, when the security 
 You prevent what you can. You watch the logs and the alerts for what prevention missed. You respond when something happens. Then you write down what you learned, and what you write down is what makes the next round of prevention better. That last arrow is why incidents get written up at all. Without it, an organisation learns the same lesson twice.
 
 The book's formal version of this loop is the incident management process, with four phases: preparation, triage, response and post-incident [Jøsang, Fig. 14.3, p. 308]{.src}. The last phase contains a "lessons-learned" meeting, which the book says should be held within a few days of the end of the incident [Jøsang, Sect. 14.5.4, p. 313]{.src}. That meeting is the arrow at the bottom of the figure. This process returns in full in Module 3.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "order", "title": "Try it: the incident management process", "instr": "Tap the book's four phases in the order they run (tap a step, then a slot - or just tap steps in order).", "steps": ["Preparation", "Triage", "Response", "Post-incident"], "ok": "That is the formal loop. The lessons-learned meeting sits in the last phase, and it is what improves the next round of prevention."}
+</script>
+```
 
 ### Watching, and when something happens
 
@@ -531,6 +549,12 @@ A state actor wants information and wants to still be there next year, so it wor
 
 An insider is rarely a spy. Far more often it is someone who left in March and is still logged in, because nobody disabled the account. Both the state actor and the insider are found the same way: by knowing who has access. A list of who has access, checked against a list of who works here, finds the account of the person who left. No firewall helps with that. The book's name for this checking is access authorisation, and it belongs to the configuration phase of identity and access management, before anyone ever logs in [Jøsang, Sect. 1.11, Fig. 1.13, p. 22]{.src}.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: who wants what", "instr": "Sort each fact onto the threat actor it describes.", "buckets": ["Criminals", "States", "Hacktivists", "Insiders"], "items": [["Want money above all", 0], ["Automated and loud once inside", 0], ["Want information and lasting access", 1], ["Quiet, patient, well resourced", 1], ["Want attention for a cause", 2], ["Public and short-lived", 2], ["Already hold a key", 3], ["Often an account nobody disabled", 3]], "ok": "Sorted. What an attacker wants predicts their behaviour better than how skilled they are."}
+</script>
+```
+
 ### Why a small business gets hit
 
 The most common shape of an incident involves no decision about the victim at all. The book's Figure 1.3 shows the general pattern: a threat actor executes a threat scenario, step by step, each step exploiting a vulnerability, until the assets are reached and an incident with negative impact occurs [Jøsang, Sect. 1.4, Fig. 1.3, p. 7]{.src}. Here is that pattern as it plays out against a firm the size of Nordvik.
@@ -570,6 +594,12 @@ Three Norwegian services describe the threat picture. All three publish every Fe
   **Nasjonal trusselvurdering**   Politiets sikkerhetstjeneste (PST)   Looks inwards: threats against Norway from espionage, sabotage and extremism.
 
 The book describes the general activity these reports support as Cyber Threat Intelligence, and notes that incident detection can rely on it [Jøsang, Sect. 14.5.2, p. 311]{.src}. National reporting is also how the picture gets built at all: the book lists notification of authorities as a step in the triage phase, with thresholds that for some sectors are a matter of hours [Jøsang, Sect. 14.5, p. 308; Sect. 14.5.2, p. 312]{.src}.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "Which of the three February assessments is published by Politiets sikkerhetstjeneste (PST)?", "options": ["Nasjonal trusselvurdering", "Fokus", "Risiko", "All three of them"], "correct": [0], "ok": "Right.", "why": "PST looks inwards with Nasjonal trusselvurdering. Fokus is Etterretningstjenesten looking outwards, and Risiko is NSM on how well protection works in practice."}
+</script>
+```
 
 ### What a finding looks like
 

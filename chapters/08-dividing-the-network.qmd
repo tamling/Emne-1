@@ -73,6 +73,12 @@ On Nordvik's flat network, a supplier's remote session or a guest on the Wi-Fi c
 
 [→ The problem is one shared space. Part 2 divides one switch by a single line of configuration.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Why can the edge firewall not stop a guest laptop reaching the payroll server on a flat network?","options":["Traffic that stays inside never reaches the edge","Firewalls cannot read internal addresses","Guests are trusted once they are inside","The switch refuses to forward to the firewall"],"correct":[0],"ok":"Right.","why":"A firewall at the edge protects the edge of the network. It cannot refuse what it never sees."}
+</script>
+```
+
 ## One switch, several networks
 
 ### What the switch knows, and what it does not
@@ -109,6 +115,12 @@ Two VLANs cannot reach each other at all, which is the whole point of them. Yet 
 One command creates the VLAN, and one more puts a port into it. A third prints the table, so you can see which ports are in which group. The separation is text in a configuration and nothing more. Type one of those commands wrongly and the port sits in the wrong group, with no error and no warning. That is why reading the table back matters as much as typing the commands.
 
 [→ The switch can divide. Part 3 decides which groups exist, and what each may reach.]{.bridge}
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: by itself, or configured?","instr":"Sort each behaviour: does the switch do it on its own, or did somebody have to set it up?","buckets":["The switch does it by itself","Somebody configured it"],"items":[["Learning card addresses by watching",0],["Flooding unknown addresses to every port",0],["Grouping ports into VLAN 10 and VLAN 20",1],["A trunk carrying labelled frames",1],["A crossing between two VLANs",1]],"ok":"Separation is text in a configuration - and so is every crossing."}
+</script>
+```
 
 ## Deciding the zones
 
@@ -165,6 +177,12 @@ The book's own pairings are gatekeeper, drawbridge and moat for the external fir
 
 [→ The design is drawn. Part 4 is the honesty check: the quiet ways a division stops being real.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: the castle on the network","instr":"Drag each network item onto its castle pairing. Two are distractors.","zones":[{"label":"The gate and the drawbridge","answer":"The gateway and its firewall"},{"label":"The inner gate","answer":"The internal firewall"},{"label":"The lookout tower","answer":"The intrusion detection system"},{"label":"The outer court","answer":"The DMZ, facing outward"}],"extra":["The trunk port","The routing table"],"ok":"And a castle assumes everybody inside belongs there."}
+</script>
+```
+
 ## Where the division fails
 
 ### Dividing is not filtering
@@ -207,6 +225,12 @@ Nordvik could put its server, the office and the suppliers in separate zones, bu
 
 [→ Flat, divided, zoned, tested. Part 5 builds two groups, and the refused ping is the proof.]{.bridge}
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A router now joins the staff VLAN and the guest VLAN. What decides what may pass between them?","options":["A firewall rule somebody wrote, starting from default-deny","The 802.1Q label on each frame","The switch's table of card addresses","Nothing is needed - VLANs block unwanted traffic"],"correct":[0],"ok":"Right.","why":"Dividing a network creates a place for a rule; it does not create the rule. The moment a router joins two VLANs, everything is reachable in both directions until a rule says otherwise."}
+</script>
+```
+
 ## Building the division
 
 ### Two groups in the simulator
@@ -233,6 +257,12 @@ Switch# show vlan brief
   `switchport mode access`      Puts this port into access mode, for one group only
   `switchport access vlan 10`   Places this port in VLAN 10
   `show vlan brief`             Lists every VLAN and the ports that belong to it
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: five commands","instr":"Tap the commands in the order the chapter gives them (tap a step, then a slot - or just tap steps in order).","steps":["vlan 10","name Ansatte","switchport mode access","switchport access vlan 10","show vlan brief"],"ok":"And reading the table back is how you check the other four."}
+</script>
+```
 
 ### Worked example: one flat municipality
 

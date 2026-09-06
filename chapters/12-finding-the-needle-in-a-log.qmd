@@ -58,6 +58,15 @@ The names say it. `head` is the head of the file, `tail` is the tail, and `less`
   Reach for it   Meeting a format you have never seen   During an incident, which is most of the time   Reading a file you cannot guess your way around
   Give it        `head -n 20` for the first twenty      `tail -n 50` for the last fifty                 Space, `b`, slash, `n` and `q`
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: three ways to look","instr":"Sort each fact onto the tool it belongs to. None of the three opens the whole file.",
+ "buckets":["head","tail","less"],
+ "items":[["The first ten lines",0],["The last ten lines",1],["One screen at a time",2],["During an incident, start here",1],["A format you have never seen",0],["Space forward, slash searches, q leaves",2]],
+ "ok":"Sorted. A log is written downwards, so the newest line is at the bottom."}
+</script>
+```
+
 ### How the file ends
 
 ```{.bash}
@@ -145,6 +154,15 @@ In `grep` the star means any number of the character before it. That is not what
 
 The caret and the dollar anchor a pattern, and the other three describe what sits between them. These five cover every example in this chapter.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: five characters","instr":"Drag each pattern character onto what it matches. One character is a distractor: it joins commands, it matches nothing.",
+ "zones":[{"label":"The start of a line","answer":"^"},{"label":"The end of a line","answer":"$"},{"label":"Any one character","answer":"."},{"label":"Any number of the one before it","answer":"*"},{"label":"Any single digit","answer":"[0-9]"}],
+ "extra":["|"],
+ "ok":"Those five cover every example in this chapter. The vertical bar is the pipe from Part 4, not a pattern."}
+</script>
+```
+
 ### Building one pattern, step by step
 
 Each step is the one before it plus one idea. Nobody writes the last line out of their head. You add one idea at a time and read the result, because a pattern you built one step at a time is a pattern you can repair.
@@ -225,6 +243,15 @@ The option `-maxdepth 1` stops `find` from going down into subdirectories. Witho
 
 Shotts calls `find` the hard way and `locate` the easy way. `locate` answers the same question far faster, and it never looks at the disk: it reads an index that was built earlier, usually overnight. A file created this morning is not in it, and a file deleted this morning still is. Fast and possibly wrong, or slow and always true. During an incident you want the second.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: grep or find?","instr":"The two tools never overlap. Sort each fact onto the one it describes.",
+ "buckets":["grep","find"],
+ "items":[["Reads what is inside files",0],["Never opens a file, reads facts about it",1],["A signature search over a log",0],["Start, a test, an optional action",1],["-c counts the matching lines",0],["-mtime -1: changed in the last day",1]],
+ "ok":"Sorted. grep finds lines inside files; find finds the files themselves."}
+</script>
+```
+
 [→ The tools are small on purpose. Part 4 joins them, and decides where the answer lands.]{.bridge}
 
 ## Joining commands and redirecting output
@@ -281,6 +308,13 @@ A command has two output streams. Results travel on stream one, error messages t
   `ls /etc /finnesikke > ut.txt 2>&1`   Sends stream 2 wherever stream 1 goes
   `find / -type f 2>/dev/null`          The refusals go nowhere, and the results stay
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Read aloud: what does 2>&1 at the end of a command mean?","options":["Send stream two to wherever stream one is going","Append to the file instead of replacing it","Throw the error messages away","Run the two commands at once","Catch the results and discard the errors"],"correct":[0],
+ "ok":"Right.","why":"Results travel on stream one and errors on stream two; a plain arrow only catches stream one, and 2>&1 sends the errors where the results go."}
+</script>
+```
+
 [→ Sample, search, find, join. Part 5 puts three questions to one real log.]{.bridge}
 
 ## Three questions against one log
@@ -295,6 +329,13 @@ student@kali:~$ grep -E "Invalid user" auth.log
 ```
 
 The flag `-c` gives the count and leaves the matching lines out. A count is the answer that goes in a report, and the lines are what you read next. The second command asks a different question, about accounts this machine has never had. Somebody tried `admin`. That is a guess, not a mistake, and it is the book's **precursor**: "a sign that an incident may occur soon" [Jøsang, Sect. 14.5.2, p. 311]{.src}.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Somebody tried to log in as admin, an account this machine has never had. What is the book's name for that sign?","options":["A precursor","An indicator","A signature","A false alarm","An audit"],"correct":[0],
+ "ok":"Right.","why":"A precursor is a sign an incident may occur soon; an indicator is a sign one may already have occurred, like the jndi: string during Log4Shell."}
+</script>
+```
 
 ### Question two: who got in
 
@@ -317,6 +358,14 @@ student@kali:~$ grep -oE "from [0-9.]+" auth.log | sort | uniq -c | sort -rn
 ```
 
 Counting with `wc -l` after a pipe gives the same answer as `grep -c` did. The flag `-o` prints only the part that matched, so each line becomes one address. `sort` groups the identical lines, `uniq -c` counts each group, and `sort -rn` puts the biggest count first. On a real server this line is the one that shows three addresses responsible for ninety percent of the failures.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: where did they come from","instr":"Tap the pipeline's stages in the order they run to count attempts per address, biggest first.",
+ "steps":["grep -oE keeps only the matched addresses","sort brings identical lines together","uniq -c counts each group","sort -rn puts the biggest count first"],
+ "ok":"That is the pipeline. uniq only collapses neighbours, which is why sort comes before it."}
+</script>
+```
 
 ### Keeping the answer
 

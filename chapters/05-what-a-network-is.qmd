@@ -47,6 +47,12 @@ The machines in one building usually reach each other directly. That is a **LAN*
 
 Everything outside is reached through one way out, which is the router, and beyond it lies the **WAN**, "a computer network over long distances", typically fibre point-to-point [Jøsang, Sect. 6.1.2, p. 126]{.src}. The boundary is the point of this section. Inside it you control the machines and the rules. Outside it you are a guest on equipment that somebody else owns and configures.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: LAN or WAN?", "instr": "Sort each fact onto the kind of network it describes.", "buckets": ["LAN", "WAN"], "items": [["Connects nodes within a limited area", 0], ["Works with the internet closed", 0], ["The MAC address is enough to find hosts", 0], ["A network over long distances", 1], ["Reached through the one way out", 1], ["Equipment somebody else owns", 1]], "ok": "Sorted. Inside the boundary you control the machines and the rules; outside it you are a guest."}
+</script>
+```
+
 ### The same terms in Norwegian
 
 The slides, the coursebook and the NetAcad exams are in English. The Norwegian words are the ones used on NDLA and in the Arbeidsdag sessions, and you will meet both in the same week.
@@ -90,6 +96,12 @@ A data packet is simply a chunk of bits grouped together in a structure. [Jøsan
 
 Two separate reasons sit behind this, and a student who learns only one loses half the answer. The medium is shared, and one machine sending a huge file in one piece would make everyone else wait. And a single error means you re-send one small piece rather than the whole file. Fair sharing of the carrier, and cheap repair of damage.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "Why does a message travel in pieces rather than as one stream? Choose the two reasons the chapter gives.", "options": ["Fair sharing of the shared carrier", "Cheap repair: re-send one piece only", "Packets travel faster than a stream", "Encryption only works on small pieces"], "correct": [0, 1], "ok": "Right.", "why": "A student who learns only one reason loses half the answer: fair sharing of the carrier, and cheap repair of damage."}
+</script>
+```
+
 ### Protocols: rules agreed in advance
 
 Dividing a message and putting it back together works only because both ends agree on how. A set of rules agreed in advance is called a **protocol**. These are the rules from Part 1, now with their proper name. The book adds why protocols are standardised: "so that manufacturers can develop products for data communication that can communicate with each other" [Jøsang, Sect. 6.2, p. 127]{.src}. A protocol is an agreement written down in advance by people who never meet. Two machines from different makers, built years apart, exchange packets because both followed the same document.
@@ -116,6 +128,12 @@ Each layer solves one problem and knows nothing about how the others solve their
 :::
 
 You will hear people say "layer 7" or "layer 4". Those numbers come from the older OSI model, which has seven layers; the book maps them for you: application is OSI 7 (with 6 and 5), transport is 4, internet is 3, link is 2 and physical is 1 [Jøsang, Sect. 6.1.2, Fig. 6.4, p. 124]{.src}. This course uses the book's four names.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "order", "title": "Try it: down the stack", "instr": "Tap the steps in the order a packet is wrapped on its way out, per the book's walk-through.", "steps": ["Browser hands data to the application layer", "TCP adds the transport header", "IP adds the internet header", "The link layer adds the last header"], "ok": "Right. And the first router on the way unwraps only up to the IP layer before deciding where to forward."}
+</script>
+```
 
 ### A real packet in Wireshark
 
@@ -146,6 +164,12 @@ Every packet carries both addresses at once, and each device reads only the one 
   Read by        The switch                                 The router
 
 The book: "At the link layer, all addressing takes place with MAC addresses, therefore network equipment such as switches and routers must translate IP addresses into MAC addresses" [Jøsang, Sect. 6.1.2, p. 125]{.src}. Two questions, two answers: which device is this, and where on the network is it.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: which address?", "instr": "Sort each fact onto the address it describes.", "buckets": ["MAC address", "IP address"], "items": [["Fixed to the card by the manufacturer", 0], ["Valid on this cable only", 0], ["Read by the switch", 0], ["Never changes", 0], ["Handed out by the network it joins", 1], ["Valid across the whole internet", 1], ["Read by the router", 1], ["Changes with every new network", 1]], "ok": "Sorted. Which device is this, and where on the network is it: two questions, two addresses."}
+</script>
+```
 
 [→ Two addresses, three devices. Each device reads one of them, and one decides whether traffic passes at all.]{.bridge}
 
@@ -197,6 +221,12 @@ A firewall decides whether traffic is allowed at all. No other device on the net
 
 Two further points from the same page. "The standard basic rule for firewalls is default-deny, i.e. any type of traffic is rejected unless otherwise specified." And "A small misconfiguration can allow the firewall to let malicious traffic pass through." A person writes the rules, so a rule that allows something records a decision to allow it. A firewall decides only about traffic that passes through it; two machines on one switch never go near it.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "What is the standard basic rule for firewalls?", "options": ["Default-deny: reject unless a rule allows it", "Default-allow: pass unless a rule blocks it", "Inspect the message inside every packet", "Block traffic between machines on one switch"], "correct": [0], "ok": "Right.", "why": "Any type of traffic is rejected unless otherwise specified. And every rule that allows something records a person's decision to allow it."}
+</script>
+```
+
 ### The three devices together
 
 Three decisions happen in a row, and at home all three live in one small box. The decisions matter more than the number of devices.
@@ -216,6 +246,12 @@ Three devices each read one thing about a packet: the switch picks the port, the
 Nordvik's one firewall on the boundary is where a written rule decides whether a supplier's remote connection is allowed in at all. If nobody at Nordvik can say what that rule says, nobody at Nordvik has decided.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "match", "title": "Try it: three devices, three questions", "instr": "Drag each device onto the question it asks about every packet. Two terms are not middle devices and stay on the bench.", "zones": [{"label": "Which port does this go out of?", "answer": "Switch"}, {"label": "Which network is this handed to next?", "answer": "Router"}, {"label": "Is this allowed at all?", "answer": "Firewall"}], "extra": ["Host", "Wireshark"], "ok": "Right. And only the firewall's answer comes from rules a person wrote down."}
+</script>
+```
 
 [→ Parts, packets, addresses, devices. Part 5 shows all of it in one recording, on one screen.]{.bridge}
 

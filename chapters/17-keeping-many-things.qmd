@@ -84,6 +84,12 @@ A list keeps many values under one name, in order and with duplicates kept, beca
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"What does sorted(brukere) do to the list brukere?","options":["Hands back a new list in order, leaving the original alone","Rearranges brukere in place","Removes the duplicates and sorts the rest","Sorts the list and returns nothing"],"correct":[0],"ok":"Right.","why":"sorted() gives a new ordered copy; brukere.sort() is the one that rearranges in place."}
+</script>
+```
+
 [→ A position says where. Part 2 reaches a value by its name instead.]{.bridge}
 
 ## Dictionaries
@@ -168,6 +174,12 @@ This is the shape of JSON, which you will meet constantly without being taught i
 A dictionary answers what a list cannot: one value per name, so you can count per account or hold a whole record as named facts. A finding is rarely one number, so one dictionary per finding keeps its parts together, and a list of those dictionaries is what almost every security tool hands you.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: list or dictionary?","instr":"Which structure fits each question or property? Sort them.","buckets":["List","Dictionary"],"items":[["What came third",0],["How many for this account",1],["Values kept in order",0],["A value reached by name",1],["The whole record for one line",1],["Duplicates kept as separate facts",0]],"ok":"Choose the structure from the question you are asking."}
+</script>
+```
 
 [→ You could write the bookkeeping yourself. Part 3 is the three tools that already did.]{.bridge}
 
@@ -258,6 +270,18 @@ admin 1 ['127.0.0.1']
 
 A **set** keeps one of each. Adding something already in it is not an error and not a duplicate. A set has no order, so it answers which ones rather than in what sequence. Ask a set whether a value is in it and the answer comes back at once. The book: "A set stores a collection of unique values", and "Sets use an unordered representation" [Python for Everyone, Sect. 8.1]{.src}. Its worked example is "Counting Unique Words", which is this problem with words instead of addresses [Python for Everyone, Sect. 8.1, WE 1]{.src}. Two entries became one, and the count of distinct addresses is now correct; the book's "Dictionary of Sets" is exactly this shape [Python for Everyone, Sect. 8.3.1]{.src}.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: pick the right container","instr":"Drag each tool onto the job the chapter gives it. One term is a distractor and stays on the bench.","zones":[{"label":"A number per key","answer":"Counter"},{"label":"A list or set per key","answer":"defaultdict"},{"label":"One of each, no order","answer":"Set"},{"label":"A list that cannot be changed","answer":"Tuple"}],"extra":["sorted"],"ok":"Counter counts, defaultdict groups, a set keeps only the distinct ones."}
+</script>
+```
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"One counting script reported ('127.0.0.1', 3) where another reported the accounts. What went wrong in the first?","options":["It counted a field by position and landed on the address","Counter cannot hold account names","The log held no account names at all","The invalid user lines were skipped"],"correct":[0],"ok":"Right.","why":"The two extra words invalid user move every field after them, so name the field you want rather than counting to it."}
+</script>
+```
+
 [→ Counter came from a module. Part 4 is the library it belongs to, and the habit of looking first.]{.bridge}
 
 ## The standard library
@@ -298,6 +322,12 @@ print(ip_address('8.8.8.8') in ip_network('127.0.0.0/8'))     # False
 ### Look before you write
 
 A hand-written address check takes an afternoon and is wrong at the edges. The module took one import line and handles ranges, versions and malformed text. The same is true for dates, file paths, comma-separated files and JSON, all of which the book covers as toolboxes rather than as things to write yourself [Python for Everyone, Sect. 7.2 Toolbox 1; 7.3 Toolbox 2; 8.3 Toolbox 1]{.src}. The habit is two minutes of searching before any fiddly code.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Why does ip_address(\"999.999.999.999\") fail where a pattern of four numbers with dots would not?","options":["The module knows no such address can exist","The string is too long for a pattern to read","Numbers above 255 crash every pattern","The module accepts only private addresses"],"correct":[0],"ok":"Right.","why":"The difference is between something shaped like an address and something that is one; the module raises ValueError."}
+</script>
+```
 
 [→ Three structures, one import. Part 5 reads auth.log once and answers three questions.]{.bridge}
 
@@ -357,6 +387,12 @@ Capital One has published that unauthorised access to its data happened on 22 an
 Run the script on your own `/var/log/auth.log`. Then add a fourth question: which hour of the day had the most refusals. You need one more `Counter` and the slice `biter[0][11:13]` from L15.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: one pass over the log","instr":"Tap the steps in the order the finished script does them for each counted line.","steps":["Split the line into fields","Skip lines of another shape","Take account and address by label","Count and group per account","Report with most_common"],"ok":"One pass, three structures, and a last line that says what was skipped."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

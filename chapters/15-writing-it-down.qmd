@@ -59,6 +59,15 @@ A pipeline is one line, read left to right, with no memory between the steps. Th
 
 The first two rows are honest about the shell being good at this. The turn comes at row three, and the last row is the security reason: the book's incident-handling rule is that every step be documented so that it can be repeated and checked [Jøsang, Jøsang, Sect. 14.5.2, p. 311]{.src}, and a file with names in it is a document. A one-line pipeline in somebody's terminal history is not.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: one line, or a file?","instr":"Sort each fact onto the form it describes. The first rows of the chapter's table are honest: the shell is good at some of this.",
+ "buckets":["A one-line pipeline","A script in a file"],
+ "items":[["No memory between the steps",0],["React when a count passes ten: one if",1],["The same job for six files: a loop",1],["Names and lines to read next year",1],["One long line in terminal history",0],["Counting the refusals: comfortable",0]],
+ "ok":"Sorted. The turn comes when a question needs a decision or a second pass."}
+</script>
+```
+
 ### A script is a file the machine reads from the top
 
 A script is a plain text file holding those steps, one per line, saved with a name. Python starts at line one and works down. Nothing runs until it is reached.
@@ -132,6 +141,15 @@ The same character on the screen, and two entirely different things inside the m
   Ask `type()` about it   `class str`                        `class int`
 
 Row two is the whole table. Adding text joins it, adding numbers adds them, and the plus sign means both. The book's word for joining is concatenation: "Use the + operator to concatenate strings" [Python for Everyone, Sect. 2.4]{.src}.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: text or number?","instr":"The same character on the screen, two different things inside the machine. Sort each fact onto the value it is true of.",
+ "buckets":["The text '5'","The number 5"],
+ "items":[["Written inside quotation marks",0],["Added to itself gives 55",0],["Added to itself gives 10",1],["len() answers 1",0],["len() is an error",1],["type() says class int",1]],
+ "ok":"Sorted. Adding text joins it, adding numbers adds them, and the plus sign means both."}
+</script>
+```
 
 ### Converting between them
 
@@ -226,6 +244,15 @@ That is 4.3 percent of the file
 
 An f-string carries an `f` before the opening quote. Anything in braces is worked out and dropped in. It saves you converting numbers to text by hand, which the Part 2 table showed was needed. A colon inside the braces controls the format: `.1f` means one decimal place. The book covers the older `%` format operator [Python for Everyone, Sect. 2.5]{.src}; the f-string does the same job and is the one piece of syntax in this chapter worth memorising, because you will write it every day.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: take the text apart","instr":"Drag each operation onto what it does. Two chips are distractors and stay on the bench.",
+ "zones":[{"label":"Cuts a string at every run of spaces","answer":".split()"},{"label":"Removes whitespace from both ends","answer":".strip()"},{"label":"How many characters","answer":"len()"},{"label":"Does it begin with what you gave it?","answer":".startswith()"}],
+ "extra":[".lower()","repr()"],
+ "ok":"Those are the operations that take a log line apart. lower() converts case, and repr() only shows what is really in the string."}
+</script>
+```
+
 [→ Scripts meet people, and people mistype. Part 4 is what goes in, what comes out, and what breaks.]{.bridge}
 
 ## Input, output and errors
@@ -250,6 +277,13 @@ Anything from a person, a file or a network is text until you convert it. Type a
 
 The book says it in the same breath as introducing `input`: "To read an integer or floating-point value, use the input function followed by the int or float function" [Python for Everyone, Sect. 2.5]{.src}, with a programming tip called "Don't Wait to Convert". This is the most common first bug in Python, and it is worth meeting deliberately rather than by accident.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A person types 12 at an input() prompt. What does the script receive?","options":["The string '12'","The integer 12","The float 12.0","True","A ValueError, immediately"],"correct":[0],
+ "ok":"Right.","why":"input() always hands back a string, holding the characters that spell the number. Convert it with int() before computing - the book's tip is Don't Wait to Convert."}
+</script>
+```
+
 ### Watching it break
 
 ```{.bash}
@@ -266,6 +300,13 @@ The script asked for a number and the person typed the word *tre*. Python refuse
 ### Reading the red text
 
 A traceback is not the machine being angry. It is the machine being unusually specific. Read the last line first, because that line says what actually failed. Then the line above it names the file and the line number. Read it in this order, and most errors are fixed before you have finished reading. Beginners read tracebacks from the top and give up in the middle; the useful sentence is always at the bottom. The book's name for this kind of error is a **run-time error**, one the interpreter finds while running, as opposed to a **syntax error** it finds before starting [Python for Everyone, Sect. 1.7]{.src}.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"A traceback is twelve lines long. Which line do you read first?","options":["The last line, which says what actually failed","The first line, where Python started","The middle, where the code is quoted","None of it - rerun the script instead","The line with the file name, wherever it is"],"correct":[0],
+ "ok":"Right.","why":"The useful sentence is always at the bottom; the line above it names the file and the line number. Beginners read from the top and give up in the middle."}
+</script>
+```
 
 ### A name that is not there
 
@@ -311,6 +352,14 @@ student@kali:~$ python3 tellfeil.py      # after the f-string
 ```
 
 Four runs of the same file, each after one more line was added to it. The zero says the tally exists. The 69 says the file is being read. The 3 says the question works. Write four lines, run once, and a failure has four suspects; write one, run, and it has one. This is the book's advice made into a habit: "first do it by hand" and check each step against a known answer [Python for Everyone, Sect. 2.3]{.src}. The known answer here is L12's `grep -c`.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: four runs, one script","instr":"tellfeil.py was run after each new line was added. Tap the four printed answers in the order they appeared.",
+ "steps":["0 - the tally exists","69 - the file is being read","3 - the question works","3 refusals in auth.log - the sentence"],
+ "ok":"Write one line, run once, and a failure has one suspect. The known answer was L12's grep -c."}
+</script>
+```
 
 ### The finished script
 

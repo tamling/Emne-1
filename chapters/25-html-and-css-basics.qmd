@@ -60,6 +60,12 @@ What does a server send back first when a browser asks for a page? Which part of
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: how the page loads","instr":"Tap the steps in the order they happen when a visitor opens the report page.","steps":["Browser asks for index.html over HTTP","Server answers headers, then the text","A line in the head names stil.css","Browser sends a second request for it","The page is assembled in the browser"],"ok":"One visit, several requests - assembled, not delivered."}
+</script>
+```
+
 [→ An element is a tag pair around content. Part 2 is how HTML labels what the page says.]{.bridge}
 
 ## Elements
@@ -113,6 +119,12 @@ A web page is text fetched over HTTP that names the other files it needs, and HT
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: the skeleton","instr":"Drag each element name onto what it holds. Two chips stay on the bench.","zones":[{"label":"Facts about the page, not its content","answer":"head"},{"label":"Everything the visitor reads","answer":"body"},{"label":"Read this file as modern HTML","answer":"DOCTYPE"},{"label":"A header cell in a table row","answer":"th"}],"extra":["td","p"],"ok":"That is the skeleton every page has, and the order never changes."}
+</script>
+```
+
 [→ HTML says what a piece of text is. Part 3 is CSS, which says how it looks.]{.bridge}
 
 ## CSS
@@ -120,6 +132,12 @@ A web page is text fetched over HTTP that names the other files it needs, and HT
 ### What the page says, and how it looks
 
 HTML says what a piece of text is, and CSS says how it looks. A table stays a table whether it is printed blue or grey. Keeping the two apart lets one person write the text and another design it, and lets the same HTML be shown on a phone, on paper or by a screen reader. This is the L08 separation-of-concerns idea in a different domain: one job, one place.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: HTML or CSS?","instr":"One says what the text is, one says how it looks. Sort each item.","buckets":["HTML","CSS"],"items":[["Says what a piece of text is",0],["Says how it looks",1],["A tag pair around content",0],["Selectors, properties and values",1],["The class attribute names a group",0],["The rule that turns a row red",1]],"ok":"Kept apart, so one person can write and another design."}
+</script>
+```
 
 ### Selectors pick the elements to change
 
@@ -159,6 +177,12 @@ What does a selector do inside a CSS rule? Which character starts a class select
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"The red backup row should become orange instead. Which rule in the stylesheet changes?","options":[".varsel","th","body",".ingress","h1"],"correct":[0],"ok":"Right.","why":"A class selector starts with a dot and matches the class attribute; .varsel is the rule on the backup cell, and one line changes it everywhere."}
+</script>
+```
+
 [→ The browser follows the server's word on how to treat each file. Part 4 is what that means for security.]{.bridge}
 
 ## Files, types and trust
@@ -185,6 +209,12 @@ Which header tells the browser how to treat an arriving file? What privileges do
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"One JavaScript file loaded by a payment page is edited to copy card data as it is typed. What does the visitor notice?","options":["Nothing - the page works and the padlock looks the same","The padlock disappears from the address bar","The browser warns that a loaded file has changed","The payment fails, which reveals the attack"],"correct":[0],"ok":"Right.","why":"HTTPS protects data in transit, not from code running inside the page. The padlock is identical on a clean page and an edited one."}
+</script>
+```
+
 [→ One edited script, and the page still worked. Part 5 is the airline that learned that at scale.]{.bridge}
 
 ## British Airways, 2018
@@ -209,6 +239,12 @@ A page is not one file but a list of files the browser assembles, and every one 
 Nordvik's report page loads one stylesheet from its own server and nothing else. The day somebody adds a chart library from another company's server "to make it look nicer", that company gains the ability to change what runs on the page, and nobody at Nordvik will see the change. The question to ask first is the one from L04 and L11: whose code is this, and how would we know if it changed?
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: the British Airways chain","instr":"Tap the events of the 2018 case in the order they happened.","steps":["A supplier login without MFA is used","Attacker inside the network from 22 June","One payment-page script file is edited","Card data is copied to a look-alike domain","The ICO fines the airline 20 million pounds"],"ok":"The page and its padlock looked unchanged the whole way."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

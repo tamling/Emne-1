@@ -38,6 +38,12 @@ The processor calculates. The memory holds the current work and empties when the
 
 The distinction that matters for security is the one between memory and disk. Memory is emptied at power-off. Disk is not. That single difference explains why pulling the plug on a compromised machine destroys evidence of what was running, and why a stolen laptop is a disk problem, not a memory problem. It returns in Module 3 when you learn what a log is and where it lives.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "match", "title": "Try it: the four working parts", "instr": "Drag each part onto what it does inside the machine. Two terms are not among the four parts and stay on the bench.", "zones": [{"label": "Executes the software", "answer": "CPU"}, {"label": "Holds current work; empties at power-off", "answer": "Memory (RAM)"}, {"label": "Keeps programs and data permanently", "answer": "Disk"}, {"label": "Carries questions and answers in and out", "answer": "Network interface"}], "extra": ["Kernel", "Hypervisor"], "ok": "Right. And the difference between memory and disk is the one that matters most for security."}
+</script>
+```
+
 ### Software sits in layers
 
 Those four parts are only the bottom layer. Two layers of software sit above them, and each layer trusts the one below it.
@@ -60,6 +66,12 @@ The privilege level of a process limits which instructions it may execute and wh
 A program never touches hardware directly. It asks the operating system, and the operating system checks whether that request is allowed before carrying it out. The book states the enforcement mechanism: if a process "tries to call a disallowed instruction, the operating system will stop the process, which means that the program crashes" [Jøsang, Sect. 3.4, p. 49]{.src}. The operating system starts and stops programs, decides which gets the processor, and decides which may open the disk, the screen or the network.
 
 Every access control mechanism in this study programme rests on that one arrangement. The operating system stands between every program and everything the program wants.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "A process tries to call a disallowed instruction. What happens, according to the book?", "options": ["The operating system stops it - the program crashes", "The instruction runs at a lower privilege level", "The hardware executes it directly", "The process is promoted to level 0"], "correct": [0], "ok": "Right.", "why": "A program never touches hardware directly. The operating system checks every request, and a disallowed call means the process is stopped."}
+</script>
+```
 
 ### Every program runs as somebody
 
@@ -124,6 +136,12 @@ Data exists in two states, and each state needs a different kind of protection. 
   In motion   On a cable, over Wi-Fi, between two machines   Encryption of the connection (HTTPS), so that machines on the path cannot read it
 
 The same file needs both. One does not replace the other. Beginners mix them up constantly: encrypting a connection does nothing for a database sitting open on a server, and encrypting a disk does nothing for a password sent in the clear. The book's own illustration of this is a quotation it borrows from Gene Spafford: using encryption on the internet is like "using an armored car to deliver credit card information from someone who lives in a cardboard box to someone who lives on a park bench" [Jøsang, Sect. 3.2, Fig. 3.2, p. 45]{.src}. Strong transport security does not help if the endpoints are weak.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: at rest or in motion?", "instr": "Sort each item into the state of data it belongs to.", "buckets": ["At rest", "In motion"], "items": [["On a disk", 0], ["In a backup", 0], ["Protected by disk encryption", 0], ["Guarded by the building's locks", 0], ["On a cable", 1], ["Over Wi-Fi", 1], ["Between two machines", 1], ["Protected by HTTPS", 1]], "ok": "Sorted. The same file needs both kinds of protection, and one does not replace the other."}
+</script>
+```
 
 ### One document, several copies
 
@@ -221,6 +239,12 @@ SaaS, Software as a Service
 
 The trade-off is simple. More supplier responsibility means less work and less control. If you need more flexibility, the book says, the alternative is PaaS or IaaS, where you can build your own applications on top [Jøsang, Sect. 11.7.4, p. 266]{.src}.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type": "quiz", "title": "Check yourself", "q": "In PaaS, which is the topmost layer your organisation still runs itself?", "options": ["Applications", "Platform", "Operating system", "Hardware", "Networking"], "correct": [0], "ok": "Right.", "why": "PaaS hands the platform and every layer below it to the supplier; you run your own programs on top of it."}
+</script>
+```
+
 ### What you keep when you rent
 
 Some responsibilities never move to the supplier, whichever model you choose. The book's second figure on shared responsibility lists security functions rather than layers, and three of them stay with the customer in every column, including SaaS [Jøsang, Sect. 11.7.5, Fig. 11.9, p. 267]{.src}.
@@ -244,6 +268,12 @@ Renting the machines hands the supplier the running, patching and physical secur
 Nordvik runs Microsoft 365, so Microsoft patches the servers. Nordvik still owns who may sign in, the customer and drawing data, and answering for that data under Norwegian law. The two suppliers with remote access to the server in the cupboard are a Partner question in the book's four P's [Jøsang, Sect. 1.6, p. 11]{.src}, and nobody at Nordvik has written down what they may reach.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "buckets", "title": "Try it: whose job in SaaS?", "instr": "Nordvik runs Microsoft 365, a SaaS service. Sort each responsibility onto who carries it.", "buckets": ["The supplier", "Your organisation"], "items": [["Physical security of the halls", 0], ["Hypervisor and operating systems", 0], ["Network security of the service", 0], ["Data classification and management", 1], ["The laptops that connect", 1], ["Who may sign in", 1]], "ok": "Sorted. Renting the machines never hands over the data, the endpoints or the identities."}
+</script>
+```
 
 [→ Endpoint, data, network, cloud. Part 5 watches one real request cross all of them.]{.bridge}
 
@@ -288,6 +318,12 @@ Before reading on: what is the first question you would ask the caller? Write it
 4.  **Ask what the screen says.** An error text names the layer more reliably than the caller does.
 
 **Result.** Each question points at one of this chapter's parts. "The system is down" becomes "the file service at the supplier is not answering for anybody since nine", which is something a supplier can be phoned about. Naming the layer is the whole job of the first call.
+
+```{=html}
+<script type="application/json" class="qex">
+{"type": "order", "title": "Try it: the system is down", "instr": "Tap the four questions of the worked example in the order the chapter asks them, cheapest first.", "steps": ["Check the network - are colleagues online?", "Ask what they were doing when it stopped", "Ask whether anybody else has the problem", "Ask what the screen says"], "ok": "That order eliminates layer by layer, cheapest first, until the fault has a name a supplier can be phoned about."}
+</script>
+```
 
 ## Common misconceptions {#common-misconceptions .unnumbered}
 

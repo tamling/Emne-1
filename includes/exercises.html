@@ -105,7 +105,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
       if (!armed) {
         armed = true;
         s.textContent = 'Really show it';
-        setMsg(msg, 'Clicking straight to the answer is no fun — try it first. (Click again if you really want it.)', 'no');
+        setMsg(msg, 'Clicking straight to the answer is no fun - try it first. (Click again if you really want it.)', 'no');
         return;
       }
       armed = false;
@@ -220,7 +220,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         setMsg(msg, '✓ ' + (cfg.ok || 'Correct.'), 'ok');
         return;
       }
-      setMsg(msg, 'Not quite — the red ones went back. Try again.', 'no');
+      setMsg(msg, 'Not quite - the red ones went back. Try again.', 'no');
       setTimeout(function () {
         wrong.forEach(function (c) {
           var z = c.closest('.qex-zone'); if (z) z.classList.remove('qex-wrong', 'qex-filled');
@@ -288,7 +288,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         return;
       }
       wrong.forEach(function (c) { c.closest('.qex-zone').classList.add('qex-wrong'); });
-      setMsg(msg, 'Not quite — ' + wrong.length + ' item' + (wrong.length > 1 ? 's' : '') + ' went back. Try again.', 'no');
+      setMsg(msg, 'Not quite - ' + wrong.length + ' item' + (wrong.length > 1 ? 's' : '') + ' went back. Try again.', 'no');
       setTimeout(function () {
         wrong.forEach(function (c) { tray.appendChild(c); });
         zoneEls().forEach(function (z) { z.classList.remove('qex-wrong'); });
@@ -353,7 +353,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         setMsg(msg, '✓ ' + (cfg.ok || 'Correct order.'), 'ok');
         return;
       }
-      setMsg(msg, 'Not quite — the red steps went back. Try again.', 'no');
+      setMsg(msg, 'Not quite - the red steps went back. Try again.', 'no');
       setTimeout(function () {
         wrong.forEach(function (c) {
           var s = c.closest('.qex-slot'); if (s) s.classList.remove('qex-wrong', 'qex-filled');
@@ -421,7 +421,7 @@ body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color
         else if (o.classList.contains('qex-sel')) o.classList.add(want.indexOf(i) >= 0 ? 'qex-right' : 'qex-wrong');
       });
       if (right) { solved = true; setMsg(msg, '✓ ' + (cfg.ok || 'Correct.') + (cfg.why ? ' ' + cfg.why : ''), 'ok'); }
-      else setMsg(msg, 'Not quite — try again.', 'no');
+      else setMsg(msg, 'Not quite - try again.', 'no');
     }
     opts.addEventListener('click', function (e) {
       var o = e.target.closest('.qex-opt');

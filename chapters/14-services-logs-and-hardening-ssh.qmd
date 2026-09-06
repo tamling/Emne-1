@@ -89,6 +89,15 @@ Taken to Nordvik's undocumented server, the first command is `ps -eo user,pid,co
 
 :::
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: service, or just running?","instr":"Both are processes. Sort each fact onto the column it belongs to.",
+ "buckets":["A service","Just a running program"],
+ "items":[["Started by the system at boot",0],["Started by a person, in a session",1],["Restarted if it stops",0],["Gone when that person logs out",1],["systemd knows it, from a unit file",0],["Appears in ps and nowhere else",1]],
+ "ok":"Sorted. The left column is managed and written down; the right one lives only as long as somebody keeps it alive."}
+</script>
+```
+
 [→ You know what runs. Part 2 asks which of it answers the network, and on which address.]{.bridge}
 
 ## Listening ports
@@ -119,6 +128,13 @@ The name `telnet` is older than the web, and the command opens a plain connectio
 
 The address in front of the port number changes the answer completely. `0.0.0.0` means every address this machine has, including the one facing the network. `127.0.0.1` is the machine talking to itself, and nothing outside can reach it. Beginners read the port and skip the address in front of it. That address decides whether anybody outside the machine can reach the service at all, and it is set in the service's own configuration, not in any firewall.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"ss shows a database listening on 127.0.0.1:5432. Who can reach it?","options":["Only the machine itself","Anyone the firewall allows in","Every address the machine has","Nobody, because it is stopped","Only accounts in the adm group"],"correct":[0],
+ "ok":"Right.","why":"127.0.0.1 is the machine talking to itself, and nothing outside can reach it, whatever the firewall says. 0.0.0.0 is the address that faces the network."}
+</script>
+```
+
 ### Not the same as open in a firewall
 
   **Listening on the machine**         **Reachable from elsewhere**
@@ -141,6 +157,15 @@ From inside the machine, one line of `ss` turns a port into a program, a process
 On Nordvik's server, a database bound to `0.0.0.0` with the suppliers' remote access forwarded to the whole machine is reachable by both suppliers whether or not anybody meant it. Bound to `127.0.0.1`, it is reachable by nobody outside, whatever the firewall says.
 
 :::
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"buckets","title":"Try it: listening or reachable?","instr":"A service can be listening and still unreachable. Sort each fact onto the side it describes.",
+ "buckets":["Listening on the machine","Reachable from elsewhere"],
+ "items":[["A process is waiting on a port",0],["Traffic actually arrives on the port",1],["A decision the machine made",0],["A decision the network made",1],["ss and lsof can see it",0],["The firewall decides it",1]],
+ "ok":"Sorted. Both must be true before a service is exposed."}
+</script>
+```
 
 [→ Running and listening are now. Part 3 reads what the machine wrote down about before.]{.bridge}
 
@@ -168,6 +193,13 @@ The name `journalctl` is the journal plus `ctl` for control, and its own help sa
   `journalctl -g "Failed password"`   search the message text, as `grep` would
   `journalctl -S 12:00 -U 13:00`      one named hour, from noon to one
   `journalctl -u ssh -S -1h`          one service, inside the last hour
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"quiz","title":"Check yourself","q":"Which command shows only what the SSH service wrote, inside the last hour?","options":["journalctl -u ssh -S -1h","journalctl -n 50","journalctl -b","journalctl -f","journalctl -p err"],"correct":[0],
+ "ok":"Right.","why":"-u picks out one unit and -S is since. The others give the last fifty lines, this boot, a live feed, and errors and worse."}
+</script>
+```
 
 ### Not a complete record
 
@@ -220,6 +252,15 @@ Each line is one key and one value, which is all this file ever is. A commented-
 
 Every setting takes effect when the service reloads. Test from a second connection, and put the file back if that one is refused. The service that applies these settings is also the service carrying your own session, which is why the second connection matters.
 
+```{=html}
+<script type="application/json" class="qex">
+{"type":"match","title":"Try it: three settings","instr":"Drag each sshd_config line onto what it decides. Two lines from the shipped file are distractors.",
+ "zones":[{"label":"May root log in over the network?","answer":"PermitRootLogin no"},{"label":"Is a password accepted at all?","answer":"PasswordAuthentication no"},{"label":"The only accounts allowed in","answer":"AllowUsers anneli timo"}],
+ "extra":["X11Forwarding yes","UsePAM yes"],
+ "ok":"Three settings decide who may log in. Change them from a second connection, and put the file back if that one is refused."}
+</script>
+```
+
 ### The log becomes the defence
 
 The program `fail2ban` joins three things you already know into one defence. It counts refusals in the log, per address, inside a time window you choose. When the count is passed it asks the firewall to drop that address for a while. Counting lines came from L12, the lines themselves came from Part 3, and the block itself is L08's firewall. The book's category for this is a detective control that triggers a corrective one [Jøsang, Sect. 1.5, p. 8]{.src}, and it is the smallest working example of the loop from L01.
@@ -252,6 +293,14 @@ Four commands answer four questions, and you run them in this order every time. 
   `ss -tlnp`               a socket investigator        What is listening, on which address, and which program answers
   `systemctl list-units`   control the system manager   Which services this machine knows about and starts by itself
   `journalctl -S -1h`      query the journal            What the machine wrote down about the last hour
+
+```{=html}
+<script type="application/json" class="qex">
+{"type":"order","title":"Try it: survey a strange machine","instr":"Tap the four survey commands in the order the chapter says to run them, every time.",
+ "steps":["ps -eo user,pid,comm - what runs, as whom","ss -tlnp - what listens, which program","systemctl list-units - what starts itself","journalctl -S -1h - the last hour"],
+ "ok":"Four answers, written down as four short lists before you change anything at all."}
+</script>
+```
 
 ### Running, and listening
 

@@ -1,0 +1,407 @@
+<!-- Interactive exercise framework, loaded on every page via
+     include-after-body in _quarto.yml. Chapters declare exercises as
+     <script type="application/json" class="qex">{…}</script> blocks inside
+     a ```{=html} fence; this file renders them. Four types:
+
+     match   – drag/tap terms onto labelled targets
+               {type, title, instr?, zones:[{label, answer}…], extra:[…]?, ok?}
+     buckets – sort items into 2–4 category buckets
+               {type, title, instr?, buckets:[…], items:[[text, bucketIdx]…], ok?}
+     order   – put shuffled steps into the right sequence (tap in order)
+               {type, title, instr?, steps:[…], ok?}
+     quiz    – multiple choice, single or multiple correct
+               {type, title, q, options:[…], correct:[idx…], ok?, why?}
+
+     All styling is scoped under .qex-w and follows the light/dark themes
+     via body.quarto-dark. No external libraries. -->
+<style>
+.qex-w { border: 1px solid #bfc6d4; border-radius: 6px; padding: 1rem 1rem 1.1rem; margin: 1.2rem 0; background: #f8fafb; }
+.qex-w h4 { margin: 0 0 .3rem; font-size: 1rem; color: #0d1f4f; }
+.qex-w h4::before { content: "✏️ "; }
+.qex-w .qex-instr { font-size: .9rem; color: #444; margin-bottom: .8rem; }
+.qex-w .qex-chip { display: inline-block; padding: .28rem .75rem; border: 1px solid #0d1f4f; border-radius: 999px; background: #e9ecf4; color: #0d1f4f; font-size: .87rem; font-weight: 600; cursor: pointer; user-select: none; touch-action: none; margin: 2px; }
+.qex-w .qex-chip.qex-sel { outline: 3px solid #d8973c; }
+.qex-w .qex-chip.qex-ghost { position: fixed; z-index: 999; pointer-events: none; opacity: .9; }
+.qex-w .qex-tray { display: flex; flex-wrap: wrap; gap: .35rem; justify-content: center; margin-top: .7rem; min-height: 2.1rem; }
+.qex-w .qex-zones { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: center; }
+.qex-w .qex-zone { border: 2px dashed #8d99ae; border-radius: 8px; background: #fff; padding: 6px 8px; text-align: center; min-width: 150px; max-width: 240px; flex: 1 1 150px; min-height: 62px; transition: border-color .15s, background .15s; }
+.qex-w .qex-zone .qex-cap { font-size: .72rem; color: #5b6b73; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; }
+.qex-w .qex-zone.qex-over { border-color: #d8973c; background: #fbf1e1; }
+.qex-w .qex-zone.qex-filled { border-style: solid; border-color: #0d1f4f; }
+.qex-w .qex-zone.qex-wrong { border-color: #bf3d37; background: #f8eceb; }
+.qex-w .qex-zone.qex-right { border-color: #2e7d32; background: #e8f3e9; }
+.qex-w .qex-slots { display: flex; flex-direction: column; gap: .4rem; max-width: 560px; margin: 0 auto; }
+.qex-w .qex-slot { border: 2px dashed #8d99ae; border-radius: 8px; background: #fff; min-height: 2.2rem; padding: 3px 8px 3px 2.2rem; position: relative; text-align: left; transition: border-color .15s, background .15s; }
+.qex-w .qex-slot::before { content: attr(data-n); position: absolute; left: .65rem; top: 50%; transform: translateY(-50%); font-weight: 700; color: #8d99ae; }
+.qex-w .qex-slot.qex-filled { border-style: solid; border-color: #0d1f4f; }
+.qex-w .qex-slot.qex-wrong { border-color: #bf3d37; background: #f8eceb; }
+.qex-w .qex-slot.qex-right { border-color: #2e7d32; background: #e8f3e9; }
+.qex-w .qex-opts { display: flex; flex-direction: column; gap: .4rem; max-width: 560px; margin: .3rem auto 0; }
+.qex-w .qex-opt { border: 1px solid #8d99ae; border-radius: 8px; background: #fff; padding: .45rem .7rem .45rem 2.2rem; position: relative; cursor: pointer; text-align: left; font-size: .92rem; }
+.qex-w .qex-opt::before { content: ""; position: absolute; left: .65rem; top: 50%; transform: translateY(-50%); width: .95rem; height: .95rem; border: 2px solid #8d99ae; border-radius: 50%; background: transparent; }
+.qex-w.qex-multi .qex-opt::before { border-radius: 3px; }
+.qex-w .qex-opt.qex-sel { border-color: #0d1f4f; background: #e9ecf4; }
+.qex-w .qex-opt.qex-sel::before { background: #0d1f4f; border-color: #0d1f4f; }
+.qex-w .qex-opt.qex-right { border-color: #2e7d32; background: #e8f3e9; }
+.qex-w .qex-opt.qex-wrong { border-color: #bf3d37; background: #f8eceb; }
+.qex-w .qex-msg { text-align: center; font-size: .92rem; min-height: 1.4rem; margin-top: .7rem; font-weight: 600; }
+.qex-w .qex-msg.ok { color: #2e7d32; }
+.qex-w .qex-msg.no { color: #bf3d37; }
+.qex-w .qex-btns { text-align: center; margin-top: .5rem; }
+.qex-w .qex-btn { font-size: .8rem; padding: .28rem .95rem; border: 1px solid #8d99ae; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; margin: 0 .25rem; }
+.qex-w .qex-btn.qex-primary { border-color: #0d1f4f; background: #0d1f4f; color: #fff; }
+body.quarto-dark .qex-w { background: #23262b; border-color: #4a5568; }
+body.quarto-dark .qex-w h4 { color: #cfe0ff; }
+body.quarto-dark .qex-w .qex-instr { color: #b5bcc4; }
+body.quarto-dark .qex-w .qex-chip { background: #39415a; color: #dfe6f5; border-color: #8fa2d4; }
+body.quarto-dark .qex-w .qex-zone, body.quarto-dark .qex-w .qex-slot, body.quarto-dark .qex-w .qex-opt { background: #2c3036; border-color: #6b7686; color: inherit; }
+body.quarto-dark .qex-w .qex-zone .qex-cap { color: #9fb0b8; }
+body.quarto-dark .qex-w .qex-zone.qex-over { background: #3a3323; }
+body.quarto-dark .qex-w .qex-zone.qex-filled, body.quarto-dark .qex-w .qex-slot.qex-filled { border-color: #cfe0ff; }
+body.quarto-dark .qex-w .qex-zone.qex-wrong, body.quarto-dark .qex-w .qex-slot.qex-wrong, body.quarto-dark .qex-w .qex-opt.qex-wrong { background: #3a2626; }
+body.quarto-dark .qex-w .qex-zone.qex-right, body.quarto-dark .qex-w .qex-slot.qex-right, body.quarto-dark .qex-w .qex-opt.qex-right { background: #223527; border-color: #66bb6a; }
+body.quarto-dark .qex-w .qex-opt.qex-sel { background: #39415a; border-color: #8fa2d4; }
+body.quarto-dark .qex-w .qex-opt.qex-sel::before { background: #8fa2d4; border-color: #8fa2d4; }
+body.quarto-dark .qex-w .qex-btn.qex-primary { background: #39415a; border-color: #8fa2d4; }
+</style>
+<script>
+(function () {
+  'use strict';
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+  function shuffled(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function widgetShell(cfg) {
+    var w = el('div', 'qex-w');
+    w.appendChild(el('h4', null, cfg.title || 'Try it'));
+    if (cfg.instr) w.appendChild(el('p', 'qex-instr', cfg.instr));
+    return w;
+  }
+  function msgBar(w) { var m = el('div', 'qex-msg'); m.setAttribute('role', 'status'); w.appendChild(m); return m; }
+  function setMsg(m, text, cls) { m.textContent = text; m.className = 'qex-msg' + (cls ? ' ' + cls : ''); }
+  function btns(w, onReset, checkLabel, onCheck) {
+    var bar = el('div', 'qex-btns');
+    if (onCheck) {
+      var c = el('button', 'qex-btn qex-primary', checkLabel || 'Check');
+      c.type = 'button'; c.addEventListener('click', onCheck); bar.appendChild(c);
+    }
+    var r = el('button', 'qex-btn', 'Reset');
+    r.type = 'button'; r.addEventListener('click', onReset); bar.appendChild(r);
+    w.appendChild(bar);
+    return bar;
+  }
+  function makeChip(text) {
+    var c = el('span', 'qex-chip', text);
+    c.dataset.v = text;
+    c.setAttribute('tabindex', '0');
+    return c;
+  }
+
+  // shared tap-to-place plus pointer-drag between a tray and target boxes
+  function placer(w, tray, targets, canTake, onPlace, onTake) {
+    var selected = null, drag = null;
+    function clearSel() { if (selected) selected.classList.remove('qex-sel'); selected = null; }
+    w.addEventListener('click', function (e) {
+      var chip = e.target.closest('.qex-chip');
+      if (chip && chip.parentElement !== tray) { if (canTake()) onTake(chip); clearSel(); return; }
+      if (chip) {
+        var was = selected === chip;
+        clearSel();
+        if (!was) { selected = chip; chip.classList.add('qex-sel'); }
+        return;
+      }
+      var t = e.target.closest('.qex-drop');
+      if (t && selected && canTake()) { var c = selected; clearSel(); onPlace(c, t); }
+    });
+    w.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('qex-chip')) e.target.click();
+    });
+    w.addEventListener('pointerdown', function (e) {
+      var chip = e.target.closest('.qex-chip');
+      if (!chip || !canTake() || chip.parentElement !== tray) return;
+      drag = { chip: chip, ghost: null, x0: e.clientX, y0: e.clientY, moved: false };
+    });
+    document.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      if (!drag.moved && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 6) return;
+      if (!drag.ghost) {
+        drag.moved = true;
+        var g = drag.chip.cloneNode(true);
+        g.classList.add('qex-ghost');
+        document.body.appendChild(g);
+        drag.ghost = g;
+        drag.chip.style.opacity = '0.35';
+      }
+      drag.ghost.style.left = (e.clientX - drag.ghost.offsetWidth / 2) + 'px';
+      drag.ghost.style.top = (e.clientY - drag.ghost.offsetHeight / 2) + 'px';
+      targets().forEach(function (z) {
+        var r = z.getBoundingClientRect();
+        z.classList.toggle('qex-over',
+          e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom);
+      });
+    });
+    document.addEventListener('pointerup', function (e) {
+      if (!drag) return;
+      var d = drag; drag = null;
+      if (d.ghost) d.ghost.remove();
+      d.chip.style.opacity = '';
+      if (!d.moved) return;
+      var hit = targets().find(function (z) {
+        var r = z.getBoundingClientRect();
+        return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      });
+      targets().forEach(function (z) { z.classList.remove('qex-over'); });
+      clearSel();
+      if (hit) onPlace(d.chip, hit);
+    });
+    return { clearSel: clearSel };
+  }
+
+  // ── match: chips onto labelled zones ─────────────────────────────────
+  function buildMatch(cfg, w) {
+    var zones = el('div', 'qex-zones'), tray = el('div', 'qex-tray');
+    w.appendChild(zones); w.appendChild(tray);
+    var msg = msgBar(w);
+    var solved = false;
+    function zoneEls() { return Array.prototype.slice.call(zones.children); }
+    function reset() {
+      solved = false;
+      zones.innerHTML = ''; tray.innerHTML = '';
+      cfg.zones.forEach(function (z) {
+        var d = el('div', 'qex-zone qex-drop');
+        d.dataset.answer = z.answer;
+        d.appendChild(el('div', 'qex-cap', z.label));
+        zones.appendChild(d);
+      });
+      var terms = cfg.zones.map(function (z) { return z.answer; }).concat(cfg.extra || []);
+      shuffled(terms).forEach(function (t) { tray.appendChild(makeChip(t)); });
+      setMsg(msg, '', '');
+    }
+    function check() {
+      var zs = zoneEls();
+      if (zs.some(function (z) { return !z.querySelector('.qex-chip'); })) return;
+      var wrong = [];
+      zs.forEach(function (z) {
+        var chip = z.querySelector('.qex-chip');
+        if (chip.dataset.v === z.dataset.answer) z.classList.add('qex-right');
+        else { z.classList.add('qex-wrong'); wrong.push(chip); }
+      });
+      if (!wrong.length) {
+        solved = true;
+        setMsg(msg, '✓ ' + (cfg.ok || 'Correct.'), 'ok');
+        return;
+      }
+      setMsg(msg, 'Not quite — the red ones went back. Try again.', 'no');
+      setTimeout(function () {
+        wrong.forEach(function (c) {
+          var z = c.closest('.qex-zone'); if (z) z.classList.remove('qex-wrong', 'qex-filled');
+          tray.appendChild(c);
+        });
+      }, 900);
+    }
+    placer(w, tray, zoneEls,
+      function () { return !solved; },
+      function (chip, zone) {
+        if (zone.querySelector('.qex-chip')) return;
+        zone.appendChild(chip); zone.classList.add('qex-filled'); check();
+      },
+      function (chip) {
+        var z = chip.closest('.qex-zone');
+        if (z) z.classList.remove('qex-filled', 'qex-wrong', 'qex-right');
+        tray.appendChild(chip); setMsg(msg, '', '');
+      });
+    btns(w, reset);
+    reset();
+  }
+
+  // ── buckets: classify chips into category buckets ────────────────────
+  function buildBuckets(cfg, w) {
+    var zones = el('div', 'qex-zones'), tray = el('div', 'qex-tray');
+    w.appendChild(zones); w.appendChild(tray);
+    var msg = msgBar(w);
+    var solved = false;
+    function zoneEls() { return Array.prototype.slice.call(zones.children); }
+    function reset() {
+      solved = false;
+      zones.innerHTML = ''; tray.innerHTML = '';
+      cfg.buckets.forEach(function (b, i) {
+        var d = el('div', 'qex-zone qex-drop');
+        d.dataset.b = String(i);
+        d.appendChild(el('div', 'qex-cap', b));
+        zones.appendChild(d);
+      });
+      shuffled(cfg.items).forEach(function (it) {
+        var c = makeChip(it[0]); c.dataset.b = String(it[1]); tray.appendChild(c);
+      });
+      setMsg(msg, '', '');
+    }
+    function check() {
+      if (tray.querySelector('.qex-chip')) return;
+      var wrong = [];
+      zoneEls().forEach(function (z) {
+        Array.prototype.slice.call(z.querySelectorAll('.qex-chip')).forEach(function (c) {
+          if (c.dataset.b !== z.dataset.b) wrong.push(c);
+        });
+      });
+      if (!wrong.length) {
+        solved = true;
+        zoneEls().forEach(function (z) { z.classList.add('qex-right'); });
+        setMsg(msg, '✓ ' + (cfg.ok || 'Correct.'), 'ok');
+        return;
+      }
+      wrong.forEach(function (c) { c.closest('.qex-zone').classList.add('qex-wrong'); });
+      setMsg(msg, 'Not quite — ' + wrong.length + ' item' + (wrong.length > 1 ? 's' : '') + ' went back. Try again.', 'no');
+      setTimeout(function () {
+        wrong.forEach(function (c) { tray.appendChild(c); });
+        zoneEls().forEach(function (z) { z.classList.remove('qex-wrong'); });
+      }, 900);
+    }
+    placer(w, tray, zoneEls,
+      function () { return !solved; },
+      function (chip, zone) { zone.appendChild(chip); check(); },
+      function (chip) { tray.appendChild(chip); setMsg(msg, '', ''); });
+    btns(w, reset);
+    reset();
+  }
+
+  // ── order: tap the shuffled steps in the right sequence ──────────────
+  function buildOrder(cfg, w) {
+    var slots = el('div', 'qex-slots'), tray = el('div', 'qex-tray');
+    w.appendChild(slots); w.appendChild(tray);
+    var msg = msgBar(w);
+    var solved = false;
+    function slotEls() { return Array.prototype.slice.call(slots.children); }
+    function reset() {
+      solved = false;
+      slots.innerHTML = ''; tray.innerHTML = '';
+      cfg.steps.forEach(function (_, i) {
+        var s = el('div', 'qex-slot qex-drop');
+        s.dataset.n = String(i + 1);
+        s.setAttribute('data-n', String(i + 1));
+        slots.appendChild(s);
+      });
+      var arr = shuffled(cfg.steps);
+      // reshuffle if it accidentally comes out already solved
+      if (arr.join('') === cfg.steps.join('') && cfg.steps.length > 1) arr = shuffled(cfg.steps);
+      arr.forEach(function (t) {
+        var c = makeChip(t);
+        c.dataset.i = String(cfg.steps.indexOf(t));
+        tray.appendChild(c);
+      });
+      setMsg(msg, '', '');
+    }
+    function firstEmpty() {
+      return slotEls().find(function (s) { return !s.querySelector('.qex-chip'); });
+    }
+    function check() {
+      if (firstEmpty()) return;
+      var wrong = [];
+      slotEls().forEach(function (s, i) {
+        var chip = s.querySelector('.qex-chip');
+        if (Number(chip.dataset.i) === i) s.classList.add('qex-right');
+        else { s.classList.add('qex-wrong'); wrong.push(chip); }
+      });
+      if (!wrong.length) {
+        solved = true;
+        setMsg(msg, '✓ ' + (cfg.ok || 'Correct order.'), 'ok');
+        return;
+      }
+      setMsg(msg, 'Not quite — the red steps went back. Try again.', 'no');
+      setTimeout(function () {
+        wrong.forEach(function (c) {
+          var s = c.closest('.qex-slot'); if (s) s.classList.remove('qex-wrong', 'qex-filled');
+          tray.appendChild(c);
+        });
+      }, 900);
+    }
+    placer(w, tray, slotEls,
+      function () { return !solved; },
+      function (chip, slot) {
+        if (slot.querySelector('.qex-chip')) slot = firstEmpty();
+        if (!slot) return;
+        slot.appendChild(chip); slot.classList.add('qex-filled'); check();
+      },
+      function (chip) {
+        var s = chip.closest('.qex-slot');
+        if (s) s.classList.remove('qex-filled', 'qex-wrong', 'qex-right');
+        tray.appendChild(chip); setMsg(msg, '', '');
+      });
+    btns(w, reset);
+    reset();
+  }
+
+  // ── quiz: single- or multi-answer multiple choice ────────────────────
+  function buildQuiz(cfg, w) {
+    var multi = cfg.correct.length > 1;
+    if (multi) w.classList.add('qex-multi');
+    if (cfg.q) w.appendChild(el('p', 'qex-instr', cfg.q));
+    var opts = el('div', 'qex-opts');
+    w.appendChild(opts);
+    var msg = msgBar(w);
+    var solved = false, order = [];
+    function reset() {
+      solved = false;
+      opts.innerHTML = '';
+      order = shuffled(cfg.options.map(function (_, i) { return i; }));
+      order.forEach(function (idx) {
+        var o = el('div', 'qex-opt', cfg.options[idx]);
+        o.dataset.i = String(idx);
+        o.setAttribute('tabindex', '0');
+        opts.appendChild(o);
+      });
+      setMsg(msg, '', '');
+    }
+    function check() {
+      if (solved) return;
+      var sel = Array.prototype.slice.call(opts.querySelectorAll('.qex-opt.qex-sel'));
+      if (!sel.length) { setMsg(msg, multi ? 'Pick the answers first.' : 'Pick an answer first.', 'no'); return; }
+      var picked = sel.map(function (o) { return Number(o.dataset.i); }).sort();
+      var want = cfg.correct.slice().sort();
+      var right = picked.length === want.length && picked.every(function (v, i) { return v === want[i]; });
+      Array.prototype.slice.call(opts.children).forEach(function (o) {
+        var i = Number(o.dataset.i);
+        o.classList.remove('qex-right', 'qex-wrong');
+        if (right) { if (want.indexOf(i) >= 0) o.classList.add('qex-right'); }
+        else if (o.classList.contains('qex-sel')) o.classList.add(want.indexOf(i) >= 0 ? 'qex-right' : 'qex-wrong');
+      });
+      if (right) { solved = true; setMsg(msg, '✓ ' + (cfg.ok || 'Correct.') + (cfg.why ? ' ' + cfg.why : ''), 'ok'); }
+      else setMsg(msg, 'Not quite — try again.', 'no');
+    }
+    opts.addEventListener('click', function (e) {
+      var o = e.target.closest('.qex-opt');
+      if (!o || solved) return;
+      if (!multi) Array.prototype.slice.call(opts.children).forEach(function (x) { if (x !== o) x.classList.remove('qex-sel'); });
+      o.classList.toggle('qex-sel');
+      Array.prototype.slice.call(opts.children).forEach(function (x) { x.classList.remove('qex-right', 'qex-wrong'); });
+      setMsg(msg, '', '');
+    });
+    opts.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && e.target.classList.contains('qex-opt')) e.target.click();
+    });
+    btns(w, reset, 'Check', check);
+    reset();
+  }
+
+  var BUILDERS = { match: buildMatch, buckets: buildBuckets, order: buildOrder, quiz: buildQuiz };
+
+  document.querySelectorAll('script.qex[type="application/json"]').forEach(function (s) {
+    var cfg;
+    try { cfg = JSON.parse(s.textContent); } catch (e) { return; }
+    var build = BUILDERS[cfg.type];
+    if (!build) return;
+    var w = widgetShell(cfg);
+    try { build(cfg, w); } catch (e) { return; }
+    s.parentNode.insertBefore(w, s);
+  });
+})();
+</script>

@@ -63,8 +63,7 @@ Every access control mechanism in this study programme rests on that one arrange
 
 ### Every program runs as somebody
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Every program runs as one account and can reach exactly what that account can reach, and nothing more. So the operating system's core job is deciding who may touch what, and an account with more access than it needs makes every break-in worse.
 
@@ -74,8 +73,7 @@ Your browser opens your files because you can open them. If an attacker takes ov
 
 The book makes the same point about the very top of the stack. Attacks "usually enter through one of the input channels, and will typically attempt to take control of (privileged) programs running in the microprocessor" [Jøsang, Sect. 3.1, p. 45]{.src}. A program with high privilege is worth more to an attacker than one with low privilege, which is why services should not run as an all-powerful account.
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 On Nordvik's one server, a service left running as an all-powerful account means a single break-in reaches everything the server holds: the drawings, the customer list, the backups if they sit on the same machine.
 
@@ -235,15 +233,13 @@ Some responsibilities never move to the supplier, whichever model you choose. Th
 
 The book also adds two responsibilities that supplier models usually leave out: protection against corruption and insider threats at the supplier, and protection against legal access by foreign states, because supplier staff "can technically access customers' data" and governments may be able to demand it [Jøsang, Sect. 11.7.5, pp. 267--268]{.src}. In Norwegian law the supplier is the *databehandler* and your organisation remains the *behandlingsansvarlig*. The contract between them is the *databehandleravtale*.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Renting the machines hands the supplier the running, patching and physical security, but never the responsibility. You still decide who may log in, classify the data, secure the devices that connect, and answer for it in law.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik runs Microsoft 365, so Microsoft patches the servers. Nordvik still owns who may sign in, the customer and drawing data, and answering for that data under Norwegian law. The two suppliers with remote access to the server in the cupboard are a Partner question in the book's four P's [Jøsang, Sect. 1.6, p. 11]{.src}, and nobody at Nordvik has written down what they may reach.
 

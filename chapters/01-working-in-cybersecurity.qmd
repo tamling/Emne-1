@@ -112,6 +112,198 @@ The parcel message that has reached almost every phone in the country is an atta
 
 Impersonation is where most incidents begin, because it is easier than breaking anything. Notice also that one failure often causes another. Ransomware stops the work and, in its modern form, usually copies the data out first. A stolen login leads to a changed invoice. Learn the four, and learn to see the mixtures.
 
+```{=html}
+<!-- Interactive exercise: drag the three CIA-triad goals onto the triangle.
+     Self-contained (style + markup + script); scoped under .cia-widget.
+     Dark mode follows Quarto's body.quarto-dark class. -->
+<style>
+.cia-widget { border: 1px solid #bfc6d4; border-radius: 6px; padding: 1rem 1rem 1.2rem; margin: 1.2rem 0; background: #f8fafb; }
+.cia-widget h4 { margin: 0 0 .3rem; font-size: 1rem; color: #0d1f4f; }
+.cia-widget .cia-instr { font-size: .9rem; color: #444; margin-bottom: .8rem; }
+.cia-widget .cia-stage { position: relative; max-width: 560px; height: 330px; margin: 0 auto; }
+.cia-widget svg.cia-tri { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cia-widget .cia-zone { position: absolute; width: 168px; min-height: 58px; border: 2px dashed #8d99ae; border-radius: 8px; background: #fff; padding: 4px 6px; text-align: center; transition: border-color .15s, background .15s; }
+.cia-widget .cia-zone .cia-cap { font-size: .72rem; color: #5b6b73; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; }
+.cia-widget .cia-zone.cia-over { border-color: #d8973c; background: #fbf1e1; }
+.cia-widget .cia-zone.cia-filled { border-style: solid; border-color: #0d1f4f; }
+.cia-widget .cia-zone.cia-wrong { border-color: #bf3d37; background: #f8eceb; }
+.cia-widget .cia-zone.cia-right { border-color: #2e7d32; background: #e8f3e9; }
+.cia-widget .cia-tray { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: .6rem; min-height: 2.2rem; }
+.cia-widget .cia-chip { display: inline-block; padding: .3rem .8rem; border: 1px solid #0d1f4f; border-radius: 999px; background: #e9ecf4; color: #0d1f4f; font-size: .88rem; font-weight: 600; cursor: grab; user-select: none; touch-action: none; }
+.cia-widget .cia-chip.cia-sel { outline: 3px solid #d8973c; }
+.cia-widget .cia-chip.cia-drag { position: fixed; z-index: 999; pointer-events: none; opacity: .9; cursor: grabbing; }
+.cia-widget .cia-zone .cia-chip { cursor: pointer; margin-top: 2px; }
+.cia-widget .cia-msg { text-align: center; font-size: .92rem; min-height: 1.4rem; margin-top: .7rem; font-weight: 600; }
+.cia-widget .cia-msg.ok { color: #2e7d32; }
+.cia-widget .cia-msg.no { color: #bf3d37; }
+.cia-widget .cia-reset { display: block; margin: .5rem auto 0; font-size: .8rem; padding: .25rem .9rem; border: 1px solid #8d99ae; border-radius: 4px; background: transparent; color: inherit; cursor: pointer; }
+body.quarto-dark .cia-widget { background: #23262b; border-color: #4a5568; }
+body.quarto-dark .cia-widget h4 { color: #cfe0ff; }
+body.quarto-dark .cia-widget .cia-instr { color: #b5bcc4; }
+body.quarto-dark .cia-widget .cia-zone { background: #2c3036; border-color: #6b7686; }
+body.quarto-dark .cia-widget .cia-zone.cia-over { background: #3a3323; }
+body.quarto-dark .cia-widget .cia-zone.cia-filled { border-color: #cfe0ff; }
+body.quarto-dark .cia-widget .cia-zone.cia-wrong { background: #3a2626; }
+body.quarto-dark .cia-widget .cia-zone.cia-right { background: #223527; border-color: #66bb6a; }
+body.quarto-dark .cia-widget .cia-chip { background: #39415a; color: #dfe6f5; border-color: #8fa2d4; }
+body.quarto-dark .cia-widget .cia-zone .cia-cap { color: #9fb0b8; }
+@media (max-width: 480px) { .cia-widget .cia-zone { width: 128px; } .cia-widget .cia-stage { height: 300px; } }
+</style>
+<div class="cia-widget" id="cia-triad-ex">
+  <h4>Try it: build the CIA triad</h4>
+  <p class="cia-instr">Three of the six terms below form the CIA triad. Drag each one onto the corner of the
+  triangle that matches the failure it names (or tap a term, then tap a corner). Tap a placed term to take it
+  back. The three wrong terms stay on the bench.</p>
+  <div class="cia-stage">
+    <svg class="cia-tri" viewBox="0 0 560 330" aria-hidden="true">
+      <polygon points="280,52 78,268 482,268" fill="none" stroke="#8d99ae" stroke-width="2.5" stroke-linejoin="round"/>
+    </svg>
+    <div class="cia-zone" data-answer="Availability"    style="left:50%; top:12px; transform:translateX(-50%);"><div class="cia-cap">It stops working</div></div>
+    <div class="cia-zone" data-answer="Confidentiality" style="left:2px;  bottom:6px;"><div class="cia-cap">Someone reads it</div></div>
+    <div class="cia-zone" data-answer="Integrity"       style="right:2px; bottom:6px;"><div class="cia-cap">Someone changes it</div></div>
+  </div>
+  <div class="cia-tray" id="cia-tray"></div>
+  <div class="cia-msg" id="cia-msg" role="status"></div>
+  <button class="cia-reset" id="cia-reset" type="button">Reset</button>
+</div>
+<script>
+(function () {
+  var root = document.getElementById('cia-triad-ex');
+  var tray = document.getElementById('cia-tray');
+  var msg = document.getElementById('cia-msg');
+  var zones = Array.prototype.slice.call(root.querySelectorAll('.cia-zone'));
+  var TERMS = ['Availability', 'Confidentiality', 'Integrity', 'Authenticity', 'Non-repudiation', 'Privacy'];
+  var selected = null, solved = false;
+
+  function makeChip(term) {
+    var c = document.createElement('span');
+    c.className = 'cia-chip';
+    c.textContent = term;
+    c.dataset.goal = term;
+    c.setAttribute('tabindex', '0');
+    return c;
+  }
+
+  function setMsg(text, cls) { msg.textContent = text; msg.className = 'cia-msg' + (cls ? ' ' + cls : ''); }
+
+  function reset() {
+    solved = false; selected = null;
+    zones.forEach(function (z) {
+      z.className = 'cia-zone';
+      var chip = z.querySelector('.cia-chip');
+      if (chip) chip.remove();
+    });
+    tray.innerHTML = '';
+    // shuffle the bench so the order gives nothing away
+    TERMS.slice().sort(function () { return Math.random() - 0.5; })
+      .forEach(function (t) { tray.appendChild(makeChip(t)); });
+    setMsg('', '');
+  }
+
+  function place(chip, zone) {
+    if (solved || zone.querySelector('.cia-chip')) return;
+    chip.classList.remove('cia-sel');
+    zone.appendChild(chip);
+    zone.classList.add('cia-filled');
+    selected = null;
+    check();
+  }
+
+  function takeBack(chip) {
+    if (solved) return;
+    var zone = chip.closest('.cia-zone');
+    if (zone) zone.className = 'cia-zone';
+    tray.appendChild(chip);
+    setMsg('', '');
+  }
+
+  function check() {
+    var filled = zones.filter(function (z) { return z.querySelector('.cia-chip'); });
+    if (filled.length < zones.length) return;
+    var wrong = [];
+    zones.forEach(function (z) {
+      var chip = z.querySelector('.cia-chip');
+      if (chip.dataset.goal === z.dataset.answer) { z.classList.add('cia-right'); }
+      else { z.classList.add('cia-wrong'); wrong.push(chip); }
+    });
+    if (wrong.length === 0) {
+      solved = true;
+      setMsg('✓ Correct — confidentiality, integrity and availability form the CIA triad. Authenticity supports all three but is not one of its corners.', 'ok');
+      return;
+    }
+    var usedAuth = wrong.some(function (c) { return c.dataset.goal === 'Authenticity'; });
+    setMsg(usedAuth
+      ? 'Not quite — authenticity is the fourth goal, but it is not a corner of the triad. The red ones went back.'
+      : 'Not quite — the red ones went back to the bench. Try again.', 'no');
+    setTimeout(function () {
+      wrong.forEach(takeBack);
+      zones.forEach(function (z) { z.classList.remove('cia-wrong'); });
+    }, 900);
+  }
+
+  // click-to-select, click-zone-to-place (works everywhere, incl. keyboard)
+  root.addEventListener('click', function (e) {
+    var chip = e.target.closest('.cia-chip');
+    if (chip && chip.closest('.cia-zone')) { takeBack(chip); return; }
+    if (chip && !chip.classList.contains('cia-drag')) {
+      if (selected) selected.classList.remove('cia-sel');
+      selected = (selected === chip) ? null : chip;
+      if (selected) selected.classList.add('cia-sel');
+      return;
+    }
+    var zone = e.target.closest('.cia-zone');
+    if (zone && selected) place(selected, zone);
+  });
+  root.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('cia-chip')) e.target.click();
+  });
+
+  // pointer-based dragging (mouse and touch)
+  var drag = null;
+  root.addEventListener('pointerdown', function (e) {
+    var chip = e.target.closest('.cia-chip');
+    if (!chip || solved || chip.closest('.cia-zone')) return;
+    drag = { chip: chip, ghost: null, x0: e.clientX, y0: e.clientY, moved: false };
+  });
+  document.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.x0, e.clientY - drag.y0) < 6) return;
+    if (!drag.ghost) {
+      drag.moved = true;
+      var g = drag.chip.cloneNode(true);
+      g.classList.add('cia-drag');
+      document.body.appendChild(g);
+      drag.ghost = g;
+      drag.chip.style.opacity = '0.35';
+    }
+    drag.ghost.style.left = (e.clientX - drag.ghost.offsetWidth / 2) + 'px';
+    drag.ghost.style.top = (e.clientY - drag.ghost.offsetHeight / 2) + 'px';
+    zones.forEach(function (z) {
+      var r = z.getBoundingClientRect();
+      z.classList.toggle('cia-over',
+        e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom);
+    });
+  });
+  document.addEventListener('pointerup', function (e) {
+    if (!drag) return;
+    var d = drag; drag = null;
+    if (d.ghost) d.ghost.remove();
+    d.chip.style.opacity = '';
+    if (!d.moved) return; // plain click: the click handler does selection
+    var target = zones.find(function (z) {
+      var r = z.getBoundingClientRect();
+      return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    });
+    zones.forEach(function (z) { z.classList.remove('cia-over'); });
+    if (target) place(d.chip, target);
+  });
+
+  document.getElementById('cia-reset').addEventListener('click', reset);
+  reset();
+})();
+</script>
+```
+
 ### Not a technology problem
 
 There is a belief, common among people who have never worked in the field, that security is a product. You buy it once, it has a switch on the side, and the problem is solved. The Hydro attack is the general argument against that belief. Hydro had bought security products. The way in was still a person doing an ordinary job in an ordinary way.
@@ -125,15 +317,13 @@ The book says this in its own vocabulary. Vulnerabilities come in three categori
   "If we protect the systems well enough, nothing will ever happen."   That was the thinking until around 2000; perfect security is unattainable, so detection and correction are needed too [Jøsang, Sect. 1.5, p. 9]{.src}.
   "We are too small to matter."                                        Threat actors scan for anything that answers; see Part 4.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Every incident has two halves. Something technical was possible, and something a person did was entirely reasonable. Security work that only looks at the machines misses half of every incident.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 At Nordvik, a trusted supplier's attachment or a convincing message would open the door as easily as any software flaw, and the person who clicked would have done nothing careless. That is the ordinary shape of the human half.
 
@@ -272,8 +462,7 @@ Read a real advert for any of the starting jobs and the requirement list is shor
 
 On certificates: ISC2's Certified in Cybersecurity is the entry-level one, and CompTIA Security+ is the one Norwegian adverts most often name. Neither replaces the two years.
 
-::: {.callout-warning}
-## Before L02
+::: {.callout-warning title="Before L02"}
 
 Find one live advert on finn.no, arbeidsplassen.nav.no or Jobbnorge for a service desk, operations or SOC role. Mark each requirement that this course covers. Most students find that it covers nearly all of them.
 
@@ -330,15 +519,13 @@ Nothing in this chain involves a decision about the victim. A scan gets an answe
 
 The book puts the general rule in its risk triangle: the magnitude of a risk grows with asset value, threat strength and vulnerability severity, and since it is hard to reduce assets or threats, reducing vulnerabilities is the best option in most cases [Jøsang, Sect. 1.8, Fig. 1.9, p. 13]{.src}. The chain above is a vulnerability being found. Patching it is what prevention in Part 2 was about.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Most attackers are after money and take the easiest way in. A scan finds whoever answers, so a small firm is hit not because it was chosen, but because it matched a pattern.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik has no security staff and two suppliers with standing remote access. To an automated scan it is simply something that answers. The book's warning about supply chains applies directly: vulnerabilities in a supplier cannot be directly controlled by the organisation, and the usual answer is to write security requirements into the contract [Jøsang, Sect. 1.4, p. 6]{.src}.
 

@@ -62,15 +62,13 @@ You met this distinction in L05 and L08. Today you add the routing detail.
 
 One socket on the back faces your provider and the rest of the world. The other four face your own machines. Routing is what happens between those two sides of the box. As L05 said, the box on the wall is a router, a switch, a firewall and a wireless access point in one shell, and the router part is the only one that crosses between the two sides.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A router only decides which port leads towards the destination, then forgets the packet. No machine anywhere holds the whole path, and a router never asks who sent a packet or whether it is allowed. That is the firewall's job.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 When a Nordvik laptop reaches a supplier's site, no single router knows the whole path; each one only forwards towards the next. If the supplier's site is unreachable, the fault can be at any hop, and Part 5 shows how to find which.
 
@@ -179,15 +177,13 @@ NAT does arithmetic on addresses, and a firewall makes a decision somebody wrote
 
 Every line of the third column is wrong, and the last one is the dangerous one. The book's firewall is "a checkpoint" where "a security guard controls what can pass" [Jøsang, Sect. 6.4, p. 135]{.src}. NAT has no guard. And the accidental protection ends the moment somebody forwards a port, which is what every camera, game server and remote-access tool asks you to do.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 NAT is arithmetic on addresses so many machines can share one, not a security control: it inspects nothing, records nothing useful, and one forwarded port removes its accidental protection. A firewall, unlike NAT, makes a decision someone wrote down and can be asked to explain.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik's whole office shares one public address, so a supplier's log shows one address for all twelve people, and Nordvik can tell them apart only if its own router keeps a record. And the remote access for the two suppliers is exactly one forwarded port each, which means NAT's accidental protection does not apply to the server at all.
 

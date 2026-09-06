@@ -47,6 +47,18 @@ toggle never stalls on a blocked font request.
 | `\bridge{…}` | `[→ …]{.bridge}` forward pointer |
 | `lstlisting[style=out]` | fenced block with `.code-out` |
 
+## Interactive exercises
+
+Chapters can embed self-contained HTML/JS widgets in a ```` ```{=html} ````
+block — Quarto passes them straight through to the page. The first one is
+the **CIA-triad drag-and-drop** in chapter 1 (`chapters/01-…qmd`, look for
+`cia-triad-ex`): six terms, three drop zones on a triangle, auto-check when
+all corners are filled, with a hint when authenticity is misplaced. It
+supports mouse drag, tap-to-place on touch screens, and keyboard (Tab +
+Enter), and styles itself for both themes via `body.quarto-dark`. Use it as
+the template for further exercises: scope all CSS/JS under one widget class,
+give the container a unique id, and keep state in plain JS (no libraries).
+
 ## Rebuilding the figures
 
 `_tikz/build.sh` renders every `_tikz/chNN-figM.tikz` to

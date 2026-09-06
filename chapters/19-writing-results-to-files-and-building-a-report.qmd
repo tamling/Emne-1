@@ -55,8 +55,7 @@ The book is blunt: "If the file already exists, it is emptied before the new dat
 
 `encoding="utf-8"` tells Python which bytes stand for each character. The program that reads the file later must assume the same encoding. Norwegian letters break when the writing side and the reading side disagree. Leaving the argument out lets the machine choose, and two machines may choose differently. The book's special topic on character encodings explains the mechanism and recommends UTF-8 [Python for Everyone, Sect. 7.2, ST 3]{.src}.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does `"w"` do to a file that already exists? Which mode suits a script that runs every morning and rebuilds the report? Which suits one that adds today's events to a running record? What does `encoding="utf-8"` decide about the finished file?
 
@@ -94,15 +93,13 @@ A comma inside a value looks like a new column boundary. The `csv` module wraps 
 
 `newline=""` belongs in every `open()` call that feeds a `csv` writer. The module already writes the line ending that the format requires. Without that argument, Windows adds a second one and the rows separate with blank lines. On Linux the file looks fine, and the same script breaks the day somebody runs it on a laptop.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which method writes one row, and which writes many? What belongs in the first row, and why? What does the module do with a value that contains a comma? Why does `newline=""` belong in the `open` call?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Opening a file in write mode empties it before the first byte, while append adds to it; the mode decides what survives. Let the `csv` module write the commas, quotes and line endings rather than building them by hand, and name the columns in the first row so the next reader needs no message from you.
 
@@ -161,8 +158,7 @@ Column names answer the first question a reader has. A filename carrying a date 
 
 A duty officer reads it to decide whether tonight needs a response. A manager reads the total and sets it against last week's total. The next shift reads it instead of reading 69 log lines again. The next program reads it, and L21 is that program. Four readers, one file, and none of them was in the room when it was written.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does `items()` give back? Why sort the rows before writing? What does the printed line at the end tell you? Name two things a filename can carry.
 
@@ -228,8 +224,7 @@ The script reports how many events it collected before writing. `wc -l` counts t
 
 Every storage format has a limit on how many rows it holds. A good format refuses a row it cannot store and reports the refusal. A weaker one keeps the rows that fit and drops the rest in silence. Plain CSV has no row limit of its own; the limit arrives with whatever opens it next, and Part 5 is what that looks like.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Why does the script print the number of rows it wrote? Why is `wc -l` a better check than reading the number again in Python? Why does the file hold one more line than the number of events? What would a silent limit look like in a folder listing?
 
@@ -249,8 +244,7 @@ The tempting reading is that a spreadsheet was simply the wrong tool. The result
 
 Jøsang's list of what an incident-handling record must do includes "verification", and it names the failure this case shows: the "challenge of reliably identifying ... genuine incidents" when the signs are missing rather than wrong [Jøsang, Sect. 14.5.2, p. 311]{.src}. A dropped row leaves no sign at all.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A file that exists is not a file that is complete; an empty or half-written file exists just as convincingly in a folder listing. Count the finished file, not only the running script, and compare it against a tool like `wc -l`: two numbers from two tools is the check.
 

@@ -83,15 +83,13 @@ One real line from the file, split into its five fields. Every one of those five
 
 Every line in this file has the same five fields. Learn the shape once and the rest of the file stops looking like noise. The first field matters more than it looks: the book's incident documentation rule is that every step be recorded "with a timestamp" [Jøsang, Sect. 14.5.2, p. 311]{.src}, and the log's timestamp is what your own notes get lined up against.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 You never open a log; you put questions to it. The tools do not load the whole file: `head`, `tail` and `wc` answer one question each, and `tail` starts where the newest lines are. Every log line has fields you can filter on.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 When something looks wrong on Nordvik's server, you do not open its log. You run `tail -n 50` to see what just happened, and `wc -l` to know how much there is before you go further.
 
@@ -163,15 +161,13 @@ Each step is the one before it plus one idea. Nobody writes the last line out of
 
 Log4j is a library that Java programs use to write their own log files. A message written to the log could contain a lookup, and Log4j contacted the server named in it and ran what came back. Anybody who could get a string into a log, through a username field, a chat message, a browser header, could run code on the server. NVD published CVE-2021-44228 on 10 December 2021 with a score of 10.0; the book describes NVD's role in exactly this step, importing the CVE and adding "guidelines for handling and removing the vulnerability" [Jøsang, Sect. 3.3, p. 46]{.src}. That weekend every defender in the world asked one question: were we hit? The answer was a `grep` for one string, `jndi:`, across every log they had, and it answered that same afternoon. The book's term for such a string is an **indicator**: "a sign that an incident may already have occurred or is currently occurring" [Jøsang, Sect. 14.5.2, p. 311]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 `grep` prints only the lines that match and never touches the file, so one pattern can pull a single string out of everything you have. When Log4Shell broke, every defender asked one question, were we hit, and `grep` for one string answered it that afternoon.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 If the next Log4Shell broke, answering "were we hit" for Nordvik would be `grep -r` of one string across `/var/log` on the server and the Microsoft 365 audit log. Twenty minutes, if somebody knows the command.
 

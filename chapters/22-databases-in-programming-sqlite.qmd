@@ -73,8 +73,7 @@ The function opens the database, runs one query and returns the rows. The SQL te
 
 Calling `fetchall()` a second time returns an empty list. It hands over every row and leaves the cursor empty. `fetchone()` hands over one row at a time until nothing is left. Store the result in a name if you need it twice. The `with` block ends the transaction but leaves the connection open, which is different from `with open()` on a text file; close it with `kobling.close()` when the script is done.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Name the two steps between connecting and reading a row. What does `fetchall()` give back when the query matched nothing? Why does a second call return an empty list? What does `with` do here that it does not do for a text file?
 
@@ -150,15 +149,13 @@ The book's example is the same shape with a login instead of a report: the input
 
 Nine of the table's rows record a failed login. The injected condition is `bruker = ’admin’ OR ’1’=’1’ AND resultat = ’mislykket’`. `AND` is evaluated before `OR`, so it reads as: admin rows, or any row that failed. Nine failures plus one `admin` row that was not a failure gives ten. Two words decided the number, and neither of them was typed by the programmer.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does the question mark stand for inside an SQL string? Why does the tuple need a comma when it holds one value? Which two words decide the order in the injected condition? Why did the placeholder version return zero rows for the injected input?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Every value from outside the program goes into a query as a placeholder, without exception; a placeholder keeps the value out of the SQL text entirely, which escaping quotes by hand does not. An injected `SELECT` can return rows the query was never meant to show, and the same door lets an injected `DELETE` in.
 
@@ -205,8 +202,7 @@ student@kali:~/logganalyse$ sqlite3 kopi.db "DELETE FROM hendelser;" "SELECT cha
 
 The same demonstration as L21, and the point today is who ran it. A program issuing `execute("DELETE FROM hendelser")` deletes eighteen rows exactly as the prompt did, does not print the count unless you asked it to, and commits if the block ends cleanly. The second number was 18 and not 21 because three had already gone.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does `commit()` do that `execute()` does not? When would you reach for `executemany()`? How many rows does a `DELETE` without `WHERE` remove? What does an exception inside the `with` block do to uncommitted changes?
 
@@ -245,8 +241,7 @@ A reporting script needs to read the table and nothing else. A read-only connect
 
 The book asks for exactly this: recovery routines "must be tested regularly" [Jøsang, Sect. 2.2.2, p. 37]{.src}. For an SQLite file the test is one copy and one count.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What is the cheapest way to learn what a `DELETE` will touch? Which file did the delete demonstration run against? What controls who may read and write an SQLite database? What makes a backup more than a belief?
 
@@ -264,8 +259,7 @@ The Police National Computer in England and Wales runs a weekly automated proces
 
 The tempting reading is that somebody typed a delete by hand. A scheduled program issued the statements, and no person typed them. The faulty version ran for seven weekly cycles before anybody looked at what it had matched. The same code also failed to remove some records it should have, so it was wrong in both directions, and neither direction produced an error. A count of the rows about to be deleted, compared with the count the week before, would have shown a number ten times too large on the first run. That is Part 4's count-before-you-change, at national scale, and the incident-handling failure the book names: an incident whose only sign is a number nobody looked at [Jøsang, Sect. 14.5.2, p. 311]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A `DELETE` issued by a program runs on every row it matches and never asks a second time, so counting the matching rows first is the check that turns a statement into a decision you can defend. The Police National Computer deleted 213,000 records over seven weeks before anybody compared a count.
 

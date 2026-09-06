@@ -55,15 +55,13 @@ Kali is an ordinary Debian-family distribution. It arrives with several hundred 
 
 The home router from L05 is a small computer, and it runs a version of Linux. So do the school's servers, most machines that answer for a web page, and every Android phone. You have used Linux for years without a terminal, which is why the terminal feels new rather than the system. The book's list of systems, "computers, servers, hosts, nodes, smartphones, devices" [Jøsang, Chap. 3 intro, p. 43]{.src}, is mostly a list of Linux machines.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Linux itself is just the kernel; a distribution is that kernel plus everything around it, and which one matters little. What makes Linux useful here is not that it is safer than Windows, but that almost everything, settings, logs, accounts, is an ordinary readable file you can inspect.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nobody at Nordvik knows which distribution the server runs, and it does not matter. What matters is that its settings are in `/etc`, its record of who logged in is in `/var/log`, and both can be read by anybody with an account and a terminal.
 
@@ -240,15 +238,13 @@ Pasting an install command from a web page runs unchecked code as you. It skips 
 
 The habit is common on project web pages, and it is the exact opposite of everything this part has described. The XZ backdoor hid in a dependency of SSH. A pasted script can install anything, from anywhere, with no signature and no record in the package database. The book's phrase for what you are trusting is the Partner dimension of the four P's: buying a product is a waste "if the vendor is not able to provide adequate support" [Jøsang, Sect. 1.6, p. 11]{.src}, and a web page is not a vendor.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 On Linux you install by asking the system for a package by name, and it fetches it from sources signed and trusted in advance, which removes the step where most unwanted software arrives. Pasting a command from a website skips every one of those checks and runs as you.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 If someone at Nordvik pastes an install line from a forum into the server's terminal with `sudo` in front, whatever that line fetches now runs as root on the machine that holds the drawings, with no package record and no signature. L13 is about what `sudo` actually grants.
 

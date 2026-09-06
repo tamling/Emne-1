@@ -60,15 +60,13 @@ Only associating and authenticating are new. Above those two steps, wireless is 
 
 Two settings are widely believed to secure a wireless network, and neither one does. A **hidden network** stops announcing its name. Every device that saved it then asks for it by name wherever it goes, so the announcement moved from the ceiling into every pocket that saved it. **MAC filtering** allows only listed card addresses. But the card address travels in every frame in the clear, so anybody in range can read a permitted one and use it. Both just move a readable identifier into the open.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 On radio there is no physical boundary: range reaches the car park and the pavement, and everyone in range receives every frame. Privacy has to be added on top with encryption, so hiding the SSID and MAC filtering protect nothing, because both just move a readable identifier into the open.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik's Wi-Fi reaches the car park and the flats next door. A hidden name and a MAC list would change nothing there. What keeps the neighbours out is the encryption generation and the key, and those are Part 2.
 
@@ -170,15 +168,13 @@ WPA2 agrees a session key in four messages, the four-way handshake. In 2017 Math
 
 A network can offer both WPA2 and WPA3 at once, so that older devices can still join. Every device then picks whichever it prefers, so the network is a WPA2 network for anybody who asks for WPA2. Compatibility settings are security settings. On any access point you are handed, check: which generations are offered, whether Enterprise or Personal, whether the guest network has its own VLAN, and whether the management interface is reachable from the guest side.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A network calling itself by a familiar name proves nothing: any device can announce any name, and a phone silently rejoins by name alone. What defends is the device verifying the network, not a longer password, because the fake network never needed the password.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 A laptop in Nordvik's car park could announce the office network's name with a stronger signal, and every phone that ever saved that name would join it on the way in from the car. Nordvik runs Personal mode, so nothing on those phones checks who the network is.
 

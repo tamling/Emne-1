@@ -69,8 +69,7 @@ The account numbered zero, the one the kernel does not check at all. Every other
 
 Root is not a special kind of thing. It is the number zero, and the kernel is written to skip its checks. The book places it at privilege level 0, "Kernel Mode (Unix root, Win. Adm.)" [Jøsang, Sect. 3.4, Fig. 3.4, p. 49]{.src}. So anything running as root is unchecked, which is why so much of Part 3 is about not being root for longer than one command.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Every process runs as an account, and the kernel checks what that account may touch every single time a file is opened, nothing decided once at login. Access is given to groups far more than to people, and root is simply the account numbered zero, the one the kernel does not check at all.
 
@@ -186,8 +185,7 @@ Aug 08 15:03:40 kali sudo[9830]:  student : command not allowed ; TTY=pts/0 ; ..
 
 Two lines: one use, one refusal, both with a name, a time, a directory and the exact command. That is the book's accountability, "activities in a system or computer network can be traced to someone who can be held accountable" [Jøsang, Sect. 1.10.2, p. 20]{.src}, delivered by one program.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 `sudo` runs one command as root, asking your own password and checking a written rule, and if no rule covers you it refuses and writes that down. Most of the reason it exists is the record: every use and every refusal is logged with your name. Least privilege means each part of a rule is as small as the job allows.
 

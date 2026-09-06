@@ -89,8 +89,7 @@ You run a script by naming the program that reads it, then the file. The file mu
 
 The course book for Module 4 is *Python for Everyone* by Horstmann and Necaise. Chapter 1 gets Python running, and Chapter 2, "Programming with Numbers and Strings", is Parts 2 and 3 of this chapter: variables in Sect. 2.1, strings in 2.4, input and output in 2.5. It is written for somebody who has never programmed, which is most of the room. Read Chapter 2 before L16.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A program is just a list of steps in order that a machine carries out; the pipeline you already wrote counts. A script keeps those steps in a file read from the top, with names and lines, so you can reuse it, react to what it finds, and hand it to somebody else.
 
@@ -284,8 +283,7 @@ A misspelt name is not a small error. Python has no value behind it and stops. T
 
 Typing `python3` with no file name gives a prompt, three arrows, where you try one line at a time. A prompt starting with `>>>` is Python rather than the shell. The function `help()` explains any other function without leaving that prompt. Professionals look things up constantly. Nobody memorises this, and the book's Appendix D is a reference for exactly that reason.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Anything reaching your script from a person, a file or a network is text until you convert it. When it breaks, a traceback is not anger but precision: read the last line first, and it names the file, the line and the one thing it could not do.
 

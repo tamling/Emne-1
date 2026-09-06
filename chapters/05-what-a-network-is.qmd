@@ -63,15 +63,13 @@ The slides, the coursebook and the NetAcad exams are in English. The Norwegian w
 
 In November 1988 a program began copying itself from machine to machine. Robert Tappan Morris, a graduate student at Cornell, released it. It reached roughly 6,000 machines in about a day, about ten per cent of the internet of the time, and much of the network stopped under the load. The case is here for one reason. A network is machines that can reach each other, and reaching works in both directions. Whatever can reach a machine can also spread to it.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A network is just hosts, a shared medium, middle devices and agreed rules. Because the medium is shared, anything on it can hear anything else unless something prevents it, and your own network ends at a boundary where most security controls sit.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik's office runs over one shared medium. Without separation, its server, the laptops and a guest on the Wi-Fi are all on the same wire. L08 is about putting them on different ones.
 
@@ -207,15 +205,13 @@ Three decisions happen in a row, and at home all three live in one small box. Th
 ![](figures/ch05-fig2.svg){fig-align="center"}
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Three devices each read one thing about a packet: the switch picks the port, the router picks the next network, and only the firewall asks whether the traffic is allowed at all. Its rules are written by a person, so every rule records a decision.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik's one firewall on the boundary is where a written rule decides whether a supplier's remote connection is allowed in at all. If nobody at Nordvik can say what that rule says, nobody at Nordvik has decided.
 

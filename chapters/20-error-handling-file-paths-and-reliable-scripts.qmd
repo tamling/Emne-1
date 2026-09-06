@@ -59,8 +59,7 @@ A traceback is the block of text Python prints on its way out. The middle lines 
   The report reaches a colleague as "it does not work" with no type named   The report says `FileNotFoundError: auth.lg`, and the typo is visible
   The next person starts the search with nothing to search for              The next person has a file, a line and a value
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which end of a traceback do you read first, and why? What does `FileNotFoundError` tell you that "an error occurred" does not? Name the exception raised by `int("tjue")` and say what it means.
 
@@ -113,15 +112,13 @@ Code in `else` runs only when the `try` block finished without an exception. Cod
 
 The book's own version of this warning is a programming tip: "Do Not Use except and finally in the Same try Statement" and, more generally, do not catch what you cannot handle [Python for Everyone, Sect. 7.5, PT 2]{.src}.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which lines belong inside a `try` block, and which outside? What does a bare `except` hide from the person running the script? When does `finally` run? What three things should a useful error message say?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Read a traceback from the bottom, where the exception type sits, and catch only the exception you expect so the rest still reaches you. A relative path means nothing until you know the working directory: "it worked in my folder" is how a script breaks on another machine.
 
@@ -166,8 +163,7 @@ fil = mappe / "auth.log"
 
 The script found `auth.log` because the shell stood right next to it. Run from the home folder, the same line raises `FileNotFoundError`. A path written into the code is a promise about where it will be run, and a scheduled job runs from wherever the scheduler was standing, which is usually not your folder. Checking `exists()` first, and printing `resolve()` in the error message, turns "it does not work" into "it looked in `/root/auth.log`".
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What is the working directory, and what decides its value? What does `resolve()` do to a relative path? Why does joining with `pathlib` beat adding two strings? Name one reason a working script fails after it is scheduled.
 
@@ -239,8 +235,7 @@ student@kali:~/logganalyse$ echo $?
 
 `echo $?` prints the exit code of the command that just finished. A misspelled filename gives a message and the code 1. No filename at all gives the usage line and the code 2. The real log gives the line count and the code 0. Three runs, three codes, and a scheduler can tell them apart without reading a word. L23 builds on exactly this.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which stream should an error message go to, and why? What does `$?` hold after a command finishes? Which exit code does this script use for wrong usage? Why is stopping better than reading a file you were not given?
 
@@ -258,8 +253,7 @@ CrowdStrike's Falcon sensor runs inside Windows on millions of machines. It read
 
 The tempting reading is that a file was pushed out without any testing. The tests ran, and they used a wildcard in the 21st field. A wildcard matched without ever touching the value that was missing. Three gaps line up: no check that the number of values matched the number of fields, a test that could not see the gap, and a rollout to everything at once. The check that would have caught it is one line and one second: count what arrived, compare it with what was expected, and refuse the rest. That is Part 4's argument check, at kernel scale. Jøsang's chapter on system security describes the general class, reading or writing beyond a buffer, as the vulnerability that "can be exploited by attackers to take control of a system" [Jøsang, Sect. 3.5, p. 50]{.src}; here nobody exploited it. It went off by itself.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Count what arrived before you use it, whether fields or arguments, because a check at the start costs one line and one second. A script that stops loudly names the fault; one that catches everything keeps running with wrong data inside it. CrowdStrike read past the end of 20 values because nobody counted to 21.
 

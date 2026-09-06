@@ -53,8 +53,7 @@ A repeatable answer comes out of a command, not out of a screenshot. It must be 
 
 A paragraph of status text tells a person a lot and a script nothing. A check that needs a human eye runs only as often as a human runs it. Seven machines checked and one forgotten is the ordinary way this fails, and Part 5 is exactly that. A script does not forget the eighth.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Name the four questions. Why does reading a status screen not count as a check? What has to be true before a script can test an answer with an `if`? Which question comes first, and why?
 
@@ -102,15 +101,13 @@ fi
 
 Every command leaves an exit status behind, and `$?` holds it, as L23 said. `is-active` sets that status from its answer, so an `if` can test it directly. `–quiet` prints nothing and leaves only the status behind. Testing the status instead of the word means the check does not break when somebody changes the wording.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which command answers the question about the next reboot? What does `–quiet` change? Where does a script find the answer when nothing was printed? Why test the status rather than compare the word `active`?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A glance is not an answer; a check is a question with a repeatable one, and its exit status is the part a script can test. Ask `is-active` about now and `is-enabled` about the next boot, because they are different, and remember that a disk percentage hides the actual size.
 
@@ -161,8 +158,7 @@ fi
 
 Counting the lines that `ss` prints is tempting and gives the wrong number. One service often holds an IPv4 socket and an IPv6 socket at the same time, so two lines describe one program listening on one port. Count sockets when you mean sockets, and ask `ss -ltnp` for the program when you mean services. Both numbers are useful; they are not the same number.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What do the three letters in `ss -ltn` select? Which `df` column would you quote to a colleague who asks how long we have? Why can a count of listening sockets exceed the number of services? What does `-h` change?
 
@@ -226,8 +222,7 @@ student@kali:~$ echo $?
 
 The book's incident-handling section calls these outputs **precursors**, "a sign that an incident may occur soon" [Jøsang, Sect. 14.5.2, p. 311]{.src}; a disk at 92 percent is one.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which `journalctl` flag limits the output to a single unit? Why does the health check send its failures to standard error? What does the exit status tell the program that called this script? What single change would make this script pass on a machine that is down?
 
@@ -247,8 +242,7 @@ The tempting reading is that one technician forgot one server. The deployment re
 
 The book's control for this is configuration management under system integrity [Jøsang, Sect. 1.9.3, p. 16]{.src}, and its lesson about detection is the one L18 and L19 already gave: silence from a check that was never run is indistinguishable from success.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A check that runs the same way on every machine names the one that answers differently; that is the work a script does and a person skips. Knight Capital left one server of eight on old code and lost over 460 million dollars; a check that always exits zero would have passed that server too.
 

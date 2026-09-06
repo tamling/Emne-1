@@ -58,8 +58,7 @@ CREATE TABLE IF NOT EXISTS "hendelser"(
 
 A database lives in a file, and `sqlite3` opens that file. `.import` reads the CSV file and builds a table with matching columns; the first line of the CSV supplied the four column names, which is why L19 insisted on a header row. `.schema` prints the definition, which is the rule the table now enforces.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What is the difference between a row and a column? Name the four columns of `hendelser` in order. What does a primary key guarantee? Why can several programs write to a database when two cannot safely write to one CSV file?
 
@@ -100,15 +99,13 @@ SELECT * FROM hendelser WHERE bruker = 'admin';
 
 Rows arrive in no promised order until you ask for one. `ORDER BY` sorts on a column, smallest first unless you write `DESC`. `LIMIT` cuts the result after the number of rows you name. Sorting first and cutting second is what makes "the five most recent" a single query; L12's `sort -rn | head` was the same idea in a pipe.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which keyword names the table a query reads from? Write a query that returns every row for the user `admin`. What does a query hand back when no row matches? Why does `LIMIT` mean very little without `ORDER BY`?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A table gives every row the same columns and refuses values a spreadsheet would accept without comment. `SELECT` describes the rows you want and lets the database find them; `GROUP BY` with `COUNT(*)` turns many rows into one per group; and a `JOIN` needs a column that both tables share.
 
@@ -146,8 +143,7 @@ backup   1
 
 Student failed five times, admin three times and backup once. These are the same three numbers the Python script produced in L18, and the same three L19 wrote to a file. One SQL statement replaced the loop, the condition and the counter. Two tools agreeing is the check from L18, now across three tools.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does `COUNT(*)` count when one column happens to be empty? What does `AS` do? Which runs first, the `WHERE` test or the grouping? How many rows come back from a `GROUP BY` on a column with three distinct values?
 
@@ -211,8 +207,7 @@ igjen
 
 `DELETE` removes whole rows and never single values inside a row. The first delete named a result value and removed three rows. The second carried no `WHERE` clause and removed the remaining eighteen. The table still exists, empty, and nothing asked whether you meant it. This was run on `kopi.db`, a copy, on purpose. The `WHERE` clause is the blast radius of an `UPDATE` or a `DELETE`, and the habit is always the same: `SELECT` with that `WHERE` first, read the count, then change.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which clause decides how many rows an `UPDATE` touches? What does a `DELETE` without `WHERE` do? What must exist in both tables before you can join them? What would you run to check a `DELETE` before running it?
 
@@ -232,8 +227,7 @@ The tempting reading is that one engineer typed one wrong path. Five recovery pa
 
 The book's ransomware advice is the same rule, written for a different threat: backups "should be stored offline from the network" and "routines for recovering from backups must be tested regularly" [Jøsang, Sect. 2.2.2, p. 37]{.src}. Tested regularly. A backup file that exists is L19's file that exists: not the same as one that is complete, and not the same as one that restores.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A `SELECT` with the same `WHERE` shows exactly what a `DELETE` would remove, and `WHERE` decides the blast radius of an `UPDATE` or a `DELETE`. A backup nobody has ever restored is a belief, not a backup: GitLab found four of its five recovery paths had failed on the day it needed them.
 

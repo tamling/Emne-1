@@ -54,8 +54,7 @@ A page can name files that live on a completely different server. The browser fe
 
 The server never sends the page the visitor finally sees. It sends one text file, and the browser collects everything else. A change to any one of those files changes the page for every visitor, and nobody looking at the address bar can tell how many files there were or whose servers they came from. The page is assembled in the browser, from parts, and any part can change under it.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does a server send back first when a browser asks for a page? Which part of the HTML tells the browser to fetch another file? How many requests does a page with one stylesheet need? Where does the page the visitor sees actually get put together?
 
@@ -102,15 +101,13 @@ Three elements hold every page, and their order never changes. The `head` carrie
 
 `charset="utf-8"` tells the browser how bytes become characters, which is L19's file-encoding question at the web layer. Without it a browser may guess wrong and mangle æ, ø and å, so *Innloggingsforsøk* reaches the screen as nonsense. `lang="no"` tells a screen reader which language to pronounce. Both belong in the head, and both are one line.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Why does an image element carry an `alt` attribute? Where in the document does the character-set attribute belong? Which element marks a header cell inside a table row? Which two parts wrap a piece of text into an element?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A web page is text fetched over HTTP that names the other files it needs, and HTML only labels content; it has no conditions, loops or variables. Declare `charset="utf-8"` so æ, ø and å stay readable, and put styling in one external stylesheet that changes every page at once.
 
@@ -156,8 +153,7 @@ The whole look of this page fits in one small file. `body`, `h1`, `table`, `th` 
 
 The stylesheet is a separate file, fetched with a request of its own, which is why the page needed two requests in Part 1. One line in the head connects the page to it, and every page that names the file changes when the file changes. The server sends the stylesheet as plain text with a `Content-Type` header, and Part 4 is about what that header decides.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does a selector do inside a CSS rule? Which character starts a class selector, and which starts an id selector? Why is a stylesheet usually kept in a file of its own? If the red row should become orange, which one line changes?
 
@@ -183,8 +179,7 @@ One line in the HTML is enough to load code from another company. That company c
 
 Editing one script changes no visible word on the page. The page still loads, the form still works and the payment still goes through. A copy of the data can leave at the same moment, unseen. A visitor cannot notice, because the padlock is identical on a clean page and an edited one: HTTPS protects the data in transit, as L07 said, not from code running inside the page. The book's confidentiality goal, that information is not disclosed to the unauthorised [Jøsang, Sect. 1.9.1, p. 14]{.src}, is broken here without any of the transport security failing.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which header tells the browser how to treat an arriving file? What privileges does a script fetched from another server run with? Why is a change to a third-party script hard to notice? Name one thing such a script can read.
 
@@ -202,8 +197,7 @@ The attacker used login credentials issued to an employee of Swissport, a third-
 
 The tempting reading is that the whole payment page was replaced. One JavaScript file was edited, and the page looked and behaved exactly as before. Card data still reached British Airways, and a copy went to the attacker's domain at the same instant. The changed file passed every check a visitor could make: the page loaded, the padlock showed, the purchase completed. What was missing was a check the airline could make: whether the scripts its payment page loaded were the ones it had approved, unchanged, which is Part 4's "prove a script is unchanged", and the book's digital signature of software [Jøsang, Sect. 11.6.3, p. 260]{.src}. The first access, a supplier account without MFA, is the book's broken authentication [Jøsang, Sect. 11.6.3, p. 260]{.src} and its supply-chain warning [Jøsang, Sect. 2.1.6, p. 30]{.src}, both from earlier readers.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A page is not one file but a list of files the browser assembles, and every one of them runs with the page's own privileges; a third-party script is a supplier with access to your customers. British Airways lost card data when one edited JavaScript file, loaded by the payment page, copied every card number as it was typed, while the page and its padlock looked unchanged.
 

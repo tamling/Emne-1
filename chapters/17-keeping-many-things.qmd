@@ -78,8 +78,7 @@ The last row catches people out. `sorted()` hands back a new list rather than re
 
 A firewall rule is built from a list of addresses, and an access review works through a list of accounts. A list of open ports comes out of the `ss` output you read in L14. A list of lines is what a log file becomes the moment a script opens it. The structure is chosen for the question, not for the syntax you remember.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A list keeps many values under one name, in order and with duplicates kept, because two refusals from one account are two facts. Almost everything in security work arrives as a list, addresses, accounts, open ports, log lines, findings, and the order is itself information.
 
@@ -164,8 +163,7 @@ for f in funn:
 
 This is the shape of JSON, which you will meet constantly without being taught it separately; the book's toolbox on JSON shows the same list-of-dictionaries shape coming back from the web [Python for Everyone, Sect. 8.3, Toolbox 1]{.src}. It is also the shape of Jøsang's incident record: a finding is "a sign that an incident may already have occurred" [Jøsang, Sect. 14.5.2, p. 311]{.src}, and a sign has a where, a what and a when.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A dictionary answers what a list cannot: one value per name, so you can count per account or hold a whole record as named facts. A finding is rarely one number, so one dictionary per finding keeps its parts together, and a list of those dictionaries is what almost every security tool hands you.
 

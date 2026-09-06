@@ -77,15 +77,13 @@ Both columns are processes, and both can listen on a port. Only one of the two i
 
 The left column is managed and written down. The right column exists only for as long as somebody keeps it alive, and it is where the "test somebody switched on" from L07 usually lives.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Nothing runs on a Linux machine without being a process, and no process is anonymous: each has a number and runs as some account. A service is one the system starts at boot and systemd knows about; anything else appears in `ps` and nowhere else.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Taken to Nordvik's undocumented server, the first command is `ps -eo user,pid,comm`, and the first thing to read is which account each program runs as. Anything unfamiliar running as root is the first question for the owner.
 
@@ -132,15 +130,13 @@ The address in front of the port number changes the answer completely. `0.0.0.0`
 
 A firewall filters packets on the way in, so a service can be listening and unreachable. Both must be true before a service is exposed. The book's firewall is the second column: "The task of the firewall is to control traffic between computer networks", with default-deny as the standard rule [Jøsang, Sect. 6.4, p. 135]{.src}. L08 built that side. In Part 5 you read the two answers together.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 From inside the machine, one line of `ss` turns a port into a program, a process and an account, the guesswork L07 stopped at. Read the bind address before the port: `0.0.0.0` faces the network, `127.0.0.1` faces only itself, and listening still is not the same as reachable through a firewall.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 On Nordvik's server, a database bound to `0.0.0.0` with the suppliers' remote access forwarded to the whole machine is reachable by both suppliers whether or not anybody meant it. Bound to `127.0.0.1`, it is reachable by nobody outside, whatever the firewall says.
 

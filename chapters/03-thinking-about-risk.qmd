@@ -93,15 +93,13 @@ Information security risks can be associated with the potential that threats wil
 
 The book draws risk as a sum, *Risk = Threat + Vulnerability + Asset*, ending in an incident [Jøsang, Fig. 19.1, p. 406]{.src}, and elsewhere as a triangle whose size grows with asset value, threat strength and vulnerability severity [Jøsang, Sect. 1.8, Fig. 1.9, p. 13]{.src}. The same page draws the conclusion this whole course rests on: in practice it is hard to reduce assets or threats, "which leaves reducing vulnerabilities as the best option in most cases". Controls are the only side of the triangle you can move.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Risk is what remains after your controls have done their work. It is specific to you, not to the threat: two firms facing the same threat can carry very different risk.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 The threat of ransomware is the same for Nordvik as for a bank. The risk is not, because the bank has tested backups, a monitored network and a security team, and Nordvik has one server in a cupboard and a backup nobody has restored. Same threat, different vulnerabilities, different risk.
 
@@ -163,15 +161,13 @@ The same three questions, one size apart from L01. Somebody pretending to be you
 
 Asking which of the three matters most for a given asset is what turns the triad into a decision. A bus timetable needs no confidentiality at all. A patient record puts confidentiality first. The book says this directly: "different information assets have different security needs" [Jøsang, Sect. 1.3, p. 4]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 "Secure" is not one property but three separate questions: availability, integrity and confidentiality. A measure that improves one can weaken another, so you decide which matters most for each asset.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 For the customer and drawing data, confidentiality weighs heaviest, because information that leaves cannot be brought back. For the server, availability comes first, because a firm that cannot open its drawings cannot bill anybody.
 

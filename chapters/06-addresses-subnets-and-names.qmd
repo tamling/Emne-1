@@ -66,15 +66,13 @@ The DNS (Domain Name System) consists of special servers on the Internet, called
 
 People remember names; machines need numbers. This is the field students have least feeling for. A machine with an address, a mask and a gateway reaches everything by number and nothing by name, which looks exactly like the whole internet being down. The book explains where the setting comes from: "A computer device receives the IP address of the closest DNS server through the DHCP (Dynamic Host Configuration Protocol) when connecting to a local network" [Jøsang, Sect. 6.1.1, p. 120]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A machine needs four settings to reach the world: its own address, a mask that says where its network ends, a gateway for everything beyond it, and a name server to turn names into numbers. Missing any one, it reaches less than you expect.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 If Nordvik's name-server setting is wrong, its staff reach everything by number and nothing by name, which looks like the whole internet is down. The first question on the phone is not "is the internet down" but "does `ping 1.1.1.1` answer".
 
@@ -164,8 +162,7 @@ In a capture the exchange is four rows in order: Discover, Offer, Request, Ackno
 
 ### Nothing checks who answered
 
-::: {.callout-note}
-## Nothing checks who answered
+::: {.callout-note title="Nothing checks who answered"}
 
 A machine takes the first offer, and nothing proves who sent it.
 
@@ -207,15 +204,13 @@ One row asks for a name, and the row after it carries the answer back. Both rows
 
 Twitter, Spotify and Reddit were unreachable for many users on 21 October 2016. None of those companies had been attacked. The company Dyn ran the name service for many large sites, and a botnet called Mirai, made of infected cameras and home routers, flooded Dyn with traffic until its name servers could not answer. Name resolution is a service like any other. When it fails, everything that depends on a name fails with it, however healthy the servers behind the name are. The book's warning is the general form: "it is essential that DNS information is correct, otherwise data may be routed to the wrong IP address. DNS hijacking and DNS poisoning are attacks aimed at spoofing IP addresses" [Jøsang, Sect. 6.1.1, p. 121]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 DNS turns a name into a number, but the lookup happens in the open: nothing proves who answered, and a wrong answer is remembered as well as a right one. A name nobody can resolve is a site nobody reaches.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik depends on DNS it does not control. A poisoned answer would send its staff to the wrong address without anything visibly breaking, and the padlock on the wrong site would be perfectly valid.
 

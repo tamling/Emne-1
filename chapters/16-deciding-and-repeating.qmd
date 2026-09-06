@@ -91,8 +91,7 @@ Python stops before running anything, and names the file and the line. The messa
 
 Tell your editor to insert four spaces when you press tab, and never think about it again. A tab character and four spaces look identical on screen and are different to Python. In Kali, `nano` takes `set tabsize 4` and `set tabstospaces` in `~/.nanorc`. Two minutes now saves an hour of invisible errors later.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 An `if` runs its indented block only when a question comes back True, and the indentation is the structure, not decoration: the same lines indented two ways are two different programs. Set your editor to four spaces once and stop thinking about it.
 
@@ -275,8 +274,7 @@ The word `in` asks whether an item appears in a list, and comes back `True` or `
 
 A check on the shape stops a script from breaking on rubbish. That is all it does. A line can have twelve fields, look perfectly ordinary, and still be a record of an attack. A pattern that accepts four numbers with dots would accept `999.999.999.999`. Beginners over-trust a validation step. In the book's terms, a shape check removes one vulnerability, the script's own crash on bad input; it says nothing about the threat the line records [Jøsang, Jøsang, Sect. 1.4, pp. 5--6]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Real data always brings the odd line, a blank, a header, a truncated row, so check the shape before you use it rather than assuming. An allow-list refuses loudly what it does not know, but a well-formed line can still be a record of an attack: a shape check means the script can read it, and nothing more.
 

@@ -59,15 +59,13 @@ A firewall at the edge is worth having, and it never sees traffic that stays ins
 
 The book's own design rule already contains the answer: "A computer network always has an external firewall" and "is usually divided into segments that are separated by internal firewalls" [Jøsang, Sect. 6.6, p. 138]{.src}. Usually divided. Nordvik is not.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 On an undivided network, nothing on the path says no, so how far an incident spreads is decided long before it happens. A firewall at the edge protects only the edge; it cannot refuse traffic that never reaches it.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 On Nordvik's flat network, a supplier's remote session or a guest on the Wi-Fi can open a connection straight to the server holding the customer and drawing data. The edge firewall from L05 has no say in it.
 
@@ -195,15 +193,13 @@ NSM's *Grunnprinsipper* principles 2.2 and 2.5 ask for four things about a divid
 
 Every zone design assumes that being inside a zone says something real about a machine. That assumption weakens as laptops go home and suppliers connect in. The book: "ZTA (Zero-Trust Architecture) has become a complementary approach to perimeter security. In the ZTA approach it is assumed that attackers have already infiltrated internal segments" [Jøsang, Sect. 6.3, p. 135]{.src}, and "no parts of the network 'trust' each other, so that they are always segmented with firewalls or with mutual authentication" [Jøsang, Sect. 6.6, p. 139]{.src}. Zero Trust is a name for an answer and not a product anybody can buy. The book also names the cost: "greater complexity in configuring networks and applications to support legitimate traffic between segments". You only need to recognise the phrase and know what it answers.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Dividing a network only creates the places where a decision can be applied; it is not the decision. A VLAN says who shares a network, a firewall rule says what may pass between them, and when you cannot prove two zones are separate you have to treat them as one.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik could put its server, the office and the suppliers in separate zones, but the separation is real only when somebody has written the rule between them and tested that a supplier's session cannot reach anything but the two ports it needs.
 

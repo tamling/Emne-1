@@ -68,8 +68,7 @@ A new file is readable and writable, and neither of those means runnable. `chmod
 
 A missing execute bit stops the run before a single line is read; the shell answers `Permission denied` and names your own file back to you. A missing shebang leaves the system guessing which program should read the text. Running `bash tell.sh` bypasses both, which is useful for a test and wrong for a scheduled job, because the job should not depend on somebody remembering.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What do the first two characters of a shell script tell the system? Which command adds the permission that lets a file be run? Why does `./tell.sh` carry a dot and a slash? Name one command in the script you could type at the prompt unchanged.
 
@@ -117,15 +116,13 @@ student@kali:~/logganalyse$ FIL="min logg.txt"; ls -l "$FIL"
 
 The variable holds one filename that happens to contain a space. Without quotes the shell hands `ls` two separate words instead of one name, and `ls` reports two failures for two files that do not exist. The quoted version keeps the name whole. Quotes are not style. They decide how many arguments the command receives.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Why does an assignment fail when a space follows the variable name? What does `$(…)` hand back? What happened to the filename with a space when the quotes were missing? Which Python idea is `$1`?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 In Bash a value with a space becomes two arguments unless you quote it, so quote every variable. There are no spaces around the equals sign, a dollar sign reads it back, and zero means success, the opposite of every other language here, with `$?` holding the code of the command that just finished.
 
@@ -172,8 +169,7 @@ student@kali:~/logganalyse$ echo $?
 
 A script that stops early should say so in the number it returns. The message goes to the person, and the exit code goes to the shell. Another script, or a scheduler, can read that code and act on it, which is L24.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What number does a command hand back when it worked? What does `grep -q` print when it finds a match? What does the test with `-r` ask? Why would a script exit with 1 rather than just print a message?
 
@@ -219,8 +215,7 @@ rm -rf /*
 
 A variable that was never set holds nothing, and nothing is a valid value. The shell removes the empty value and joins whatever text is left around it. The path in quotes collapses to a slash and a star, which is the whole disk. Nothing refused to run. Part 5 is this line in production.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does the loop put into `BRUKER` on its second pass? Why did the script report zero attempts for `backup`? What does an unset variable expand to inside a longer path? What arithmetic check would have flagged the wrong count?
 
@@ -240,8 +235,7 @@ The tempting reading is that one developer wrote one careless line. The delete i
 
 The privilege point is Jøsang's: a process "can access data and code defined with the same or lower privilege level" [Jøsang, Sect. 3.4, p. 49]{.src}, and a script runs as the account that started it. Steam deleted only what the user could delete, which was everything the user owned. The same script run with `sudo` would have deleted the machine.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A path assembled from a variable is only as safe as that variable: if it comes back empty, the command runs on whatever text is left, and Steam's script deleted from the root of the filesystem when a folder had moved. Test a value before you build a path from it, and never let a comment stand where a test belongs.
 

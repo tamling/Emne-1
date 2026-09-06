@@ -89,8 +89,7 @@ The first function reads the file and hands back a list of lines. The second cou
 
 The book has a common-error box for exactly this, "Trying to Modify Arguments" and "Missing Return Value" [Python for Everyone, Sect. 5.3--5.4, CE]{.src}. In L19 the number goes into a file; a function that only prints cannot be used there.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Write the first line of a function called `tell_linjer` that takes a path. What keyword hands the answer back? What happens to a variable created inside a function when it ends? Why is a docstring worth one extra line?
 
@@ -142,15 +141,13 @@ student@kali:~/logganalyse$ grep -c "Failed password" auth.log
 
 The two functions now run against the real log. The line count matches what `wc -l` reported, and the word count matches what `grep -c` reported. Agreement between two tools is the first check worth doing, and the disagreement in Part 3 is the point of doing it.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A function names a block of work so you can reuse it, and `return` hands the answer back; printing is not returning. Reading a file line by line handles a log larger than the machine's memory, and a line stays text until you split it into fields.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 The same two functions, called with the path of Nordvik's log, produce Nordvik's three numbers. Nothing in them mentions Nordvik. That is what a parameter is for.
 
@@ -211,8 +208,7 @@ def er_feilet_innlogging(linje):
 
 A better filter names the program as well as the message. Only `sshd` writes authentication results, so require `sshd` in the line. Require the full phrase `Failed password for`, not two words that could appear anywhere. The check now says what it means, and the `sudo` line no longer passes. This is L16's allow-list idea applied to a filter: say what you accept.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does `split()` do to a line of text? Why is reading a field by label safer than by position? Name one line in this log that contains the words `Failed password` but is not a login. What kind of bug was that: a crash, or a wrong answer?
 
@@ -254,8 +250,7 @@ Three accounts were involved in failed logins on this machine. The account calle
 
 A count answers a narrower question than the one that was asked. This count says how many lines matched, not how many people tried. One person retrying a password three times produces three lines. The number is a starting point for a question, not the end of one. Jøsang's word for the sentence you write beside it is analysis, "to understand what has happened and what should be done next" [Jøsang, Sect. 14.5.2, p. 311]{.src}, and the analysis is the part that gets read.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Which Python type pairs a username with a count? What does the counting function hand back? Why return the dictionary instead of printing it? State in one sentence what the number 5 for `student` does and does not tell you.
 
@@ -273,15 +268,13 @@ Attackers used a vulnerability in the Apache Struts web framework in March 2017 
 
 The tempting reading is that Equifax lacked monitoring equipment. The report says the equipment existed and produced nothing readable. Renewing one certificate turned silence back into evidence. The same day, an administrator saw the traffic and the response began. The point for this chapter is small: a tool that runs without error has not proved its output is right, and silence is not the same as "nothing happened". L14 said that about logs; Part 3 said it about the naive filter, which would have run cleanly and reported ten. Jøsang's account of detection lists exactly this failure mode among "the most challenging" parts of incident handling: determining whether an incident has occurred at all from signs that may be absent [Jøsang, Sect. 14.5.2, p. 311]{.src}.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A script that runs without an error has not proved its answer is right; the naive filter ran cleanly and reported the wrong number. Say what a number counted, and check it against a tool like `wc -l` or `grep -c`, so it is a number you can defend.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 A script that reports zero refusals for Nordvik tomorrow morning is either good news or a broken filter. The line that says `69 lines read` beside the zero is what tells you which.
 

@@ -25,8 +25,7 @@ Imagine Nordvik hires you to review its security. What you may touch is decided 
 
 ### Straffeloven § 204
 
-::: {.callout-note}
-## Straffeloven § 204
+::: {.callout-note title="Straffeloven § 204"}
 
 Getting access to a system you had no right to reach is the offence in itself. Lovdata publishes the code free of charge. The paragraph is about permission, not damage.
 
@@ -57,15 +56,13 @@ Each excuse in the left column has been tried before. The moment you have to arg
 
 The rule underneath every row is the same. The book's definition: "Access authorization is the act of specifying access rights for users, roles, and processes" [Jøsang, Sect. 1.11, p. 21]{.src}, and authorising is something "authorities in an organization are responsible for" [Jøsang, Sect. 1.11, p. 22]{.src}. Authorisation is given by somebody. It is not something you find.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Under straffeloven § 204, getting access to a system you had no right to reach is the offence in itself. Damage, theft, motive and skill change the sentence a court gives, not whether a crime happened. The only question is whether you were authorised.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 If you probed Nordvik's server without Nordvik's written permission, you would be on the wrong side of § 204 even if you touched nothing and meant well.
 
@@ -110,15 +107,13 @@ In September 2019 two testers from the firm Coalfire were arrested in Iowa for d
 
 This is the clearest case of an authorisation failing on ownership. Everything you learn to do this term is lawful only because of a document like this, and the document is what anybody reads first when something goes wrong.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Authorization is what turns the same action from a § 204 offence into a job: a named person with authority, agreeing in writing before any work starts, naming which systems, on which dates, and who to call when something breaks.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 A signed engagement could put Nordvik's own server in scope, but never its two suppliers' systems, because Nordvik cannot authorise access to another company. The suppliers would each have to sign for their own.
 

@@ -67,15 +67,13 @@ The book names both transport protocols in one sentence: TCP "is the most common
 
 Neither is better than the other. TCP pays time to be certain, and UDP pays nothing and accepts loss. The choice is about what a lost piece costs.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 One machine runs many services behind one address, and a port is just the number that says which program gets a packet. A port is open only while a program is listening on it: open means something is there, not that it is unprotected.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 Nordvik's one server runs several services on one address. Each open port is one more program that has to be patched and watched, and nobody at Nordvik has counted them.
 
@@ -224,15 +222,13 @@ The book's vulnerability lifecycle runs from discovery and CVE registration, thr
 
 Mapping means finding out what you actually have. In L03 you met NSM's *Grunnprinsipper for IKT-sikkerhet*, and the first of its four categories is *identifisere og kartlegge*: identify and map. In front of one machine it means one task. List what is listening, name each line, and find out who owns it. The book's version is asset identification as the first step of risk identification [Jøsang, Sect. 19.4.1, p. 418]{.src}. Part 5 turns the category into a command.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 Keep four words apart: listening is about the machine, reachable is about the network, exposed is both, and vulnerable is a specific weakness. Ask of every service whether it runs, who can reach it, and whether it needs to be there, because only the last question removes work.
 
 :::
 
-::: {.callout-tip}
-## On Nordvik AS
+::: {.callout-tip title="On Nordvik AS"}
 
 The services nobody at Nordvik chose, a test switched on years ago, a database a package pulled in, are the ones nobody patches. They are exposed to the two suppliers at least, and to the world if the firewall rule from L05 was written loosely.
 

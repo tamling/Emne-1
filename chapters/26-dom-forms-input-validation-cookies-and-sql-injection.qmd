@@ -48,8 +48,7 @@ A node knows its tag name, its attributes and the text inside it. JavaScript rea
 
 The file the server sent and the page the visitor holds are two different things. The visitor controls the second. This is L25's "assembled, not delivered", taken one step further: not only assembled from many files, but editable after assembly by anyone whose script the page loaded, or by the visitor themselves.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What does the browser build out of the HTML text? Where does the DOM live, on the server or the visitor's machine? Name one thing a script can change after the page loads. If a script edits the DOM, does the server's file change?
 
@@ -93,15 +92,13 @@ Any program that speaks HTTP can send the request the form would have sent. `cur
 
 The browser runs on hardware the visitor owns and may change at will. A rule written into the page is advice to a visitor who wants to follow it. The server is the only machine in the exchange that you control, so every value must be checked again there. This is L16's validation with the reason made sharp: the book's OWASP entry "Broken Access Control" is exactly the failure of not re-checking on the server, "Restrictions on what authenticated users are allowed to do are often not enforced properly" [Jøsang, Sect. 11.6.3, p. 259]{.src}, and its input-validation advice from L16 assumed the check ran where you control it.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 Where do the parameters of a `GET` request travel? Where do a `POST`'s? What does `maxlength` prevent, and for whom? Why can a request arrive that the form itself would never have sent?
 
 :::
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 The browser turns the page into a tree that any script it loads can change, so nothing the page does can be trusted by the server: any program can send the request, and even a `GET` that only reads can change which rows a query returns. Where a value came from is the only thing that decides whether to trust it, and the answer is always outside.
 
@@ -141,8 +138,7 @@ The first request arrives with no cookie and is refused with 401, one of L07's s
 
 The cookie value comes in three parts separated by full stops. The first part is the data, encoded with base64 so it travels safely; base64 is an encoding, not encryption, so anyone can decode it, and the username `student` is plainly readable in it. A signature made with a secret key sits in the third part and lets the server detect any change. So a Flask session cookie is signed against change and open to reading. `HttpOnly` stops page scripts from reading it, and whoever holds the value still can. The book's warning about sessions is the OWASP entry "Identification and Authentication Failures", where attackers "compromise passwords, keys, or cookies to steal identities or take over control of a session" [Jøsang, Sect. 11.6.3, p. 260]{.src}.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What problem does a cookie solve for a server that forgets every request? What does `HttpOnly` stop, and what does it leave untouched? What does the signature on a Flask session cookie prevent, and what does it not? Why is `student` readable inside the cookie?
 
@@ -199,8 +195,7 @@ The question mark marks a slot, and the value never joins the query text. The da
 
 A blocklist has to name every string an attacker might think of sending. The value used today carried a quote and an `OR`, and no keyword a simple list would catch; banning the letters `OR` would also reject an ordinary surname such as *Nordmann*. This is L16's deny-list, which fails silently and incompletely. The book calls SQL injection "a solved problem that can be easily prevented by standard controls", and names the control: parameterised commands [Jøsang, Sect. 11.7.1, p. 262]{.src}. Not a word list. A placeholder.
 
-::: {.callout-warning}
-## Checkpoint
+::: {.callout-warning title="Checkpoint"}
 
 What turned four rows into 21 in the demonstration? Where does the value travel when a query uses a placeholder? Why did the safe endpoint answer zero rather than four? Name one legitimate username a blocklist for injection might wrongly reject.
 
@@ -218,8 +213,7 @@ The attack on the telecoms company TalkTalk in October 2015 was SQL injection. P
 
 The tempting reading is that one developer wrote one careless line last year. The pages had entered the company through an acquisition six years earlier, and a fix for the exact bug that was exploited had been available before the attack. Three of the book's OWASP risks line up: injection, because a field reached a query unparameterised [Jøsang, Sect. 11.6.3, p. 260]{.src}; vulnerable and outdated components, because "known vulnerabilities that are not patched expediently" leave the organisation exposed "for long periods" [Jøsang, Sect. 11.6.3, p. 260]{.src}, which is L11's and L07's patch race; and, underneath, an asset nobody had mapped, the L03 first step and L07's "services nobody chose". The fix was one character per query, known and available. Nobody had gone through the inherited pages to apply it.
 
-::: {.callout-important}
-## Key idea
+::: {.callout-important title="Key idea"}
 
 A form rule helps an honest user and stops nobody: any program can send the request, so the validation that matters runs on the server, and every value goes into a query as a placeholder, beside it and never inside it. TalkTalk lost 156,959 customers' data to SQL injection on inherited, unpatched pages, and the book calls injection a solved problem, prevented by the one control this course has taught twice.
 

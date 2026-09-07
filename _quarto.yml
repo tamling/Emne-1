@@ -62,3 +62,6 @@ format:
     # Interactive exercise framework (match / buckets / order / quiz):
     # chapters declare exercises as JSON blocks, this include renders them.
     include-after-body: includes/exercises.html
+    # Client-side password gate on every page (course password; see
+    # includes/password-gate.html for how to change it)
+    include-in-header: includes/password-gate.html

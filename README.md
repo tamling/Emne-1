@@ -47,6 +47,21 @@ toggle never stalls on a blocked font request.
 | `\bridge{…}` | `[→ …]{.bridge}` forward pointer |
 | `lstlisting[style=out]` | fenced block with `.code-out` |
 
+## Password gate
+
+Every page loads `includes/password-gate.html` (via `include-in-header`):
+an overlay asks for the course password before the page becomes visible,
+and a correct entry is remembered in the browser (localStorage). The
+current password is **Nordvik2026**; to change it, compute
+`python3 -c "import hashlib; print(hashlib.sha256('emne1|NEWPASSWORD'.encode()).hexdigest())"`
+and put the hash into `E1_HASH` in that file (bump the storage key to
+force re-entry).
+
+This is client-side only - it keeps the reader from being casually
+opened, but it is not real access control: the content still reaches the
+browser and lives in this repository. For real protection the site would
+need an authenticating host (e.g. Cloudflare Access) and a private repo.
+
 ## Interactive exercises
 
 Chapters can embed self-contained HTML/JS widgets in a ```` ```{=html} ````

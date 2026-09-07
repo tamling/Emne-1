@@ -63,5 +63,9 @@ format:
     # chapters declare exercises as JSON blocks, this include renders them.
     include-after-body: includes/exercises.html
     # Client-side password gate on every page (course password; see
-    # includes/password-gate.html for how to change it)
-    include-in-header: includes/password-gate.html
+    # includes/password-gate.html for how to change it) + the Hypothesis
+    # annotation client (same setup as SKY2100), so students can highlight
+    # and comment on any passage
+    include-in-header:
+      - includes/password-gate.html
+      - includes/hypothesis.html

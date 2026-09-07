@@ -47,6 +47,13 @@ toggle never stalls on a blocked font request.
 | `\bridge{…}` | `[→ …]{.bridge}` forward pointer |
 | `lstlisting[style=out]` | fenced block with `.code-out` |
 
+## Annotations (Hypothesis)
+
+Every page loads the Hypothesis client (`includes/hypothesis.html`, same
+setup as SKY2100): students select text to highlight and comment in the
+margin. A free hypothes.is account is needed; annotations are public
+unless a course group is configured in that file.
+
 ## Password gate
 
 Every page loads `includes/password-gate.html` (via `include-in-header`):
